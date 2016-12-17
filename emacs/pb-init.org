@@ -28,28 +28,25 @@ This section sets up =use-package=.
 #+begin_src emacs-lisp
 (setq user-full-name "Patrick Ball")
 (setq user-mail-address "pball@hrdag.org")
-
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
-
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
-(setq use-package-verbose t)
-(setq use-package-always-ensure t)
-(require 'use-package)
-(use-package auto-compile
-  :config (auto-compile-on-load-mode))
-(setq load-prefer-newer t)
-(use-package diminish)
-(use-package bind-key)
 #+end_src
 
 #+RESULTS:
+: pball@hrdag.org
 
 * Basic Behaviors
+*** Theme
+#+begin_src emacs-lisp :results output silent
+(use-package color-theme
+  :ensure t)
+(setq custom-safe-themes t)
+(use-package zenburn-theme
+  :ensure t
+  :diminish ""
+  :config
+  (load-theme 'zenburn))
+#+end_src
 *** Backups
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :results output silent
 (setq
  backup-directory-alist '(("." . "~/.emacs.d/backups"))
  delete-old-versions -1
@@ -59,7 +56,7 @@ This section sets up =use-package=.
 #+end_src
 
 *** History
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :results output silent
 (setq
  savehist-file "~/.emacs.d/savehist"
  history-length t
@@ -73,29 +70,55 @@ This section sets up =use-package=.
 (desktop-save-mode 1)
 #+end_src
 
-#+RESULTS:
-: t
-
 *** UTF-8
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :results output silent
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 #+end_src
 
-#+RESULTS:
-: utf-8-unix
-
+*** minor editing hacks
+  #+begin_src emacs-lisp :eval yes :results output silent
+(delete-selection-mode 1)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+  #+end_src
 
 * Little hacks
-There aren't any now, but there will be. 
+There aren't any now, but there will be.
 
 * Searching, buffers, and other finding bits
 
-** Helm 
-  #+begin_src emacs-lisp
-
+** Helm
+  #+begin_src emacs-lisp :results output silent
+(use-package helm
+  :diminish helm-mode
+  :init
+  (progn
+    (require 'helm-config)
+    (setq helm-candidate-number-limit 100)
+    ;; From https://gist.github.com/antifuchs/9238468
+    (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
+          helm-input-idle-delay 0.01  ; this actually updates things
+                                        ; reeeelatively quickly.
+          helm-yas-display-key-on-candidate t
+          helm-quick-update t
+          helm-M-x-requires-pattern nil
+          helm-ff-skip-boring-files t)
+    (helm-mode))
+  :bind (("C-c h" . helm-mini)
+         ("C-h a" . helm-apropos)
+         ("C-x C-b" . helm-buffers-list)
+         ("C-x b" . helm-buffers-list)
+         ("M-y" . helm-show-kill-ring)
+         ("M-x" . helm-M-x)
+         ("C-x c o" . helm-occur)
+         ("C-x c s" . helm-swoop)  ("M-x" . "helm-M-x")  ("M-x" . "helm-M-x")
+         ("C-x c y" . helm-yas-complete)
+         ("C-x c Y" . helm-yas-create-snippet-on-region)
+         ("C-x c b" . my/helm-do-grep-book-notes)
+         ("C-x c SPC" . helm-all-mark-rings)))
+(ido-mode -1) ;; Turn off ido mode in case I enabled it accidentally
   #+end_src
 
 
@@ -152,7 +175,7 @@ This means that M-up|down|right|left drag line or the region.
   #+RESULTS:
 
 
-** =avy= and =ace= 
+** =avy= and =ace=
   #+begin_src emacs-lisp
 (use-package ace-window
   :ensure t
@@ -161,7 +184,7 @@ This means that M-up|down|right|left drag line or the region.
     (global-set-key [remap other-window] 'ace-window)
     (custom-set-faces
      '(aw-leading-char-face
-       ((t (:inherit ace-jump-face-foreground :height 3.0))))) 
+       ((t (:inherit ace-jump-face-foreground :height 3.0)))))
     )
   :bind ("C-'" . ace-window)
   :config (progn (setq

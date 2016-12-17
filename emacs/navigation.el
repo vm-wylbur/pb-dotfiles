@@ -29,3 +29,6 @@
 ;;    ((t (:inherit ace-jump-face-foreground :height 3.0)))))
 
 
+(use-package epa-file)
+(epa-file-enable)
+
