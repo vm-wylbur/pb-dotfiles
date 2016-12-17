@@ -98,12 +98,14 @@ There aren't any now, but there will be.
 
   #+end_src
 
-  #+begin_src emacs-lisp
 
-  #+end_src
 
 
 * Editing
+** Autocomplete with =company-mode=
+  #+begin_src emacs-lisp
+
+  #+end_src
 
 ** snippets hydra
 
@@ -135,7 +137,7 @@ point reaches the beginning or end of the buffer, stop there."
       (move-beginning-of-line 1))))
   #+end_src
 
-** Dragging stuff
+** Dragging stuff w =super-up,down=
 This means that M-up|down|right|left drag line or the region.
   #+begin_src emacs-lisp
 (use-package drag-stuff
@@ -149,9 +151,25 @@ This means that M-up|down|right|left drag line or the region.
 
   #+RESULTS:
 
+
 ** =avy= and =ace= 
   #+begin_src emacs-lisp
+(use-package ace-window
+  :ensure t
+  :init
+  (progn
+    (global-set-key [remap other-window] 'ace-window)
+    (custom-set-faces
+     '(aw-leading-char-face
+       ((t (:inherit ace-jump-face-foreground :height 3.0))))) 
+    )
+  :bind ("C-'" . ace-window)
+  :config (progn (setq
+		  aw-keys '(?f ?g ?h ?j ?k ?l)
+		  aw-background nil)))
 
   #+end_src
+
+  #+RESULTS:
 
 # end.
