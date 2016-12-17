@@ -1,0 +1,10 @@
+# -*- mode: sh -*-
+
+# this starts with the output of path_helper:
+# "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:/Library/TeX/texbin:/Users/pball/bin"
+
+export PATH="/usr/local/sbin:$PATH"
+export PATH="$HOME/bin:/Applications/RStudio.app/Contents/MacOS/pandoc:$PATH"
+export PATH="$PATH:$HOME/projects/hrdag/snap/bin"
+
+# end.
