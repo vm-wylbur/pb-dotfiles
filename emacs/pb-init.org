@@ -5,6 +5,7 @@
 #+STARTUP: showall
 #+STARTUP: logdone
 #+PROPERTY:  eval yes
+#+PROPERTY: header-args :results silent
 
 * Configuration
 ** About this file
@@ -13,29 +14,44 @@
    :END:
 <<babel-init>>
 
-* Introduction
-#+begin_src emacs-lisp
-(message "starting PB's init from org-mode")
-#+end_src
 
-#+RESULTS:
-: starting PB’s init from org-mode
+* Introduction
 
 This is an effort to write a literate elisp init file. I'm mostly following [[http://pages.sachachua.com/.emacs.d/Sacha.html%5D%5D%20amazing%20work.%20%0A%0A*%20Introduction][Sacha Chua's]] amazing work.
 
-This section sets up =use-package=.
+This section sets the path.
 
-#+begin_src emacs-lisp
-(setq user-full-name "Patrick Ball")
-(setq user-mail-address "pball@hrdag.org")
+#+begin_src emacs-lisp :results output silent
+(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+(setq exec-path (append exec-path '("/usr/local/bin")))
+
+
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("org" . "http://orgmode.org/elpa/") t)
+(package-initialize)
+(add-to-list 'load-path "~/.emacs.d/elpa")
+
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(require 'use-package)
+(setq use-package-verbose t)
+(setq use-package-always-ensure t)
+(use-package auto-compile
+  :config (auto-compile-on-load-mode))
+(setq load-prefer-newer t)
+(require 'diminish)                ;; if you use :diminish
+(require 'bind-key)                ;;
 #+end_src
 
-#+RESULTS:
-: pball@hrdag.org
 
 * Basic Behaviors
-*** Theme
-#+begin_src emacs-lisp :results output silent
+** Theme
+#+begin_src emacs-lisp
 (use-package color-theme
   :ensure t)
 (setq custom-safe-themes t)
@@ -45,8 +61,29 @@ This section sets up =use-package=.
   :config
   (load-theme 'zenburn))
 #+end_src
-*** Backups
-#+begin_src emacs-lisp :results output silent
+** UI
+#+begin_src emacs-lisp
+(show-paren-mode 1)
+(tool-bar-mode -1)
+(menu-bar-mode t)
+(setq show-paren-delay 0)
+(setq column-number-mode 1
+      inhibit-startup-message t)
+(setq-default cursor-type 'bar)
+(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+(fringe-mode '(8 . 2)) ;; make the left fringe 4 pixels wide and the right disappear
+#+end_src
+** fill-column-indicator
+#+begin_src emacs-lisp
+(use-package fill-column-indicator
+  :diminish ""
+  :ensure t
+  :defer t
+  :init
+  (hook-into-modes 'fci-mode '(prog-mode-hook)))
+#+end_src
+** Backups
+#+begin_src emacs-lisp
 (setq
  backup-directory-alist '(("." . "~/.emacs.d/backups"))
  delete-old-versions -1
@@ -55,8 +92,8 @@ This section sets up =use-package=.
  auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
 #+end_src
 
-*** History
-#+begin_src emacs-lisp :results output silent
+** History
+#+begin_src emacs-lisp
 (setq
  savehist-file "~/.emacs.d/savehist"
  history-length t
@@ -70,27 +107,56 @@ This section sets up =use-package=.
 (desktop-save-mode 1)
 #+end_src
 
-*** UTF-8
-#+begin_src emacs-lisp :results output silent
+** UTF-8
+#+begin_src emacs-lisp
 (prefer-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-keyboard-coding-system 'utf-8)
 #+end_src
 
-*** minor editing hacks
-  #+begin_src emacs-lisp :eval yes :results output silent
+** minor editing hacks
+  #+begin_src emacs-lisp :eval yes
 (delete-selection-mode 1)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+(show-paren-mode 1)
   #+end_src
+** minor behavior hacks
+  #+begin_src emacs-lisp :eval yes
+(global-set-key (kbd "C-x k") 'kill-this-buffer)
+  #+end_src
+
 
 * Little hacks
 There aren't any now, but there will be.
 
-* Searching, buffers, and other finding bits
 
-** Helm
-  #+begin_src emacs-lisp :results output silent
+* Modes
+** markdown
+#+begin_src emacs-lisp
+(use-package markdown-mode
+  :mode ("\\.\\(m\\(ark\\)?down\\|md\\)$" . markdown-mode)
+  :config)
+#+end_src
+** magit
+#+begin_src emacs-lisp
+(use-package magit
+  :ensure t)
+(defhydra hydra-magit (:color blue :columns 3)
+  "Magit"
+  ("s" magit-status "status")
+  ("c" magit-commit "commit")
+  ("C" magit-checkout "checkout")
+  ("v" magit-branch-manager "branch manager")
+  ("m" magit-merge "merge")
+  ("l" magit-log "log")
+  ("!" magit-git-command "command")
+  ("$" magit-process "process"))
+#+end_src
+
+* Searching, buffers, and other finding bits
+** Helm and swiper
+#+begin_src emacs-lisp
 (use-package helm
   :diminish helm-mode
   :init
@@ -113,51 +179,74 @@ There aren't any now, but there will be.
          ("M-y" . helm-show-kill-ring)
          ("M-x" . helm-M-x)
          ("C-x c o" . helm-occur)
-         ("C-x c s" . helm-swoop)  ("M-x" . "helm-M-x")  ("M-x" . "helm-M-x")
+         ("C-x c s" . helm-swoop)
          ("C-x c y" . helm-yas-complete)
          ("C-x c Y" . helm-yas-create-snippet-on-region)
          ("C-x c b" . my/helm-do-grep-book-notes)
          ("C-x c SPC" . helm-all-mark-rings)))
 (ido-mode -1) ;; Turn off ido mode in case I enabled it accidentally
+
+(use-package swiper-helm
+  :config
+  :bind (("C-s" . swiper-helm)
+	 ("C-r" . swiper-helm)))
+
+(use-package helm-swoop)  ;; on hydra
   #+end_src
-
-
 
 
 * Editing
-** Autocomplete with =company-mode=
+** yank pop w hydra
+#+begin_src emacs-lisp
+(defhydra hydra-yank-pop ()
+  "yank"
+  ("C-y" yank nil)
+  ("M-y" yank-pop nil)
+  ("y" (yank-pop 1) "next")
+  ("Y" (yank-pop -1) "prev")
+  ("l" helm-show-kill-ring "list" :color blue)
+  ("u" undo-tree-visualize "undoTree"))
+(bind-key* (kbd "M-y") #'hydra-yank-pop/yank-pop)
+(bind-key* (kbd "C-y") #'hydra-yank-pop/yank)
+  #+end_src
+
+** M-p, M-n
+** flyspell
   #+begin_src emacs-lisp
+(use-package flyspell
+  :init
+  (progn
+    (add-hook 'text-mode-hook 'flyspell-mode)
+    (add-hook 'prog-mode-hook 'flyspell-prog-mode))
+  :config
+  (setq ispell-extra-args '("--sug-mode=bad-spellers")
+        ispell-personal-dictionary "~/.flydict"
+	ispell-program-name (executable-find "aspell")
+	ispell-extra-args
+	(list "--sug-mode=fast" ;; ultra|fast|normal|bad-spellers
+        "--lang=en_US"
+        "--ignore=3"))
+   :bind* ("C-;" . flyspell-auto-correct-previous-word))
+(add-hook 'org-mode-hook 'turn-on-flyspell)
 
   #+end_src
 
-** snippets hydra
+** Autocomplete with =company-mode=
+  #+begin_src emacs-lisp
+(use-package company
+  :ensure t
+  :defer t
+  :config (global-company-mode))
+  #+end_src
+
+** snippets hydra **TODO**
 
 * Navigation
 
-** A better =C-a=
-From [[https://github.com/bbatsov/crux/blob/master/crux.el][=crux=]]
+** A better =C-a= from [[https://github.com/bbatsov/crux/blob/master/crux.el][=crux=]]
   #+begin_src emacs-lisp
-;;
-(defun crux-move-beginning-of-line (arg)
-  "Move point back to indentation of beginning of line.
-Move point to the first non-whitespace character on this line.
-If point is already there, move to the beginning of the line.
-Effectively toggle between the first non-whitespace character and
-the beginning of the line.
-If ARG is not nil or 1, move forward ARG - 1 lines first.  If
-point reaches the beginning or end of the buffer, stop there."
-  (interactive "^p")
-  (setq arg (or arg 1))
-
-  ;; Move lines first
-  (when (/= arg 1)
-    (let ((line-move-visual nil))
-      (forward-line (1- arg))))
-
-  (let ((orig-point (point)))
-    (back-to-indentation)
-    (when (= orig-point (point))
-      (move-beginning-of-line 1))))
+(use-package crux
+  :bind* ("C-a" . crux-move-beginning-of-line))
   #+end_src
 
 ** Dragging stuff w =super-up,down=
@@ -174,8 +263,7 @@ This means that M-up|down|right|left drag line or the region.
 
   #+RESULTS:
 
-
-** =avy= and =ace=
+** =ace= and =avy= window jumping
   #+begin_src emacs-lisp
 (use-package ace-window
   :ensure t
@@ -186,13 +274,92 @@ This means that M-up|down|right|left drag line or the region.
      '(aw-leading-char-face
        ((t (:inherit ace-jump-face-foreground :height 3.0)))))
     )
-  :bind ("C-'" . ace-window)
+  :bind* ("C-'" . ace-window)
   :config (progn (setq
 		  aw-keys '(?f ?g ?h ?j ?k ?l)
 		  aw-background nil)))
-
+(use-package avy
+  :config (setq avy-all-windows 'all-frames))
   #+end_src
 
-  #+RESULTS:
 
+** TODO window and frame stuff (on yy)y
+#+begin_src emacs-lisp
+(defhydra my/window-movement (:color blue
+				     :hint nil)
+"
+^Jump^         ^Files^       ^Buffer^     ^Search
+------------------------------------------------------
+_y_: other    _m_: buf-rec   _b_: buff    _s_: swoop
+_a_: ace-win  _r_: recent    _B_: ibuff   _S_: multswoop
+_c_: char     _F_: find-oth  _r_: rename  _g_: grep
+_l_: line     _f_: find      _D_: del(win)
+"
+  ("y" other-window)
+  ("a" ace-window)
+  ("c" avy-goto-char)
+  ("l" avy-goto-line)
+  ("f" helm-find-files)
+  ("r" helm-recentf)
+  ("m" helm-mini)
+  ("F" helm-find-files)
+  ("D" ace-delete-window)
+  ("b" helm-buffers-list)
+  ("B" ibuffer)
+  ("r" crux-rename-file-and-buffer)
+  ("s" helm-swoop)
+  ("S" helm-multi-swoop-all)
+  ("g" helm-grep-do-grep)
+  ("q" quit-window "quit" :color blue))
+#+end_src
+
+** TODO personal hydras (on hh)
+
+* key chords
+  the ones we want are definitely in there (uu = uno; jj/jl = avy goto char/line; hh = my personal stuff, prob mostly org-mode; ff = file & buffer; yy = _window_ movements; xx = snippets).
+
+  note that all of the key-chord hydras should include (i) insert and (q). Columns should get us there but think about the headers. also none should include a head w the char in the chord. that way 3 presses of the chord key dump it out.
+
+  oo, org-mode: close/open at 1/2/3 levels;
+
+  yy: windmove, new frame, ace-win, find files, recent, mini, grep??
+
+  xx: hippie-expand; and some snippets
+
+  hh: comment-or-uncomment-region (which should be super-/ anyway); crux-duplicate-current-line-or-region; crux-kill-line-backwards; switch to or open a few freq files (init.org, .bash_profile, log, todo)
+
+** chord assignments
+  #+begin_src emacs-lisp
+(use-package key-chord
+  :init
+  (progn
+    (setq key-chord-one-key-delay 0.2)
+    (key-chord-mode 1)
+    (key-chord-define-global "uu"     'undo)
+    (key-chord-define-global "jj"     'avy-goto-char)
+    (key-chord-define-global "jl"     'avy-goto-line)
+    (key-chord-define-global "gg"     'hydra-magit/body)
+    (key-chord-define-global "xx"     'er/expand-region)  ;; TBD!
+    (key-chord-define-global "hh"     'my/key-chord-commands/body) ;; TBD!
+    (key-chord-define-global "yy"     'my/window-movement/body)))
+  #+end_src
+
+
+* Conclusion
+** seek to open window w buffer switch
+** set modeline
+  Someday this could be smart modeline, but it's not now.
+  #+begin_src emacs-lisp
+  (load-file "~/dotfiles/emacs/modeline.el")
+  #+end_src
+
+** stuff to consider [/]
+ - [ ] elpy
+ - [ ] autosave
+ - [ ] one-on-one emacs: no more windows.
+
+** stuff to keep working on [/]
+ - [ ] flyspell's autocorrect rarely gets it right the first time.
+ - [ ] kill other window, the annoying help or error window that just popped up.
+ - [ ] fill-column-indicator not working
 # end.
