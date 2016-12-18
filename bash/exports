@@ -1,3 +1,4 @@
+
 # Make vim the default editor.
 export EDITOR='emacs';
 
@@ -28,6 +29,14 @@ export LESS_TERMCAP_md="${yellow}";
 
 # Don’t clear the screen after quitting a manual page.
 export MANPAGER='less -X';
+
+# to fix gnu gcc stuff
+# NB also need to ln -sf /usr/bin/cpp /usr/local/bin/cpp
+export HOMEBREW_CC=gcc-5
+export HOMEBREW_CXX=g++-5
+export CC=gcc-5
+export CXX=g++-5
+export LD=gcc-5
 
 # for unlimited github calls
 export HOMEBREW_GITHUB_API_TOKEN="7105df98ca887eda6aa4125926a86945b5da40bd"

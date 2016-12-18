@@ -25,7 +25,6 @@ This section sets the path.
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 (setq exec-path (append exec-path '("/usr/local/bin")))
 
-
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/") t)
@@ -46,6 +45,7 @@ This section sets the path.
 (setq load-prefer-newer t)
 (require 'diminish)                ;; if you use :diminish
 (require 'bind-key)                ;;
+(use-package hydra)
 #+end_src
 
 
@@ -71,16 +71,22 @@ This section sets the path.
       inhibit-startup-message t)
 (setq-default cursor-type 'bar)
 (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
-(fringe-mode '(8 . 2)) ;; make the left fringe 4 pixels wide and the right disappear
+(fringe-mode '(8 . 2))
 #+end_src
 ** fill-column-indicator
+This is broken, and I don't know why.
 #+begin_src emacs-lisp
-(use-package fill-column-indicator
-  :diminish ""
-  :ensure t
-  :defer t
-  :init
-  (hook-into-modes 'fci-mode '(prog-mode-hook)))
+  ;; (use-package fill-column-indicator
+  ;;   :diminish ""
+  ;;   :ensure t
+  ;;   :defer t
+  ;;   :init (progn (
+  ;;     (hook-into-modes 'fci-mode '(prog-mode-hook))
+  ;;   (setq
+  ;;     fci-rule-width 1
+  ;;     fci-rule-color "darkblue"
+  ;;     fci-rule-column 79))))
+
 #+end_src
 ** Backups
 #+begin_src emacs-lisp
@@ -104,7 +110,7 @@ This section sets the path.
    search-ring
    regexp-search-ring))
 (savehist-mode 1)
-(desktop-save-mode 1)
+;; (desktop-save-mode 1)
 #+end_src
 
 ** UTF-8
@@ -140,18 +146,22 @@ There aren't any now, but there will be.
 #+end_src
 ** magit
 #+begin_src emacs-lisp
-(use-package magit
-  :ensure t)
-(defhydra hydra-magit (:color blue :columns 3)
-  "Magit"
-  ("s" magit-status "status")
-  ("c" magit-commit "commit")
-  ("C" magit-checkout "checkout")
-  ("v" magit-branch-manager "branch manager")
-  ("m" magit-merge "merge")
-  ("l" magit-log "log")
-  ("!" magit-git-command "command")
-  ("$" magit-process "process"))
+  ;; (use-package magit
+  ;;   :ensure t
+  ;;   :init (progn (
+  ;;      (setq magit-git-executable "/usr/local/bin/git"))))
+
+  ;; (defhydra hydra-magit (:color blue :columns 3)
+  ;;   "Magit"
+  ;;   ("s" magit-status "status")
+  ;;   ("c" magit-commit "commit")
+  ;;   ("C" magit-checkout "checkout")
+  ;;   ("p" magit-
+  ;;   ("v" magit-branch-manager "branch manager")
+  ;;   ("m" magit-merge "merge")
+  ;;   ("l" magit-log "log")
+  ;;   ("!" magit-git-command "command")
+  ;;   ("$" magit-process "process")))
 #+end_src
 
 * Searching, buffers, and other finding bits
@@ -211,6 +221,7 @@ There aren't any now, but there will be.
   #+end_src
 
 ** M-p, M-n
+The question here is what these do. I think backward-paragraph?
 ** flyspell
   #+begin_src emacs-lisp
 (use-package flyspell
@@ -362,4 +373,6 @@ _l_: line     _f_: find      _D_: del(win)
  - [ ] flyspell's autocorrect rarely gets it right the first time.
  - [ ] kill other window, the annoying help or error window that just popped up.
  - [ ] fill-column-indicator not working
+
+This file was last evaluated on #{Date.today}
 # end.
