@@ -6,8 +6,9 @@
 #+STARTUP: logdone
 #+PROPERTY:  eval yes
 #+PROPERTY: header-args :results silent
+#+SETUPFILE: /Users/pball/src/org-html-themes/setup/theme-bigblow-local.setup
 
-* Configuration
+* Introduction
 ** About this file
    :PROPERTIES:
    :CUSTOM_ID: babel-init
@@ -15,11 +16,14 @@
 <<babel-init>>
 
 
-* Introduction
-
 This is an effort to write a literate elisp init file. I'm mostly following [[http://pages.sachachua.com/.emacs.d/Sacha.html%5D%5D%20amazing%20work.%20%0A%0A*%20Introduction][Sacha Chua's]] amazing work.
 
-This section sets the path.
+Writing this file in org-mode allows me to export it as html (which
+happens automagically on GitHub), and to mix my thinking with the
+code. This is another step toward [[http://reproducibleresearch.net][reproducible research]], close to
+[[https://hrdag.org][HRDAG]]'s "principled data processing" ideas.
+
+** paths and =use-package=
 
 #+begin_src emacs-lisp :results output silent
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
@@ -61,8 +65,41 @@ This section sets the path.
   :config
   (load-theme 'zenburn))
 #+end_src
-** UI
+** elscreen
 #+begin_src emacs-lisp
+  (use-package elscreen
+    :init
+    (progn
+      (elscreen-start)))
+(defhydra hydra-elscreen (:color red :hint nil)
+         "
+elscreen
+_0_ _c_reate    _n_ext     _s_tore
+_1_ _k_ill      _p_revious _r_estore
+_2_ _C_lone     _g_oto
+_3_
+_4_"
+         ("0" elscreen-jump-0)
+	 ("1" elscreen-jump-0)
+	 ("2" elscreen-jump-0)
+	 ("3" elscreen-jump-0)
+	 ("4" elscreen-jump-0)
+         ("c" elscreen-create)
+         ("C" elscreen-clone)
+         ("k" elscreen-kill)
+         ("n" elscreen-next)
+         ("p" elscreen-previous)
+         ("s" elscreen-store)
+         ("r" elscreen-restore)
+         ("g" elscreen-goto)
+         )
+#+end_src
+
+#+end_src
+
+** Little UI bits
+#+begin_src emacs-lisp
+(setq ring-bell-function 'ignore)
 (show-paren-mode 1)
 (tool-bar-mode -1)
 (menu-bar-mode t)
@@ -110,7 +147,7 @@ This is broken, and I don't know why.
    search-ring
    regexp-search-ring))
 (savehist-mode 1)
-;; (desktop-save-mode 1)
+(desktop-save-mode 1)
 #+end_src
 
 ** UTF-8
@@ -126,7 +163,40 @@ This is broken, and I don't know why.
 (delete-selection-mode 1)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (show-paren-mode 1)
-  #+end_src
+(bind-keys*
+  ("M-n" . forward-paragraph)
+  ("M-p" . backward-paragraph))
+#+end_src
+
+** better commenting on super-/
+From [[http://endlessparentheses.com/implementing-comment-line.html][endless parentheses]]. Note that it can't deal with single lines of elisp code in
+=begin_src ... end_src= blocks. Regions, ok, but not single lines.
+#+begin_src emacs-lisp
+  (defun endless/comment-line-or-region (n)
+      "Comment or uncomment current line and leave point after it.
+    With positive prefix, apply to N lines including current one.
+    With negative prefix, apply to -N lines above.
+    If region is active, apply to active region instead."
+      (interactive "p")
+      (if (use-region-p)
+    	  (comment-or-uncomment-region
+    	   (region-beginning) (region-end))
+	(let ((range
+               (list (line-beginning-position)
+                     (goto-char (line-end-position n)))))
+	  (comment-or-uncomment-region
+	   (apply #'min range)
+	   (apply #'max range)))
+	(back-to-indentation)))
+  (bind-key (kbd "s-/") 'endless/comment-line-or-region)
+#+end_src
+
+So this is a line of text.
+This is a second line.
+
+and a third.
+
+
 ** minor behavior hacks
   #+begin_src emacs-lisp :eval yes
 (global-set-key (kbd "C-x k") 'kill-this-buffer)
@@ -135,7 +205,18 @@ This is broken, and I don't know why.
 
 * Little hacks
 There aren't any now, but there will be.
-
+#+begin_src emacs-lisp
+;; https://github.com/jjasghar/alfred-org-capture/blob/master/el/alfred-org-capture.el
+(defun make-orgcapture-frame ()
+  "Create a new frame and run org-capture."
+  (interactive)
+  (make-frame '((name . "remember") (width . 80) (height . 16)
+                (top . 400) (left . 300)
+                (font . "-apple-Monaco-medium-normal-normal-*-13-*-*-*-m-0-iso10646-1")
+                ))
+  (select-frame-by-name "remember")
+  (org-capture))
+#+end_src
 
 * Modes
 ** markdown
@@ -144,7 +225,7 @@ There aren't any now, but there will be.
   :mode ("\\.\\(m\\(ark\\)?down\\|md\\)$" . markdown-mode)
   :config)
 #+end_src
-** magit
+** magit FIXME
 #+begin_src emacs-lisp
   ;; (use-package magit
   ;;   :ensure t
@@ -166,42 +247,45 @@ There aren't any now, but there will be.
 
 * Searching, buffers, and other finding bits
 ** Helm and swiper
+
+In the =use-package= spec I found, there ere a bunch of =C-x c=
+sequences. Those are the kind of thing I'll never remember, so I need
+to move them to hydras or delete them.
 #+begin_src emacs-lisp
-(use-package helm
-  :diminish helm-mode
-  :init
-  (progn
-    (require 'helm-config)
-    (setq helm-candidate-number-limit 100)
-    ;; From https://gist.github.com/antifuchs/9238468
-    (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
-          helm-input-idle-delay 0.01  ; this actually updates things
-                                        ; reeeelatively quickly.
-          helm-yas-display-key-on-candidate t
-          helm-quick-update t
-          helm-M-x-requires-pattern nil
-          helm-ff-skip-boring-files t)
-    (helm-mode))
-  :bind (("C-c h" . helm-mini)
-         ("C-h a" . helm-apropos)
-         ("C-x C-b" . helm-buffers-list)
-         ("C-x b" . helm-buffers-list)
-         ("M-y" . helm-show-kill-ring)
-         ("M-x" . helm-M-x)
-         ("C-x c o" . helm-occur)
-         ("C-x c s" . helm-swoop)
-         ("C-x c y" . helm-yas-complete)
-         ("C-x c Y" . helm-yas-create-snippet-on-region)
-         ("C-x c b" . my/helm-do-grep-book-notes)
-         ("C-x c SPC" . helm-all-mark-rings)))
-(ido-mode -1) ;; Turn off ido mode in case I enabled it accidentally
+  (use-package helm
+    :diminish helm-mode
+    :init
+    (progn
+      (require 'helm-config)
+      (setq helm-candidate-number-limit 100)
+      ;; From https://gist.github.com/antifuchs/9238468
+      (setq helm-idle-delay 0.0
+            helm-input-idle-delay 0.01
+            helm-yas-display-key-on-candidate t
+            helm-quick-update t
+            helm-M-x-requires-pattern nil
+            helm-ff-skip-boring-files t)
+      (helm-mode))
+    :bind (("C-c h" . helm-mini)
+           ("C-h a" . helm-apropos)
+           ("C-x C-b" . helm-buffers-list)
+           ("C-x b" . helm-buffers-list)
+           ("M-y" . helm-show-kill-ring)
+           ("M-x" . helm-M-x)
+           ;; ("C-x c o" . helm-occur)
+           ;; ("C-x c s" . helm-swoop)
+           ;; ("C-x c y" . helm-yas-complete)
+           ;; ("C-x c Y" . helm-yas-create-snippet-on-region)
+           ;; ("C-x c b" . my/helm-do-grep-book-notes)
+           ("C-x c SPC" . helm-all-mark-rings)))
+  (ido-mode -1) ;; Turn off ido mode in case I enabled it accidentally
 
-(use-package swiper-helm
-  :config
-  :bind (("C-s" . swiper-helm)
-	 ("C-r" . swiper-helm)))
+  (use-package swiper-helm
+    :config
+    :bind (("C-s" . swiper-helm)
+	   ("C-r" . swiper-helm)))
 
-(use-package helm-swoop)  ;; on hydra
+  (use-package helm-swoop)  ;; on hydra
   #+end_src
 
 
@@ -359,7 +443,8 @@ _l_: line     _f_: find      _D_: del(win)
 * Conclusion
 ** seek to open window w buffer switch
 ** set modeline
-  Someday this could be smart modeline, but it's not now.
+  Someday this could be smart modeline, but it's not now. Note that it
+  has to load *after* =elscreen=, else they conflict.
   #+begin_src emacs-lisp
   (load-file "~/dotfiles/emacs/modeline.el")
   #+end_src

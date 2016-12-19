@@ -3,11 +3,7 @@
 
 ;; org is weird and buggy, from elpa directly, no use-package
 ;; if weird, rm ~/.emacs.d/elpa/org-yyyymmdd/*elc
-
-;; Added by Package.el.  This must come before configurations of
-;; installed packages.  Don't delete this line.  If you don't want it,
-;; just comment it out by adding a semicolon to the start of the line.
-;; You may delete these explanatory comments.
+;;
 (package-initialize)
 
 (require 'org)
@@ -15,7 +11,7 @@
  org-confirm-babel-evaluate nil
  org-src-fontify-natively t)
 (org-babel-load-file "~/dotfiles/emacs/pb-init.org")
-
+;; need to remove the pb-init.el file here
 
 ;; note in customize below, epg-gpg-program had to be hardcoded.
 ;;; Customize below
@@ -31,7 +27,8 @@
  '(epg-gpg-program "/usr/local/bin/gpg")
  '(package-selected-packages
    (quote
-    (magit markdown-mode org org-plus-contrib drag-stuff ob-tangle org-install epa-file org-mode helm-swoop shackle powerline smart-mode-line helm-flyspell helm-pydoc swiper-helm fill-column-indicator helm zenburn-theme color-theme use-package))))
+    (smart-comment comment-dwim-2 elscreen tabbar magit markdown-mode org org-plus-contrib drag-stuff ob-tangle org-install epa-file org-mode helm-swoop shackle powerline smart-mode-line helm-flyspell helm-pydoc swiper-helm fill-column-indicator helm zenburn-theme color-theme use-package)))
+ '(tabbar-separator (quote (1.0))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
