@@ -166,6 +166,12 @@ This is broken, and I don't know why.
 (bind-keys*
   ("M-n" . forward-paragraph)
   ("M-p" . backward-paragraph))
+(defun nowstamp ()
+  "Insert the timestamp I want"
+  (interactive)
+  (insert (format-time-string "%Y-%m-%dT%H:%M%Z")))
+(global-set-key (kbd "C-x t") 'nowstamp)
+
 #+end_src
 
 ** better commenting on super-/
@@ -196,13 +202,23 @@ This is a second line.
 
 and a third.
 
-
 ** minor behavior hacks
   #+begin_src emacs-lisp :eval yes
 (global-set-key (kbd "C-x k") 'kill-this-buffer)
   #+end_src
 
 
+* Workflow
+** todo-txt
+This is from [[http://todotxt.com][Gina Trapani's legendary script]]. I know that =org-mode=
+loves todo's, but I find them overwhelmingly complicated. With
+todotxt, I understand what I'm doing, and I can interact with the
+todo.txt file from other tools outside of emacs (heresy! I know).
+#+begin_src emacs-lisp
+(use-package todotxt
+  :init (setq todotxt-file "~/Documents/notes/todo.txt")
+  :bind ("C-t" . todotxt))
+#+end_src
 * Little hacks
 There aren't any now, but there will be.
 #+begin_src emacs-lisp
@@ -290,6 +306,11 @@ to move them to hydras or delete them.
 
 
 * Editing
+** multiple cursors
+#+begin_src emacs-lisp
+(use-package multiple-cursors)
+(global-set-key (kbd "C-c m c") 'mc/edit-lines)
+#+end_src
 ** yank pop w hydra
 #+begin_src emacs-lisp
 (defhydra hydra-yank-pop ()
@@ -411,7 +432,7 @@ _l_: line     _f_: find      _D_: del(win)
 ** TODO personal hydras (on hh)
 
 * key chords
-  the ones we want are definitely in there (uu = uno; jj/jl = avy goto char/line; hh = my personal stuff, prob mostly org-mode; ff = file & buffer; yy = _window_ movements; xx = snippets).
+  the ones we want are definitely in there (uu = undo; jj/jl = avy goto char/line; hh = my personal stuff, prob mostly org-mode; ff = file & buffer; yy = _window_ movements; xx = snippets).
 
   note that all of the key-chord hydras should include (i) insert and (q). Columns should get us there but think about the headers. also none should include a head w the char in the chord. that way 3 presses of the chord key dump it out.
 
@@ -421,7 +442,9 @@ _l_: line     _f_: find      _D_: del(win)
 
   xx: hippie-expand; and some snippets
 
-  hh: comment-or-uncomment-region (which should be super-/ anyway); crux-duplicate-current-line-or-region; crux-kill-line-backwards; switch to or open a few freq files (init.org, .bash_profile, log, todo)
+  hh: crux-duplicate-current-line-or-region; crux-kill-line-backwards;
+  switch to or open a few freq files (init.org, .bash_profile, log,
+  todo); single-step org todo capture; org-todo-overview look.
 
 ** chord assignments
   #+begin_src emacs-lisp

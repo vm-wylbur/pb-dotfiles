@@ -1,3 +1,4 @@
+# -*- mode: sh -*-
 
 # Make vim the default editor.
 export EDITOR='emacs';
