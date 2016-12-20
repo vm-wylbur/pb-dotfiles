@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 #+TITLE: PB's Emacs configuration
 #+OPTIONS: toc:4 h:4
-#+STARTUP: showall
+#+STARTUP: hideblocks
 #+STARTUP: logdone
+#+STARTUP: indent
+#+STARTUP: showstars
 #+PROPERTY:  eval yes
 #+PROPERTY: header-args :results silent
-#+SETUPFILE: /Users/pball/src/org-html-themes/setup/theme-bigblow-local.setup
 
 * Introduction
 ** About this file
@@ -18,10 +19,19 @@
 
 This is an effort to write a literate elisp init file. I'm mostly following [[http://pages.sachachua.com/.emacs.d/Sacha.html%5D%5D%20amazing%20work.%20%0A%0A*%20Introduction][Sacha Chua's]] amazing work.
 
-Writing this file in org-mode allows me to export it as html (which
-happens automagically on GitHub), and to mix my thinking with the
-code. This is another step toward [[http://reproducibleresearch.net][reproducible research]], close to
-[[https://hrdag.org][HRDAG]]'s "principled data processing" ideas.
+Writing this file in org-mode allows me to export it as html (which happens automagically on GitHub), and to mix my thinking with the code. This is another step toward [[http://reproducibleresearch.net][reproducible research]], close to [[https://hrdag.org][HRDAG]]'s "principled data processing" ideas.
+
+Here's the thing about Emacs. I've always loved it, but I've always felt kind of dumb that I couldn't memorize more than a few dozen of the quite literally thousands of commands and keystrokes---tens of thousands if you think for a moment about all the useful packages.
+
+What's changed for me recently are a few key innovations:
+
+- First, key-chords are absolutely amazing. With a quick pair of keystrokes, like =hh= or =jk=, I can make something happen without a [[http://catb.org/jargon/html/Q/quadruple-bucky.html][Vulcan nerve pinch]]. Srsly, just hitting the same key twice, quickly (in <0.2s), makes something cool happen. That's a lot less [[http://www.thefreedictionary.com/Escape+meta+alt+control+shift][escape-meta-alt-control-shift]]. It's called key-chording, and it's great.
+
+Combine key-chords with =ace-window= jump or =avy-jump=, and wow, I can move to any point across four windows full of code, each about 90 chars wide by 48 lines deep, in about 5 keystrokes---without moving my hands off the home row.
+
+- Second, I can make little menus that follow from the key-chording. These are called =hydras=, and on them I stash my most frequently used but least remembered commands: magit, a handful of complicated org-mode bits, really quick screen changing in =elscreen=, and lots of file find and search commands. I do know about all the commands, but I can't remember enough key combinations to use them. But I know that all my file-related commands are on =yy=, I'll find various file opening, buffer searching, grep, and swoop stuff. Fast!
+
+- And third, there's a fallback: guide-key. If I can remember the prefix command, guide-key will get me the rest of the way there. This is really helpful for the heavily-overloaded commands like C-c and C-x.
 
 ** paths and =use-package=
 
@@ -71,28 +81,6 @@ code. This is another step toward [[http://reproducibleresearch.net][reproducibl
     :init
     (progn
       (elscreen-start)))
-(defhydra hydra-elscreen (:color red :hint nil)
-         "
-elscreen
-_0_ _c_reate    _n_ext     _s_tore
-_1_ _k_ill      _p_revious _r_estore
-_2_ _C_lone     _g_oto
-_3_
-_4_"
-         ("0" elscreen-jump-0)
-	 ("1" elscreen-jump-0)
-	 ("2" elscreen-jump-0)
-	 ("3" elscreen-jump-0)
-	 ("4" elscreen-jump-0)
-         ("c" elscreen-create)
-         ("C" elscreen-clone)
-         ("k" elscreen-kill)
-         ("n" elscreen-next)
-         ("p" elscreen-previous)
-         ("s" elscreen-store)
-         ("r" elscreen-restore)
-         ("g" elscreen-goto)
-         )
 #+end_src
 
 #+end_src
@@ -165,12 +153,27 @@ me. Just save the file. kthxbai.
 (set-keyboard-coding-system 'utf-8)
 #+end_src
 
+** filling and unfilling
+#+begin_src emacs-lisp
+(auto-fill-mode -1)
+(remove-hook 'text-mode-hook #'turn-on-auto-fill)
+;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
+(defun unfill-paragraph (&optional region)
+  "Takes a multi-line paragraph and makes it into a single line of text."
+  (interactive (progn (barf-if-buffer-read-only) '(t)))
+  (let ((fill-column (point-max))
+        ;; This would override `fill-column' if it's an integer.
+        (emacs-lisp-docstring-fill-column t))
+    (fill-paragraph nil region)))
+
+#+end_src
 ** minor editing hacks
   #+begin_src emacs-lisp :eval yes
 (fset 'yes-or-no-p 'y-or-n-p)
 (delete-selection-mode 1)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (show-paren-mode 1)
+()
 (bind-keys*
   ("M-n" . forward-paragraph)
   ("M-p" . backward-paragraph))
@@ -257,6 +260,10 @@ There aren't any now, but there will be.
 #+end_src
 
 * Modes
+** org-mode tweaks
+#+begin_src emacs-lisp
+(org-indent-mode t)
+#+end_src
 ** markdown
 #+begin_src emacs-lisp
 (use-package markdown-mode
@@ -390,6 +397,7 @@ This means that M-up|down|right|left drag line or the region.
   #+RESULTS:
 
 ** =ace= and =avy= window jumping
+
   #+begin_src emacs-lisp
 (use-package ace-window
   :ensure t
@@ -408,8 +416,17 @@ This means that M-up|down|right|left drag line or the region.
   :config (setq avy-all-windows 'all-frames))
   #+end_src
 
-
-** TODO window and frame stuff (on yy)y
+** guide-key
+#+begin_src emacs-lisp
+  (use-package guide-key)
+  (setq
+    guide-key/guide-key-sequence t
+    guide-key/idle-delay 0.5
+    guide-key/popup-window-position 'bottom)
+  ;; (setq guide-key/guide-key-sequence '("C-x r"))
+  (guide-key-mode 1)
+#+end_src
+** TODO window and frame stuff
 #+begin_src emacs-lisp
 (defhydra my/window-movement (:color blue
 				     :hint nil)
@@ -435,23 +452,40 @@ _l_: line     _f_: find      _D_: del(win)
   ("r" crux-rename-file-and-buffer)
   ("s" helm-swoop)
   ("S" helm-multi-swoop-all)
-  ("g" helm-grep-do-grep)
+  ("g" helm-grep-do-grep)  ;; FIXME
   ("q" quit-window "quit" :color blue))
 #+end_src
 
 ** TODO personal hydras (on hh)
 #+begin_src emacs-lisp
+(defun my/hide-org-sublevels ()
+  (interactive "p")
+  (hide-sublevels 3))
+
 (defhydra my/key-chord-commands (:color blue
 				     :hint nil)
 "
-^Scrn^  ^Edits^       ^Buffer^     ^Modes
+^Scrn^ ^Edits^              ^Org^        ^Modes
 ------------------------------------------------------
-_0_                                       _g_ magit
-_1_
-_2_
-_3_
+_0_     _u_: dragup (s-up)  ^_L_:close3  ^_g_ magit
+_1_     _d_: dragdn (s-dn)               ^_t_ todo
+_2_     _D_: dupline
+_3_     _r_: searc/rpl
+_c_     _N_: unfillgraf
 "
-  ("g" magit-status))
+  ("0" elscreen-jump-0)
+  ("1" elscreen-jump-0)
+  ("2" elscreen-jump-0)
+  ("3" elscreen-jump-0)
+  ("c" elscreen-create)
+  ("u" drag-stuff-up)
+  ("d" drag-stuff-down)
+  ("D" crux-duplicate-current-line-or-region)
+  ("L" my/hide-org-sublevels)  ;; FIXME
+  ("r" query-replace)
+  ("N" unfill-paragraph)
+  ("g" magit-status)
+  ("t" todotxt))
 #+end_src
 
 * key chords
@@ -478,7 +512,7 @@ _3_
     (key-chord-mode 1)
     (key-chord-define-global "uu"     'undo)
     (key-chord-define-global "jj"     'avy-goto-char)
-    (key-chord-define-global "jl"     'avy-goto-line)
+    (key-chord-define-global "jl"     'ace-window)
     (key-chord-define-global "xx"     'er/expand-region)  ;; TBD!
     (key-chord-define-global "hh"     'my/key-chord-commands/body) ;; TBD!
     (key-chord-define-global "yy"     'my/window-movement/body)))
