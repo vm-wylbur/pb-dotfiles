@@ -126,7 +126,8 @@ This is broken, and I don't know why.
 
 #+end_src
 ** Backups
-So, keep a lot of backups, but do it out of focus.
+So, keep a lot of backups, but do it out of focus. And don't ask
+me. Just save the file. kthxbai.
 #+begin_src emacs-lisp
 (setq
  backup-directory-alist '(("." . "~/.emacs.d/backups"))
@@ -166,6 +167,7 @@ So, keep a lot of backups, but do it out of focus.
 
 ** minor editing hacks
   #+begin_src emacs-lisp :eval yes
+(fset 'yes-or-no-p 'y-or-n-p)
 (delete-selection-mode 1)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (show-paren-mode 1)
@@ -203,11 +205,6 @@ From [[http://endlessparentheses.com/implementing-comment-line.html][endless par
   (bind-key (kbd "s-/") 'endless/comment-line-or-region)
 #+end_src
 
-So this is a line of text.
-This is a second line.
-
-and a third.
-
 ** minor behavior hacks
   #+begin_src emacs-lisp :eval yes
 (global-set-key (kbd "C-x k") 'kill-this-buffer)
@@ -228,10 +225,19 @@ todo.txt file from other tools outside of emacs (heresy! I know).
 ** mu4e
 This is the hardest piece to config, honestly. First =git clone
 git@github.com:djcb/mu.git=, then cd into the working dir, and
-=./autogen.sh=. Of course there's a challenge: =brew='s installer for
-the mu package wants a hardlink to the emacs it's going to
-use. Here'sa  workaround: =EMACS=$(which emacs) brew install mu
---with-emacs --HEAD=. It's *not* great.
+=./autogen.sh=.
+
+Of course there's a challenge: =brew='s [[installer][ for the mu package
+wants a hardlink to =/usr/bin/emacs=. The issue is described [[https://medium.com/@kirang89/emacs-as-email-client-with-offlineimap-and-mu4e-on-os-x-3ba55adc78b6#.19h21hmj1][here]]. Of
+course =/usr/bin= is [[http://apple.stackexchange.com/questions/208764/cant-write-to-usr-lib][locked]] by Apple's "System Integrity Protection,"
+which is a fine idea except when we have to do horrible workarounds
+like this.
+
+ Here's a workaround: =EMACS=$(which emacs) brew install mu
+--with-emacs --HEAD=. It's *not* great, and it still doesn't
+work. It's a start.
+
+The issue is that the build is
 
 Then need to set the certficate; I use "~/share/certs"
 
@@ -257,24 +263,12 @@ There aren't any now, but there will be.
   :mode ("\\.\\(m\\(ark\\)?down\\|md\\)$" . markdown-mode)
   :config)
 #+end_src
-** magit FIXME
+** magit
 #+begin_src emacs-lisp
-  ;; (use-package magit
-  ;;   :ensure t
-  ;;   :init (progn (
-  ;;      (setq magit-git-executable "/usr/local/bin/git"))))
-
-  ;; (defhydra hydra-magit (:color blue :columns 3)
-  ;;   "Magit"
-  ;;   ("s" magit-status "status")
-  ;;   ("c" magit-commit "commit")
-  ;;   ("C" magit-checkout "checkout")
-  ;;   ("p" magit-
-  ;;   ("v" magit-branch-manager "branch manager")
-  ;;   ("m" magit-merge "merge")
-  ;;   ("l" magit-log "log")
-  ;;   ("!" magit-git-command "command")
-  ;;   ("$" magit-process "process")))
+  (use-package magit
+    :ensure t
+    :init (progn (
+       (setq magit-git-executable "/usr/local/bin/git"))))
 #+end_src
 
 * Searching, buffers, and other finding bits
@@ -446,6 +440,19 @@ _l_: line     _f_: find      _D_: del(win)
 #+end_src
 
 ** TODO personal hydras (on hh)
+#+begin_src emacs-lisp
+(defhydra my/key-chord-commands (:color blue
+				     :hint nil)
+"
+^Scrn^  ^Edits^       ^Buffer^     ^Modes
+------------------------------------------------------
+_0_                                       _g_ magit
+_1_
+_2_
+_3_
+"
+  ("g" magit-status))
+#+end_src
 
 * key chords
   the ones we want are definitely in there (uu = undo; jj/jl = avy goto char/line; hh = my personal stuff, prob mostly org-mode; ff = file & buffer; yy = _window_ movements; xx = snippets).
@@ -472,7 +479,6 @@ _l_: line     _f_: find      _D_: del(win)
     (key-chord-define-global "uu"     'undo)
     (key-chord-define-global "jj"     'avy-goto-char)
     (key-chord-define-global "jl"     'avy-goto-line)
-    (key-chord-define-global "gg"     'hydra-magit/body)
     (key-chord-define-global "xx"     'er/expand-region)  ;; TBD!
     (key-chord-define-global "hh"     'my/key-chord-commands/body) ;; TBD!
     (key-chord-define-global "yy"     'my/window-movement/body)))
