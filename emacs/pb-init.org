@@ -126,6 +126,7 @@ This is broken, and I don't know why.
 
 #+end_src
 ** Backups
+So, keep a lot of backups, but do it out of focus.
 #+begin_src emacs-lisp
 (setq
  backup-directory-alist '(("." . "~/.emacs.d/backups"))
@@ -133,6 +134,11 @@ This is broken, and I don't know why.
  version-control t
  vc-make-backup-files t
  auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
+(run-with-idle-timer 5 t (lambda () (save-some-buffers t)))
+(defun save-all ()
+    (interactive)
+    (save-some-buffers t))
+(add-hook 'focus-out-hook 'save-all)
 #+end_src
 
 ** History
@@ -208,7 +214,7 @@ and a third.
   #+end_src
 
 
-* Workflow
+* Workflow and apps
 ** todo-txt
 This is from [[http://todotxt.com][Gina Trapani's legendary script]]. I know that =org-mode=
 loves todo's, but I find them overwhelmingly complicated. With
@@ -219,6 +225,16 @@ todo.txt file from other tools outside of emacs (heresy! I know).
   :init (setq todotxt-file "~/Documents/notes/todo.txt")
   :bind ("C-t" . todotxt))
 #+end_src
+** mu4e
+This is the hardest piece to config, honestly. First =git clone
+git@github.com:djcb/mu.git=, then cd into the working dir, and
+=./autogen.sh=. Of course there's a challenge: =brew='s installer for
+the mu package wants a hardlink to the emacs it's going to
+use. Here'sa  workaround: =EMACS=$(which emacs) brew install mu
+--with-emacs --HEAD=. It's *not* great.
+
+Then need to set the certficate; I use "~/share/certs"
+
 * Little hacks
 There aren't any now, but there will be.
 #+begin_src emacs-lisp
