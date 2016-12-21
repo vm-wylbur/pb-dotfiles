@@ -28,6 +28,13 @@
  '(package-selected-packages
    (quote
     (guide-key space-chord multiple-cursors todotxt smart-comment comment-dwim-2 elscreen tabbar magit markdown-mode org org-plus-contrib drag-stuff ob-tangle org-install epa-file org-mode helm-swoop shackle powerline smart-mode-line helm-flyspell helm-pydoc swiper-helm fill-column-indicator helm zenburn-theme color-theme use-package)))
+ '(safe-local-variable-values
+   (quote
+    ((eval when
+	   (require
+	    (quote rainbow-mode)
+	    nil t)
+	   (rainbow-mode 1)))))
  '(tabbar-separator (quote (1.0))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

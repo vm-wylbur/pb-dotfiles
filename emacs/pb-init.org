@@ -33,6 +33,7 @@ Combine key-chords with =ace-window= jump or =avy-jump=, and wow, I can move to 
 
 - And third, there's a fallback: guide-key. If I can remember the prefix command, guide-key will get me the rest of the way there. This is really helpful for the heavily-overloaded commands like C-c and C-x.
 
+- for font disambiguation: 1l, O0 ; monaco-14 is good.
 ** paths and =use-package=
 
 #+begin_src emacs-lisp :results output silent
@@ -64,25 +65,34 @@ Combine key-chords with =ace-window= jump or =avy-jump=, and wow, I can move to 
 
 
 * Basic Behaviors
+** Font
+#+begin_src emacs-lisp
+(defconst my/font "Menlo-13")
+(set-face-attribute 'default nil :font "Monaco-13")
+(set-frame-font  "Monaco-13"  nil t)
+#+end_src
 ** Theme
 #+begin_src emacs-lisp
 (use-package color-theme
   :ensure t)
 (setq custom-safe-themes t)
-(use-package zenburn-theme
+(use-package zenburn-theme :disabled nil
   :ensure t
-  :diminish ""
+  :diminish "")
   :config
-  (load-theme 'zenburn))
+;; (load-theme 'zenburn)
+(use-package hc-zenburn-theme)
+(load-theme 'hc-zenburn)
+
 #+end_src
 ** elscreen
+wait, what happened to elscreen? nothing except Aquamacs was hiding
+it. argh.
 #+begin_src emacs-lisp
   (use-package elscreen
     :init
     (progn
       (elscreen-start)))
-#+end_src
-
 #+end_src
 
 ** Little UI bits
@@ -165,7 +175,6 @@ me. Just save the file. kthxbai.
         ;; This would override `fill-column' if it's an integer.
         (emacs-lisp-docstring-fill-column t))
     (fill-paragraph nil region)))
-
 #+end_src
 ** minor editing hacks
   #+begin_src emacs-lisp :eval yes
@@ -186,26 +195,9 @@ me. Just save the file. kthxbai.
 #+end_src
 
 ** better commenting on super-/
-From [[http://endlessparentheses.com/implementing-comment-line.html][endless parentheses]]. Note that it can't deal with single lines of elisp code in
-=begin_src ... end_src= blocks. Regions, ok, but not single lines.
+Emacs 25.1 gives us =comment-line= which works great for everything except emacs-lisp. It works with python and with org-mode. This replaces lots of other small defuns.
 #+begin_src emacs-lisp
-  (defun endless/comment-line-or-region (n)
-      "Comment or uncomment current line and leave point after it.
-    With positive prefix, apply to N lines including current one.
-    With negative prefix, apply to -N lines above.
-    If region is active, apply to active region instead."
-      (interactive "p")
-      (if (use-region-p)
-    	  (comment-or-uncomment-region
-    	   (region-beginning) (region-end))
-	(let ((range
-               (list (line-beginning-position)
-                     (goto-char (line-end-position n)))))
-	  (comment-or-uncomment-region
-	   (apply #'min range)
-	   (apply #'max range)))
-	(back-to-indentation)))
-  (bind-key (kbd "s-/") 'endless/comment-line-or-region)
+  (global-set-key (kbd "s-/") #'comment-line)
 #+end_src
 
 ** minor behavior hacks
@@ -272,7 +264,7 @@ There aren't any now, but there will be.
 #+end_src
 ** magit
 #+begin_src emacs-lisp
-  (use-package magit
+  (use-package magit :disabled t
     :ensure t
     :init (progn (
        (setq magit-git-executable "/usr/local/bin/git"))))
@@ -416,15 +408,22 @@ This means that M-up|down|right|left drag line or the region.
   :config (setq avy-all-windows 'all-frames))
   #+end_src
 
-** guide-key
+** which-key
 #+begin_src emacs-lisp
-  (use-package guide-key)
-  (setq
-    guide-key/guide-key-sequence t
-    guide-key/idle-delay 0.5
-    guide-key/popup-window-position 'bottom)
-  ;; (setq guide-key/guide-key-sequence '("C-x r"))
-  (guide-key-mode 1)
+(use-package which-key)
+(which-key-mode)
+(which-key-setup-side-window-bottom)
+#+end_src
+** guide-key
+disabled for now while I test which-key
+#+begin_src emacs-lisp
+  ;; (use-package guide-key)
+  ;; (setq
+  ;;   guide-key/guide-key-sequence t
+  ;;   guide-key/idle-delay 0.5
+  ;;   guide-key/popup-window-position 'bottom)
+  ;; ;; (setq guide-key/guide-key-sequence '("C-x r"))
+  ;; (guide-key-mode 1)
 #+end_src
 ** TODO window and frame stuff
 #+begin_src emacs-lisp
@@ -514,7 +513,7 @@ _c_     _N_: unfillgraf
     (key-chord-define-global "jj"     'avy-goto-char)
     (key-chord-define-global "jl"     'ace-window)
     (key-chord-define-global "xx"     'er/expand-region)  ;; TBD!
-    (key-chord-define-global "hh"     'my/key-chord-commands/body) ;; TBD!
+    (key-chord-define-global "hh"     'my/key-chord-commands/body)
     (key-chord-define-global "yy"     'my/window-movement/body)))
   #+end_src
 
