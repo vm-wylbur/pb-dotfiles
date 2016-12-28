@@ -2,8 +2,8 @@
 
 ;;; mu.el --- mu email config
 
-(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
-(require 'mu4e)
+;;(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+;;(require 'mu4e)
 
 ;; mu4e behaviors
 (setq
@@ -133,7 +133,8 @@ messages.  In the format of `format-time-string'."
  mu4e-index-lazy-check t
  mu4e-index-update-in-background t
  mu4e-update-interval nil
- mu4e-headers-include-related nil)
+ mu4e-headers-include-related nil
+ message-send-mail-function 'smtpmail-send-it)
 
 (setq mu4e-contexts
       `(,(make-mu4e-context
@@ -150,9 +151,9 @@ messages.  In the format of `format-time-string'."
 		  (mu4e-drafts-folder . "/icloud/Drafts")
 		  (mu4e-trash-folder . "/icloud/Deleted Messages")
 		  (mu4e-refile-folder . "/icloud/Archive")
-		  ;;(smtpmail-smtp-server "smtp.mail.me.com")
-		  ;;(smtpmail-default-smtp-server "smtp.mail.me.com")
-		  ;;(smtpmail-smtp-service 587)
+		  ;; (smtpmail-smtp-server . "smtp.mail.me.com")
+      ;; (smtpmail-default-smtp-server . "smtp.mail.me.com")
+		  ;; (smtpmail-smtp-service . 587)
 		  ))
 	,(make-mu4e-context
 	  :name "fastmail"

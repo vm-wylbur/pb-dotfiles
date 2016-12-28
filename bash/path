@@ -6,5 +6,6 @@
 export PATH="/usr/local/sbin:$PATH"
 export PATH="$HOME/bin:/Applications/RStudio.app/Contents/MacOS/pandoc:$PATH"
 export PATH="$PATH:$HOME/projects/hrdag/snap/bin"
+export PATH="/Users/pball/anaconda3/bin:$PATH"
 
 # end.

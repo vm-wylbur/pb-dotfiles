@@ -316,9 +316,27 @@ to move them to hydras or delete them.
 
 * Editing
 ** multiple cursors
+This mostly works, but it's got some weirdness. Why does it query for self-insert? Needs more study, alas.
 #+begin_src emacs-lisp
-(use-package multiple-cursors)
-(global-set-key (kbd "C-c m c") 'mc/edit-lines)
+  (use-package multiple-cursors)
+  (global-unset-key (kbd "C-c m"))
+  (global-set-key (kbd "C-c m c") 'mc/edit-lines)
+  ;; [_p_]   Next    [_n_]   Next    [_l_] Edit lines
+  ;; [_P_]   Skip    [_N_]   Skip    [_a_] Mark all
+  ;; [_M-p_] Unmark  [_M-n_] Unmark  [_r_] Mark by regexp
+  ;; ^ ^             ^ ^             [_q_] Quit
+  ;; "
+  ;;   ("l" mc/edit-lines :exit t)
+  ;;   ("a" mc/mark-all-like-this :exit t)
+  ;;   ("n" mc/mark-next-like-this)
+  ;;   ("N" mc/skip-to-next-like-this)
+  ;;   ("M-n" mc/unmark-next-like-this)
+  ;;   ("p" mc/mark-previous-like-this)
+  ;;   ("P" mc/skip-to-previous-like-this)
+  ;;   ("M-p" mc/unmark-previous-like-this)
+  ;;   ("r" mc/mark-all-in-region-regexp :exit t)
+  ;;   ("q" nil))
+  ;; ;; (global-set-key (kbd "C-c m") 'hydra/multiple-cursors/body)
 #+end_src
 ** yank pop w hydra
 #+begin_src emacs-lisp
@@ -466,11 +484,12 @@ _l_: line     _f_: find      _D_: del(win)
 "
 ^Scrn^ ^Edits^              ^Org^        ^Modes
 ------------------------------------------------------
-_0_     _u_: dragup (s-up)  ^_L_:close3  ^_g_ magit
+_0_     _u_: dragup (s-up)  ^_L_:OMsub3  ^_g_ magit
 _1_     _d_: dragdn (s-dn)               ^_t_ todo
 _2_     _D_: dupline
 _3_     _r_: searc/rpl
 _c_     _N_: unfillgraf
+      ^_m_: multicurs
 "
   ("0" elscreen-jump-0)
   ("1" elscreen-jump-0)
@@ -483,6 +502,7 @@ _c_     _N_: unfillgraf
   ("L" my/hide-org-sublevels)  ;; FIXME
   ("r" query-replace)
   ("N" unfill-paragraph)
+  ("m" mc/edit-lines :exit t)
   ("g" magit-status)
   ("t" todotxt))
 #+end_src
@@ -533,6 +553,9 @@ _c_     _N_: unfillgraf
  - [ ] one-on-one emacs: no more windows.
 
 ** stuff to keep working on [/]
+ - [ ] more hydras:
+http://kitchingroup.cheme.cmu.edu/blog/2015/09/28/A-cursor-goto-hydra-for-emacs/
+
  - [ ] flyspell's autocorrect rarely gets it right the first time.
  - [ ] kill other window, the annoying help or error window that just popped up.
  - [ ] fill-column-indicator not working
