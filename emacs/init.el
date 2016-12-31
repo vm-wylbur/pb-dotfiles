@@ -11,7 +11,7 @@
  org-confirm-babel-evaluate nil
  org-src-fontify-natively t)
 (org-babel-load-file "~/dotfiles/emacs/pb-init.org")
-;; need to remove the pb-init.el file here
+
 
 ;; note in customize below, epg-gpg-program had to be hardcoded.
 ;;; Customize below
