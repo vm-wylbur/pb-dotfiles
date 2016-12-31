@@ -47,17 +47,19 @@ Writing this file in org-mode allows me to export it as html (which happens auto
 ** Starting fresh (about the tenth time)
 
 https://sam217pa.github.io/2016/09/02/how-to-build-your-own-spacemacs/
-
-** package system bootstrap
-
+** hide customization variables
 #+begin_src emacs-lisp 
 (setq custom-file "~/.emacs.d/custom.el"
 	  kill-buffer-query-functions
 	  (remq 'process-kill-buffer-query-function
 			kill-buffer-query-functions)
 	  user-full-name "Patrick Ball"
-	  user-mail-address "pball@fastmail.fm")
+	  user-mail-address "pball@fastmail.fm"
+#+end_src
 
+** package system bootstrap
+
+#+begin_src emacs-lisp
 (package-initialize)
 
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
@@ -76,11 +78,11 @@ https://sam217pa.github.io/2016/09/02/how-to-build-your-own-spacemacs/
 (eval-when-compile
  (require 'use-package))
 (require 'diminish)                ;; if you use :diminish
+(use-package auto-compile
+  :config (auto-compile-on-load-mode))
 
 (setq use-package-verbose t)
 (setq use-package-always-ensure t)
-(use-package auto-compile
-  :config (auto-compile-on-load-mode))
 (setq load-prefer-newer t)
 (require 'bind-key)
 #+end_src
@@ -103,38 +105,97 @@ https://sam217pa.github.io/2016/09/02/how-to-build-your-own-spacemacs/
 #+end_src
 
 
+* General: the key manager
 #+begin_src emacs-lisp
-
-
-(use-package general
+(use-package general 
   :ensure t
   :config
-  (setq leader "SPC"))
+    (setq leader "SPC"))
+#+end_src 
 
-(use-package evil
+* which-key
+#+begin_src emacs-lisp
+(use-package which-key 
   :ensure t
-  :init (evil-mode 1)
-  :config
-  (general-define-key :states 'motion
-		      :prefix leader
-		      "b SPC" 'switch-to-buffer
-		      "bk" 'kill-buffer
-		      "f f" 'find-file
-		      "f s" 'save-buffer))
-
-
-(use-package which-key :ensure t
   :init
   (which-key-mode)
-  :config
-  (which-key-setup-side-window-right-bottom)
-  (setq which-key-sort-order 'which-key-key-order-alpha
-        which-key-side-window-max-width 0.5
-        which-key-idle-delay 0.05)
-  :diminish which-key-mode
-  )
+  :config (progn 
+     (which-key-setup-side-window-bottom)
+     (setq which-key-sort-order 'which-key-key-order-alpha
+           which-key-side-window-max-width 0.5
+           which-key-idle-delay 0.05))
+  :diminish which-key-mode)
+  #+end_src 
+
+* evil-mode
+This is really the key to efficient movement. 
+
+#+begin_src emacs-lisp
+(use-package evil
+  :ensure t
+  :init (evil-mode 1))
+(use-package evil-surround
+  :config (global-evil-surround-mode t))
+;;(use-package elscreen :ensure t
+;;  :quelpa (elscreen fetcher github :repo "vm-wylbur/elscreen")
+;;  :config (elscreen-start))
+(use-package evil-tabs :ensure t)
+#+end_src
+
+* setting up the key jumps with leader 
+** setup hydra
+#+begin_src emacs-lisp
+(use-package hydra)
+#+end_src 
+** file hydra
+#+begin_src emacs-lisp
+(defhydra pb/file-commands (:color blue)
+  "files" 
+  ("e" pb/emacs-files/body "emacs-files")
+  ("f" counsel-find-file "find-file")
+  ("r" counsel-recentf "recent-file")
+  ("s" save-buffer "save-file"))
+#+end_src
+*** emacs hydra
+#+begin_src emacs-lisp
+(defun pb-open-init-file ()
+  ;; todo: open in new tab, or switch to tab. 
+  "Open the init file." 
+  (interactive)
+  (find-file user-init-file))
+(defun pb-open-init-org-file ()
+  (interactive)
+  (find-file "~/dotfiles/emacs/pb-init.org"))
+(defun pb-rerun-init ()
+  (interactive)
+  (load-file user-init-file))
+(defhydra pb/emacs-files (:color blue)
+  "emacs files" 
+  ("o" pb-open-init-file "open org init")
+  ("i" pb-open-init-org-file "open pb-init.org")
+  ("R" pb-rerun-init "eval init.el"))
+#+end_src
+  
+  
+** now set up the top-level jumps
+#+begin_src emacs-lisp 
+(general-define-key 
+  :states 'motion
+  :prefix leader
+    "b SPC" 'switch-to-buffer
+    "bk" 'kill-buffer
+    "f"   'pb/file-commands/body
+    "SPC" 'counsel-M-x)
+#+end_src 
 
 
+
+
+
+
+* just dumping in starting settings for general, evil, and ivy
+
+#+begin_src emacs-lisp
 (use-package ivy :ensure t
   :ensure t
   :diminish ""
@@ -144,36 +205,56 @@ https://sam217pa.github.io/2016/09/02/how-to-build-your-own-spacemacs/
   (general-define-key :keymaps 'ivy-mode-map
 		      [escape] 'minibuffer-keyboard-quit))
 
-(use-package counsel :ensure t
+(use-package counsel 
+  :ensure t
   :bind*                           ; load counsel when pressed
   (("M-x"     . counsel-M-x)       ; M-x use counsel
    ("C-x C-f" . counsel-find-file) ; C-x C-f use counsel-find-file
    ("C-x C-r" . counsel-recentf)   ; search recently edited files
-   ("C-c f"   . counsel-git)       ; search for files in git repo
-   ("C-c s"   . counsel-git-grep)  ; search for regexp in git repo
    ("C-c /"   . counsel-ag)        ; search for regexp in git repo using ag
    ("C-c l"   . counsel-locate))   ; search for files or else using locate
   )
-
-(use-package evil-surround
-  :config (global-evil-surround-mode t)
-)
-
-(use-package evil-tabs
-  :config (global-evil-tabs-mode t)
-)
-
-
-
-#+end_src 
-
-* General: the key manager
+#+end_src y
+* UI: font, theme, etc
+** basic visuals
 #+begin_src emacs-lisp
-(use-package general :ensure t)
-#+end_src 
+(defconst my/font "Menlo-13")
+(set-face-attribute 'default nil :font "Monaco-13")
+(set-frame-font  "Monaco-13"  nil t)
+(use-package color-theme
+  :ensure t)
+(setq custom-safe-themes t)
+(use-package zenburn-theme :disabled nil
+  :ensure t
+  :diminish "")
+  :config
+;; (load-theme 'zenburn)
+(use-package hc-zenburn-theme)
+(load-theme 'hc-zenburn)
+(setq ring-bell-function 'ignore)
+(show-paren-mode 1)
+(tool-bar-mode -1)
+(menu-bar-mode t)
+(setq show-paren-delay 0
+column-number-mode 1
+inhibit-startup-message t)
+(setq-default cursor-type 'bar)
+(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+(fringe-mode '(8 . 2))
+#+end_src
+
+** powerline
+#+begin_src emacs-lisp
+(use-package powerline
+  :ensure t 
+  :init 
+    (progn 
+      (use-package powerline-evil :ensure t)
+      (powerline-evil-center-color-theme)))
+#+end_src
 
 * Conclusion 
 
 #+begin_src emacs-lisp
-(setq initial-scratch-message "Welcome to Emacs, PB.") ; print a default message in the empty scratch buffer opened at startup
+(setq initial-scratch-message ";;; Welcome to Emacs, PB.") 
 #+end_src
