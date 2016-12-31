@@ -9,6 +9,25 @@
 #+PROPERTY:  eval yes
 #+PROPERTY: header-args :results silent
 
+* big picture [1/5]
+** TODO turn off bells, the rest of the basic setup stuff. 
+** TODO possible to make tabs nicer? 
+** TODO add to prefixes:
+*** TODO 0-9 jump to tab 
+*** TODO a (applications: todotxt, eventually mail)
+*** TODO c (commenting)
+*** TODO b (buffers) 
+*** TODO f (files) counsel-recentf, counsel-ag,
+*** TODO j jump ace-window, avy-char
+*** TODO b (buffers)
+*** TODO x (text): some of the spacemacs stuff, also move line up(j), down(k)
+;;   
+** DONE migrate back to org init
+CLOSED: [2016-12-31 Sat 09:28]
+** TODO set which-key to take half the window, on bottom 
+
+
+
 * Introduction
 ** About this file
    :PROPERTIES:
@@ -19,32 +38,34 @@
 
 This is an effort to write a literate elisp init file. I'm mostly following [[http://pages.sachachua.com/.emacs.d/Sacha.html%5D%5D%20amazing%20work.%20%0A%0A*%20Introduction][Sacha Chua's]] amazing work.
 
+I'm also trying the set of [[https://sam217pa.github.io/2016/09/02/how-to-build-your-own-spacemacs/][[[my own spacemacs hacks]]]] (btw: argh! getting visual line mode to work the way I want is an unending PITA).
+
+** Why org-mode
+
 Writing this file in org-mode allows me to export it as html (which happens automagically on GitHub), and to mix my thinking with the code. This is another step toward [[http://reproducibleresearch.net][reproducible research]], close to [[https://hrdag.org][HRDAG]]'s "principled data processing" ideas.
 
-Here's the thing about Emacs. I've always loved it, but I've always felt kind of dumb that I couldn't memorize more than a few dozen of the quite literally thousands of commands and keystrokes---tens of thousands if you think for a moment about all the useful packages.
+** Starting fresh (about the tenth time)
 
-What's changed for me recently are a few key innovations:
+https://sam217pa.github.io/2016/09/02/how-to-build-your-own-spacemacs/
 
-- First, key-chords are absolutely amazing. With a quick pair of keystrokes, like =hh= or =jk=, I can make something happen without a [[http://catb.org/jargon/html/Q/quadruple-bucky.html][Vulcan nerve pinch]]. Srsly, just hitting the same key twice, quickly (in <0.2s), makes something cool happen. That's a lot less [[http://www.thefreedictionary.com/Escape+meta+alt+control+shift][escape-meta-alt-control-shift]]. It's called key-chording, and it's great.
+** package system bootstrap
 
-Combine key-chords with =ace-window= jump or =avy-jump=, and wow, I can move to any point across four windows full of code, each about 90 chars wide by 48 lines deep, in about 5 keystrokes---without moving my hands off the home row.
+#+begin_src emacs-lisp 
+(setq custom-file "~/.emacs.d/custom.el"
+	  kill-buffer-query-functions
+	  (remq 'process-kill-buffer-query-function
+			kill-buffer-query-functions)
+	  user-full-name "Patrick Ball"
+	  user-mail-address "pball@fastmail.fm")
 
-- Second, I can make little menus that follow from the key-chording. These are called =hydras=, and on them I stash my most frequently used but least remembered commands: magit, a handful of complicated org-mode bits, really quick screen changing in =elscreen=, and lots of file find and search commands. I do know about all the commands, but I can't remember enough key combinations to use them. But I know that all my file-related commands are on =yy=, I'll find various file opening, buffer searching, grep, and swoop stuff. Fast!
+(package-initialize)
 
-- And third, there's a fallback: guide-key. If I can remember the prefix command, guide-key will get me the rest of the way there. This is really helpful for the heavily-overloaded commands like C-c and C-x.
-
-- for font disambiguation: 1l, O0 ; monaco-14 is good.
-** paths and =use-package=
-
-#+begin_src emacs-lisp :results output silent
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 (setq exec-path (append exec-path '("/usr/local/bin")))
 
 (require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives
-             '("org" . "http://orgmode.org/elpa/") t)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize)
 (add-to-list 'load-path "~/.emacs.d/elpa")
 
@@ -52,513 +73,107 @@ Combine key-chords with =ace-window= jump or =avy-jump=, and wow, I can move to 
   (package-refresh-contents)
   (package-install 'use-package))
 
-(require 'use-package)
+(eval-when-compile
+ (require 'use-package))
+(require 'diminish)                ;; if you use :diminish
+
 (setq use-package-verbose t)
 (setq use-package-always-ensure t)
 (use-package auto-compile
   :config (auto-compile-on-load-mode))
 (setq load-prefer-newer t)
-(require 'diminish)                ;; if you use :diminish
-(require 'bind-key)                ;;
-(use-package hydra)
+(require 'bind-key)
+#+end_src
+
+** simple starting settings 
+#+begin_src emacs-lisp
+(setq delete-old-versions -1 )	; delete excess backup versions silently
+(setq version-control t )		; use version control
+(setq vc-make-backup-files t )      ; make backups file even when in version controlled dir
+(setq backup-directory-alist `(("." . "~/.emacs.d/backups")) ) ; which directory to put backups file
+(setq vc-follow-symlinks t )     ; don't ask for confirmation when opening symlinked file
+;; transform backups file name
+(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)) )
+(setq inhibit-startup-screen t )	; inhibit useless and old-school startup screen
+(setq ring-bell-function 'ignore )	; silent bell when you make a mistake
+(setq coding-system-for-read 'utf-8 )	; use utf-8 by default
+(setq coding-system-for-write 'utf-8 )
+(setq sentence-end-double-space nil)	; sentence SHOULD end with only a point.
+(setq default-fill-column 80)		; toggle wrapping text at the 80th character
 #+end_src
 
 
-* Basic Behaviors
-** Font
 #+begin_src emacs-lisp
-(defconst my/font "Menlo-13")
-(set-face-attribute 'default nil :font "Monaco-13")
-(set-frame-font  "Monaco-13"  nil t)
-#+end_src
-** Theme
-#+begin_src emacs-lisp
-(use-package color-theme
-  :ensure t)
-(setq custom-safe-themes t)
-(use-package zenburn-theme :disabled nil
+
+
+(use-package general
   :ensure t
-  :diminish "")
   :config
-;; (load-theme 'zenburn)
-(use-package hc-zenburn-theme)
-(load-theme 'hc-zenburn)
+  (setq leader "SPC"))
 
-#+end_src
-** elscreen
-wait, what happened to elscreen? nothing except Aquamacs was hiding
-it. argh.
-#+begin_src emacs-lisp
-  (use-package elscreen
-    :init
-    (progn
-      (elscreen-start)))
-#+end_src
-
-** Little UI bits
-#+begin_src emacs-lisp
-(setq ring-bell-function 'ignore)
-(show-paren-mode 1)
-(tool-bar-mode -1)
-(menu-bar-mode t)
-(setq show-paren-delay 0)
-(setq column-number-mode 1
-      inhibit-startup-message t)
-(setq-default cursor-type 'bar)
-(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
-(fringe-mode '(8 . 2))
-#+end_src
-** fill-column-indicator
-This is broken, and I don't know why.
-#+begin_src emacs-lisp
-  ;; (use-package fill-column-indicator
-  ;;   :diminish ""
-  ;;   :ensure t
-  ;;   :defer t
-  ;;   :init (progn (
-  ;;     (hook-into-modes 'fci-mode '(prog-mode-hook))
-  ;;   (setq
-  ;;     fci-rule-width 1
-  ;;     fci-rule-color "darkblue"
-  ;;     fci-rule-column 79))))
-
-#+end_src
-** Backups
-So, keep a lot of backups, but do it out of focus. And don't ask
-me. Just save the file. kthxbai.
-#+begin_src emacs-lisp
-(setq
- backup-directory-alist '(("." . "~/.emacs.d/backups"))
- delete-old-versions -1
- version-control t
- vc-make-backup-files t
- auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
-(run-with-idle-timer 5 t (lambda () (save-some-buffers t)))
-(defun save-all ()
-    (interactive)
-    (save-some-buffers t))
-(add-hook 'focus-out-hook 'save-all)
-#+end_src
-
-** History
-#+begin_src emacs-lisp
-(setq
- savehist-file "~/.emacs.d/savehist"
- history-length t
- history-delete-duplicates t
- savehist-save-minibuffer-history 1
- savehist-additional-variables
- '(kill-ring
-   search-ring
-   regexp-search-ring))
-(savehist-mode 1)
-(desktop-save-mode 1)
-#+end_src
-
-** UTF-8
-#+begin_src emacs-lisp
-(prefer-coding-system 'utf-8)
-(set-default-coding-systems 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-#+end_src
-
-** filling and unfilling
-#+begin_src emacs-lisp
-(auto-fill-mode -1)
-(remove-hook 'text-mode-hook #'turn-on-auto-fill)
-;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
-(defun unfill-paragraph (&optional region)
-  "Takes a multi-line paragraph and makes it into a single line of text."
-  (interactive (progn (barf-if-buffer-read-only) '(t)))
-  (let ((fill-column (point-max))
-        ;; This would override `fill-column' if it's an integer.
-        (emacs-lisp-docstring-fill-column t))
-    (fill-paragraph nil region)))
-#+end_src
-** minor editing hacks
-  #+begin_src emacs-lisp :eval yes
-(fset 'yes-or-no-p 'y-or-n-p)
-(delete-selection-mode 1)
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-(show-paren-mode 1)
-()
-(bind-keys*
-  ("M-n" . forward-paragraph)
-  ("M-p" . backward-paragraph))
-(defun nowstamp ()
-  "Insert the timestamp I want"
-  (interactive)
-  (insert (format-time-string "%Y-%m-%dT%H:%M%Z")))
-(global-set-key (kbd "C-x t") 'nowstamp)
-
-#+end_src
-
-** better commenting on super-/
-Emacs 25.1 gives us =comment-line= which works great for everything except emacs-lisp. It works with python and with org-mode. This replaces lots of other small defuns.
-#+begin_src emacs-lisp
-  (global-set-key (kbd "s-/") #'comment-line)
-#+end_src
-
-** minor behavior hacks
-  #+begin_src emacs-lisp :eval yes
-(global-set-key (kbd "C-x k") 'kill-this-buffer)
-  #+end_src
+(use-package evil
+  :ensure t
+  :init (evil-mode 1)
+  :config
+  (general-define-key :states 'motion
+		      :prefix leader
+		      "b SPC" 'switch-to-buffer
+		      "bk" 'kill-buffer
+		      "f f" 'find-file
+		      "f s" 'save-buffer))
 
 
-* Workflow and apps
-** todo-txt
-This is from [[http://todotxt.com][Gina Trapani's legendary script]]. I know that =org-mode=
-loves todo's, but I find them overwhelmingly complicated. With
-todotxt, I understand what I'm doing, and I can interact with the
-todo.txt file from other tools outside of emacs (heresy! I know).
-#+begin_src emacs-lisp
-(use-package todotxt
-  :init (setq todotxt-file "~/Documents/notes/todo.txt")
-  :bind ("C-t" . todotxt))
-#+end_src
-** mu4e
-This is the hardest piece to config, honestly. First =git clone
-git@github.com:djcb/mu.git=, then cd into the working dir, and
-=./autogen.sh=.
-
-Of course there's a challenge: =brew='s [[installer][ for the mu package
-wants a hardlink to =/usr/bin/emacs=. The issue is described [[https://medium.com/@kirang89/emacs-as-email-client-with-offlineimap-and-mu4e-on-os-x-3ba55adc78b6#.19h21hmj1][here]]. Of
-course =/usr/bin= is [[http://apple.stackexchange.com/questions/208764/cant-write-to-usr-lib][locked]] by Apple's "System Integrity Protection,"
-which is a fine idea except when we have to do horrible workarounds
-like this.
-
- Here's a workaround: =EMACS=$(which emacs) brew install mu
---with-emacs --HEAD=. It's *not* great, and it still doesn't
-work. It's a start.
-
-The issue is that the build is
-
-Then need to set the certficate; I use "~/share/certs"
-
-* Little hacks
-There aren't any now, but there will be.
-#+begin_src emacs-lisp
-;; https://github.com/jjasghar/alfred-org-capture/blob/master/el/alfred-org-capture.el
-(defun make-orgcapture-frame ()
-  "Create a new frame and run org-capture."
-  (interactive)
-  (make-frame '((name . "remember") (width . 80) (height . 16)
-                (top . 400) (left . 300)
-                (font . "-apple-Monaco-medium-normal-normal-*-13-*-*-*-m-0-iso10646-1")
-                ))
-  (select-frame-by-name "remember")
-  (org-capture))
-#+end_src
-
-* Modes
-** org-mode tweaks
-#+begin_src emacs-lisp
-(org-indent-mode t)
-#+end_src
-** markdown
-#+begin_src emacs-lisp
-(use-package markdown-mode
-  :mode ("\\.\\(m\\(ark\\)?down\\|md\\)$" . markdown-mode)
-  :config)
-#+end_src
-** magit
-#+begin_src emacs-lisp
-  (use-package magit :disabled t
-    :ensure t
-    :init (progn (
-       (setq magit-git-executable "/usr/local/bin/git"))))
-#+end_src
-
-* Searching, buffers, and other finding bits
-** Helm and swiper
-
-In the =use-package= spec I found, there ere a bunch of =C-x c=
-sequences. Those are the kind of thing I'll never remember, so I need
-to move them to hydras or delete them.
-#+begin_src emacs-lisp
-  (use-package helm
-    :diminish helm-mode
-    :init
-    (progn
-      (require 'helm-config)
-      (setq helm-candidate-number-limit 100)
-      ;; From https://gist.github.com/antifuchs/9238468
-      (setq helm-idle-delay 0.0
-            helm-input-idle-delay 0.01
-            helm-yas-display-key-on-candidate t
-            helm-quick-update t
-            helm-M-x-requires-pattern nil
-            helm-ff-skip-boring-files t)
-      (helm-mode))
-    :bind (("C-c h" . helm-mini)
-           ("C-h a" . helm-apropos)
-           ("C-x C-b" . helm-buffers-list)
-           ("C-x b" . helm-buffers-list)
-           ("M-y" . helm-show-kill-ring)
-           ("M-x" . helm-M-x)
-           ;; ("C-x c o" . helm-occur)
-           ;; ("C-x c s" . helm-swoop)
-           ;; ("C-x c y" . helm-yas-complete)
-           ;; ("C-x c Y" . helm-yas-create-snippet-on-region)
-           ;; ("C-x c b" . my/helm-do-grep-book-notes)
-           ("C-x c SPC" . helm-all-mark-rings)))
-  (ido-mode -1) ;; Turn off ido mode in case I enabled it accidentally
-
-  (use-package swiper-helm
-    :config
-    :bind (("C-s" . swiper-helm)
-	   ("C-r" . swiper-helm)))
-
-  (use-package helm-swoop)  ;; on hydra
-  #+end_src
-
-
-* Editing
-** multiple cursors
-This mostly works, but it's got some weirdness. Why does it query for self-insert? Needs more study, alas.
-#+begin_src emacs-lisp
-  (use-package multiple-cursors)
-  (global-unset-key (kbd "C-c m"))
-  (global-set-key (kbd "C-c m c") 'mc/edit-lines)
-  ;; [_p_]   Next    [_n_]   Next    [_l_] Edit lines
-  ;; [_P_]   Skip    [_N_]   Skip    [_a_] Mark all
-  ;; [_M-p_] Unmark  [_M-n_] Unmark  [_r_] Mark by regexp
-  ;; ^ ^             ^ ^             [_q_] Quit
-  ;; "
-  ;;   ("l" mc/edit-lines :exit t)
-  ;;   ("a" mc/mark-all-like-this :exit t)
-  ;;   ("n" mc/mark-next-like-this)
-  ;;   ("N" mc/skip-to-next-like-this)
-  ;;   ("M-n" mc/unmark-next-like-this)
-  ;;   ("p" mc/mark-previous-like-this)
-  ;;   ("P" mc/skip-to-previous-like-this)
-  ;;   ("M-p" mc/unmark-previous-like-this)
-  ;;   ("r" mc/mark-all-in-region-regexp :exit t)
-  ;;   ("q" nil))
-  ;; ;; (global-set-key (kbd "C-c m") 'hydra/multiple-cursors/body)
-#+end_src
-** yank pop w hydra
-#+begin_src emacs-lisp
-(defhydra hydra-yank-pop ()
-  "yank"
-  ("C-y" yank nil)
-  ("M-y" yank-pop nil)
-  ("y" (yank-pop 1) "next")
-  ("Y" (yank-pop -1) "prev")
-  ("l" helm-show-kill-ring "list" :color blue)
-  ("u" undo-tree-visualize "undoTree"))
-(bind-key* (kbd "M-y") #'hydra-yank-pop/yank-pop)
-(bind-key* (kbd "C-y") #'hydra-yank-pop/yank)
-  #+end_src
-
-** M-p, M-n
-The question here is what these do. I think backward-paragraph?
-** flyspell
-  #+begin_src emacs-lisp
-(use-package flyspell
+(use-package which-key :ensure t
   :init
-  (progn
-    (add-hook 'text-mode-hook 'flyspell-mode)
-    (add-hook 'prog-mode-hook 'flyspell-prog-mode))
+  (which-key-mode)
   :config
-  (setq ispell-extra-args '("--sug-mode=bad-spellers")
-        ispell-personal-dictionary "~/.flydict"
-	ispell-program-name (executable-find "aspell")
-	ispell-extra-args
-	(list "--sug-mode=fast" ;; ultra|fast|normal|bad-spellers
-        "--lang=en_US"
-        "--ignore=3"))
-   :bind* ("C-;" . flyspell-auto-correct-previous-word))
-(add-hook 'org-mode-hook 'turn-on-flyspell)
+  (which-key-setup-side-window-right-bottom)
+  (setq which-key-sort-order 'which-key-key-order-alpha
+        which-key-side-window-max-width 0.5
+        which-key-idle-delay 0.05)
+  :diminish which-key-mode
+  )
 
-  #+end_src
 
-** Autocomplete with =company-mode=
-  #+begin_src emacs-lisp
-(use-package company
+(use-package ivy :ensure t
   :ensure t
-  :defer t
-  :config (global-company-mode))
-  #+end_src
-
-** snippets hydra **TODO**
-
-* Navigation
-
-** A better =C-a= from [[https://github.com/bbatsov/crux/blob/master/crux.el][=crux=]]
-  #+begin_src emacs-lisp
-(use-package crux
-  :bind* ("C-a" . crux-move-beginning-of-line))
-  #+end_src
-
-** Dragging stuff w =super-up,down=
-This means that M-up|down|right|left drag line or the region.
-  #+begin_src emacs-lisp
-(use-package drag-stuff
   :diminish ""
+  :general
+  :init (ivy-mode 1)
   :config
-    (drag-stuff-global-mode 1)
-  :bind* (
-    ([(super up)] . drag-stuff-up)
-    ([(super down)] . drag-stuff-down)))
-  #+end_src
+  (general-define-key :keymaps 'ivy-mode-map
+		      [escape] 'minibuffer-keyboard-quit))
 
-  #+RESULTS:
+(use-package counsel :ensure t
+  :bind*                           ; load counsel when pressed
+  (("M-x"     . counsel-M-x)       ; M-x use counsel
+   ("C-x C-f" . counsel-find-file) ; C-x C-f use counsel-find-file
+   ("C-x C-r" . counsel-recentf)   ; search recently edited files
+   ("C-c f"   . counsel-git)       ; search for files in git repo
+   ("C-c s"   . counsel-git-grep)  ; search for regexp in git repo
+   ("C-c /"   . counsel-ag)        ; search for regexp in git repo using ag
+   ("C-c l"   . counsel-locate))   ; search for files or else using locate
+  )
 
-** =ace= and =avy= window jumping
+(use-package evil-surround
+  :config (global-evil-surround-mode t)
+)
 
-  #+begin_src emacs-lisp
-(use-package ace-window
-  :ensure t
-  :init
-  (progn
-    (global-set-key [remap other-window] 'ace-window)
-    (custom-set-faces
-     '(aw-leading-char-face
-       ((t (:inherit ace-jump-face-foreground :height 3.0)))))
-    )
-  :bind* ("C-'" . ace-window)
-  :config (progn (setq
-		  aw-keys '(?f ?g ?h ?j ?k ?l)
-		  aw-background nil)))
-(use-package avy
-  :config (setq avy-all-windows 'all-frames))
-  #+end_src
+(use-package evil-tabs
+  :config (global-evil-tabs-mode t)
+)
 
-** which-key
+
+
+#+end_src 
+
+* General: the key manager
 #+begin_src emacs-lisp
-(use-package which-key)
-(which-key-mode)
-(which-key-setup-side-window-bottom)
-#+end_src
-** guide-key
-disabled for now while I test which-key
+(use-package general :ensure t)
+#+end_src 
+
+* Conclusion 
+
 #+begin_src emacs-lisp
-  ;; (use-package guide-key)
-  ;; (setq
-  ;;   guide-key/guide-key-sequence t
-  ;;   guide-key/idle-delay 0.5
-  ;;   guide-key/popup-window-position 'bottom)
-  ;; ;; (setq guide-key/guide-key-sequence '("C-x r"))
-  ;; (guide-key-mode 1)
+(setq initial-scratch-message "Welcome to Emacs, PB.") ; print a default message in the empty scratch buffer opened at startup
 #+end_src
-** TODO window and frame stuff
-#+begin_src emacs-lisp
-(defhydra my/window-movement (:color blue
-				     :hint nil)
-"
-^Jump^         ^Files^       ^Buffer^     ^Search
-------------------------------------------------------
-_y_: other    _m_: buf-rec   _b_: buff    _s_: swoop
-_a_: ace-win  _r_: recent    _B_: ibuff   _S_: multswoop
-_c_: char     _F_: find-oth  _r_: rename  _g_: grep
-_l_: line     _f_: find      _D_: del(win)
-"
-  ("y" other-window)
-  ("a" ace-window)
-  ("c" avy-goto-char)
-  ("l" avy-goto-line)
-  ("f" helm-find-files)
-  ("r" helm-recentf)
-  ("m" helm-mini)
-  ("F" helm-find-files)
-  ("D" ace-delete-window)
-  ("b" helm-buffers-list)
-  ("B" ibuffer)
-  ("r" crux-rename-file-and-buffer)
-  ("s" helm-swoop)
-  ("S" helm-multi-swoop-all)
-  ("g" helm-grep-do-grep)  ;; FIXME
-  ("q" quit-window "quit" :color blue))
-#+end_src
-
-** TODO personal hydras (on hh)
-#+begin_src emacs-lisp
-(defun my/hide-org-sublevels ()
-  (interactive "p")
-  (hide-sublevels 3))
-
-(defhydra my/key-chord-commands (:color blue
-				     :hint nil)
-"
-^Scrn^ ^Edits^              ^Org^        ^Modes
-------------------------------------------------------
-_0_     _u_: dragup (s-up)  ^_L_:OMsub3  ^_g_ magit
-_1_     _d_: dragdn (s-dn)               ^_t_ todo
-_2_     _D_: dupline
-_3_     _r_: searc/rpl
-_c_     _N_: unfillgraf
-      ^_m_: multicurs
-"
-  ("0" elscreen-jump-0)
-  ("1" elscreen-jump-0)
-  ("2" elscreen-jump-0)
-  ("3" elscreen-jump-0)
-  ("c" elscreen-create)
-  ("u" drag-stuff-up)
-  ("d" drag-stuff-down)
-  ("D" crux-duplicate-current-line-or-region)
-  ("L" my/hide-org-sublevels)  ;; FIXME
-  ("r" query-replace)
-  ("N" unfill-paragraph)
-  ("m" mc/edit-lines :exit t)
-  ("g" magit-status)
-  ("t" todotxt))
-#+end_src
-
-* key chords
-  the ones we want are definitely in there (uu = undo; jj/jl = avy goto char/line; hh = my personal stuff, prob mostly org-mode; ff = file & buffer; yy = _window_ movements; xx = snippets).
-
-  note that all of the key-chord hydras should include (i) insert and (q). Columns should get us there but think about the headers. also none should include a head w the char in the chord. that way 3 presses of the chord key dump it out.
-
-  oo, org-mode: close/open at 1/2/3 levels;
-
-  yy: windmove, new frame, ace-win, find files, recent, mini, grep??
-
-  xx: hippie-expand; and some snippets
-
-  hh: crux-duplicate-current-line-or-region; crux-kill-line-backwards;
-  switch to or open a few freq files (init.org, .bash_profile, log,
-  todo); single-step org todo capture; org-todo-overview look.
-
-** chord assignments
-  #+begin_src emacs-lisp
-(use-package key-chord
-  :init
-  (progn
-    (setq key-chord-one-key-delay 0.2)
-    (key-chord-mode 1)
-    (key-chord-define-global "uu"     'undo)
-    (key-chord-define-global "jj"     'avy-goto-char)
-    (key-chord-define-global "jl"     'ace-window)
-    (key-chord-define-global "xx"     'er/expand-region)  ;; TBD!
-    (key-chord-define-global "hh"     'my/key-chord-commands/body)
-    (key-chord-define-global "yy"     'my/window-movement/body)))
-  #+end_src
-
-
-* Conclusion
-** seek to open window w buffer switch
-** set modeline
-  Someday this could be smart modeline, but it's not now. Note that it
-  has to load *after* =elscreen=, else they conflict.
-  #+begin_src emacs-lisp
-  (load-file "~/dotfiles/emacs/modeline.el")
-  #+end_src
-
-** stuff to consider [/]
- - [ ] elpy
- - [ ] autosave
- - [ ] one-on-one emacs: no more windows.
-
-** stuff to keep working on [/]
- - [ ] more hydras:
-http://kitchingroup.cheme.cmu.edu/blog/2015/09/28/A-cursor-goto-hydra-for-emacs/
-
- - [ ] flyspell's autocorrect rarely gets it right the first time.
- - [ ] kill other window, the annoying help or error window that just popped up.
- - [ ] fill-column-indicator not working
-
-This file was last evaluated on #{Date.today}
-# end.
