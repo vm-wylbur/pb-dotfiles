@@ -143,7 +143,7 @@ values."
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 13
+                               :size 14
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -300,8 +300,7 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
-    (setq mu4e-mu-binary "/usr/local/bin/mu"
-          vc-follow-symlinks t
+    (setq vc-follow-symlinks t
           coding-system-for-read 'utf-8
           coding-system-for-write 'utf-8
           backup-directory-alist `(("." . "~/.emacs.d/backups"))
@@ -326,164 +325,7 @@ you should place your code here."
   (setq org-capture-templates
         '(("t" "todo" entry (file+headline "/Users/pball/Documents/notes/todo.org" "Tasks")
            "* TODO [#A] %>"))))
-  ;; Mu4e Alert
-  ;;
-  ;; (with-eval-after-load 'mu4e-alert
-  ;;   (mu4e-alert-set-default-style 'notifications)
-  ;; )
-  ;; ;; ;; mu4e config stuff.
-  ;; ;; figure out helm-mu
-  ;; (setq
-  ;;   mu4e-maildir "~/Maildir"
-  ;;   user-full-name "Patrick Ball"
-  ;;   mu4e-use-fancy-chars nil
-  ;;   mu4e-attachment-dir  "~/Downloads/Attachments"
-  ;;   message-kill-buffer-on-exit t)
-  ;; (defun mu4e-message-maildir-matches (msg rx)
-  ;;   (when rx
-  ;;     (if (listp rx)
-  ;;         ;; If rx is a list, try each one for a match
-  ;;         (or (mu4e-message-maildir-matches msg (car rx))
-  ;;             (mu4e-message-maildir-matches msg (cdr rx)))
-  ;;       ;; Not a list, check rx
-  ;;       (string-match rx (mu4e-message-field msg :maildir)))))
-  ;; (defun choose-msmtp-account ()
-  ;;   (if (message-mail-p)
-  ;;       (save-excursion
-  ;;         (let*
-  ;;             ((from (save-restriction
-  ;;                      (message-narrow-to-headers)
-  ;;                      (message-fetch-field "from")))
-  ;;              (account
-  ;;               (cond
-  ;;                ((string-match "pball@fastmail.fm" from) "fastmail")
-  ;;                ((string-match "pball@hrdag.org" from) "hrdag")
-  ;;                ((string-match "wylbur@me.com" from) "icloud"))))
-  ;;           (setq message-sendmail-extra-arguments (list '"-a" account))))))
   
-  ;; ;; message windows
-  ;; (setq
-  ;;  mu4e-view-show-images t
-  ;;  mu4e-html2text-command "textutil -stdin -format html -convert txt -stdout"
-  ;;  mu4e-view-show-images t)
-  ;; ;; Use imagemagick, if available.
-  ;; (when (fboundp 'imagemagick-register-types)
-  ;;   (imagemagick-register-types))
-  ;; (add-hook 'mu4e-view-mode-hook 'visual-line-mode)
-  ;; (add-to-list 'mu4e-view-actions
-  ;;              '("View in browser" . mu4e-action-view-in-browser) t)
-
-  ;; ;; ;; composing
-  ;; ;; ;; keep in mind that org-mime was hacked by titaniumbones; see github
-  ;; ;; ;; this seems to work! remember to call the function directly, not by keycmd.
-  ;; ;; ;; note that the outgoing msg is in ~/Maildir/fastmail/Sent\ Items
-  ;; ;; ;; http://matt.hackinghistory.ca/2016/11/18/sending-html-mail-with-mu4e/
-  ;; ;; (defun pb-htmlize-and-send ()
-  ;; ;;   "when an org-mu4e-compose-org-mode message, htmlize and send it."
-  ;; ;;   (interactive)
-  ;; ;;   (message "calling htmlize and send")
-  ;; ;;   (org-mime-htmlize)
-  ;; ;;   (message "htmlized successfully")
-  ;; ;;   (when (member 'org~mu4e-mime-switch-headers-or-body post-command-hook)
-  ;; ;;     (org-mu4e-compose-org-mode))
-  ;; ;;   (message-send-and-exit)
-  ;; ;;   (message "message hopefully sent and saved"))
-  ;; ;; (require 'org-mu4e)
-  ;; ;; (setq org-mu4e-convert-to-html)
-
-  ;; (setq message-sendmail-envelope-from 'header
-  ;;       mu4e-compose-dont-reply-to-self nil)
-  ;; (add-hook 'message-send-mail-hook 'choose-msmtp-account)
-  ;; (add-hook 'mu4e-compose-mode-hook 'flyspell-mode)
-  ;; ;; (add-hook 'mu4e-compose-mode-hook 'visual-line-mode)
-  ;; ;; ;; (add-hook 'mu4e-compose-mode-hook org-mu4e-compose-org-mode)
-  ;; ;; ;; much hacking of this fn would set top stuff, sig
-  ;; ;; ;; (defun mu4e-compose-org-mail ()
-  ;; ;; ;;  (interactive)
-  ;; ;; ;;  (mu4e-compose-new)
-  ;; ;; ;;  (org-mu4e-compose-org-mode))
-  ;; ;; ;;(add-hook 'mu4e-compose-post-hook
-  ;; ;; ;;          (defun do-compose-stuff ()
-  ;; ;; ;;            "my settings for message composition"
-  ;; ;; ;;            (org-mu4e-compose-org-mode)))
-
-  ;; ;; sending
-  ;; (setq mail-user-agent 'mu4e-user-agent
-  ;;       message-send-mail-function 'message-send-mail-with-sendmail
-  ;;       sendmail-program "/usr/local/bin/msmtp")
-  ;; ;; indexing
-  ;; (setq mu4e-get-mail-command "mbsync -aX"
-  ;;       mu4e-mu-binary "/usr/local/bin/mu"
-  ;;       mu4e-index-cleanup nil
-  ;;       mu4e-index-lazy-check t
-  ;;       mu4e-index-update-in-background t
-  ;;       mu4e-update-interval nil
-  ;;       mu4e-headers-include-related nil
-  ;;       mu4e-update-interval 600)
-  ;; ;; ;; accounts
-  ;;  (setq mu4e-contexts
-  ;;       `( ,(make-mu4e-context
-  ;;           :name "icloud"
-  ;;           :enter-func (lambda () (mu4e-message "entering icloud context"))
-  ;;           :match-func (lambda(msg)
-  ;;                         (when msg
-  ;;                           (mu4e-message-contact-field-matches msg :to "@me.com")))
-  ;;           :leave-func (lambda () (mu4e-message "leaving icloud context"))
-  ;;           :vars '(
-  ;;                   (user-mail-address . "wylbur@me.com")
-  ;;                   (user-full-name . "Patrick Ball")
-  ;;                   (mu4e-sent-folder . "/icloud/Sent Messages")
-  ;;                   (mu4e-drafts-folder . "/icloud/Drafts")
-  ;;                   (mu4e-trash-folder . "/icloud/Deleted Messages")
-  ;;                   (mu4e-refile-folder . "/icloud/Archive")
-  ;;                   ))
-  ;;         ,(make-mu4e-context
-  ;;           :name "fastmail"
-  ;;           :enter-func (lambda () (mu4e-message "entering fastmail context"))
-  ;;           :match-func (lambda(msg)
-  ;;                         (when msg
-  ;;                           (mu4e-message-contact-field-matches msg :to "@fastmail.fm")))
-  ;;           :leave-func (lambda () (mu4e-message "entering fastmail context"))
-  ;;           :vars '(
-  ;;                   (user-full-name . "Patrick Ball")
-  ;;                   (user-mail-address . "pball@fastmail.fm")
-  ;;                   (mu4e-sent-folder . "/fastmail/Sent Items")
-  ;;                   (mu4e-drafts-folder . "/fastmail/Drafts")
-  ;;                   (mu4e-trash-folder . "/fastmail/Deleted Messages")
-  ;;                   (mu4e-refile-folder . "/fastmail/Archive")
-  ;;                   ))
-  ;;         ,(make-mu4e-context
-  ;;           :name "hrdag"
-  ;;           :enter-func (lambda () (mu4e-message "entering hrdag context"))
-  ;;           :match-func (lambda(msg)
-  ;;                         (when msg
-  ;;                           (mu4e-message-contact-field-matches msg :to "@hrdag.org")))
-  ;;           :leave-func (lambda () (mu4e-message "entering hrdag context"))
-  ;;           :vars '(
-  ;;                   (user-full-name . "Patrick Ball")
-  ;;                   (user-mail-address . "pball@hrdag.org")
-  ;;                   (mu4e-sent-folder . "/fastmail/Sent Items")
-  ;;                   (mu4e-drafts-folder . "/fastmail/Drafts")
-  ;;                   (mu4e-trash-folder . "/fastmail/Deleted Messages")
-  ;;                   (mu4e-refile-folder . "/fastmail/Archive")
-  ;;                   ))))
-  ;; ;; ;; Bookmarks for common searches that I use.
-  ;; (setq mu4e-bookmarks '(("m:/icloud/Inbox OR m:/fastmail/INBOX" "Inbox" ?i)
-  ;;                        ("flag:unread" "Unread messages" ?u)
-  ;;                        ("date:today..now" "Today's messages" ?t)
-  ;;                        ("date:7d..now" "Last 7 days" ?w)
-  ;;                        ("mime:image/*" "Messages with images" ?p)))
-  ;; ;; mu4e keymappings get broken, unbreak them
-  ;; (evilified-state-evilify-map mu4e-headers-mode-map
-  ;;   :mode mu4e-headers-mode
-  ;;   :bindings
-  ;;   (kbd "n") 'mu4e-headers-next)
-
-  ;; (evilified-state-evilify-map mu4e-view-mode-map
-  ;;   :mode mu4e-view-mode
-  ;;   :bindings
-  ;;   (kbd "n") 'mu4e-view-headers-next)
-
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
 (custom-set-variables

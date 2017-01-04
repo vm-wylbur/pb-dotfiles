@@ -8,6 +8,10 @@
 
 ;; packages 
 (require 'package)
+(package-initialize t)
+;; Override the packages with the git version of Org and other packages
+(add-to-list 'load-path "~/src/org-mode")
+(setq package-enable-at-startup nil)
 
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
@@ -20,7 +24,7 @@
 
 (eval-when-compile
   (require 'use-package))
-(require 'diminish)                ;; if you use :diminish
+(require 'diminish)
 (use-package auto-compile
   :config (auto-compile-on-load-mode))
 
@@ -29,30 +33,17 @@
 (setq load-prefer-newer t)
 (require 'bind-key)
 
-(if (require 'quelpa nil t)
-    (quelpa-self-upgrade)
-  (with-temp-buffer
-    (url-insert-file-contents "https://raw.github.com/quelpa/quelpa/master/bootstrap.el")
-    (eval-buffer)))
-
-(quelpa
- '(quelpa-use-package
-   :fetcher github
-   :repo "quelpa/quelpa-use-package"))
-(require 'quelpa-use-package)
-
-;; if weird, rm ~/.emacs.d/elpa/org-plus-contrib-yyyymmdd/*elc
 (use-package org
-  :quelpa (org :fetcher github :repo "jwiegley/org-mode"))
+	     :load-path "~/src/org-mode")
 
-;; (setq
-;;  org-confirm-babel-evaluate nil
-;;  org-src-fontify-natively t)
-;; (org-babel-load-file "~/dotfiles/emacs/pb-init.org")
-;; (message "PB init org file loaded.")
+(setq
+ org-confirm-babel-evaluate nil
+ org-src-fontify-natively t)
+(org-babel-load-file "~/dotfiles/emacs/pb-init.org")
+(message "PB init org file loaded.")
 
-;; (if (file-exists-p "~/dotfiles/emacs/pb-init.el")
-;;     (delete-file "~/dotfiles/emacs/pb-init.el"))
+(if (file-exists-p "~/dotfiles/emacs/pb-init.el")
+    (delete-file "~/dotfiles/emacs/pb-init.el"))
 
 
 (message "PB dotemacs loaded.")
