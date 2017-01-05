@@ -16,7 +16,9 @@
 ** TODO revisit iedit mode for evil for rectangular edits 
 ** TODO possible to make tabs nicer? 
 my idea is to use the curves from powerline to make nicer tabs. 
-** TODO add to prefixes [/] 
+** TODO add to prefixes [0/10] 
+*** TODO something for expand-region and iedit
+*** TODO alignment stuff
 *** TODO 0-9 jump to tab 
 *** TODO a (applications: todotxt, eventually mail)
 *** TODO c (commenting)
@@ -166,14 +168,33 @@ Writing this file in org-mode allows me to export it as html (which happens auto
 #+end_src
 * evil-mode
 ** evil package 
+the idea of evil-surround is to deal with stuff in "quotes"; it offers a bunch of amazing tools for wrapping a word or visual-state region in "", '', <>, {}, (), etc. 
 #+begin_src emacs-lisp
 (use-package evil 
   :ensure t
   :config (progn  
     (setcdr evil-insert-state-map nil)  ; no evil-mode in insert.
-    (global-set-key evil-insert-state-map [escape] 'evil-normal-state) 
+    (define-key evil-insert-state-map [escape] 'evil-normal-state) 
     (evil-mode 1))
+  (use-package evil-surround
+    :ensure t
+    :config
+    (global-evil-surround-mode))
+  (use-package evil-indent-textobject
+    :ensure t)
 )
+#+end_src
+** evil-iedit-state
+expand-region works, as does iedit. but not evil-iedit-state. needs attention.
+#+begin_src emacs-lisp
+(use-package expand-region
+  :bind ("C-=" . er/expand-region))
+(use-package iedit)
+(use-package evil-iedit-state)
+#+end_src
+** org-evil FIXME  
+#+begin_src emacs-lisp
+(use-package org-evil)
 #+end_src
 ** escape from everything
 http://www.totherme.org/configs/gds.html#orgheadline10
@@ -199,6 +220,29 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (global-set-key [escape] 'evil-exit-emacs-state)
 #+end_src
 
+* General 
+General defines the leader key. This can be for all states, not just evil-normal. I'll map evil-normal to <SPC> and all other states to M-<SPC>. 
+#+begin_src emacs-lisp
+(use-package general :ensure t
+   :config (progn 
+     (general-evil-setup 1)
+     (general-define-key
+       :states '(normal insert emacs)
+       :prefix "M-SPC"
+       :non-normal-prefix "M-SPC"
+       "l" '(avy-goto-line)
+       "a" 'align-regexp
+       )
+     (general-define-key
+       :states '(normal motion insert emacs)
+       :prefix "SPC"
+       "g"  '(:ignore t :which-key "Git")
+       "gs" '(magit-status :which-key "git status")
+     )
+     (general-nvmap "j" 'evil-next-visual-line
+                    "k" 'evil-previous-visual-line)
+))
+#+end_src
 * Markdown 
 #+begin_src emacs-lisp
 (use-package markdown-mode
