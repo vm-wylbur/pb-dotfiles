@@ -12,7 +12,8 @@
 
 * NOTE: to execute, C-c C-v C-b 
 
-* big picture [2/6]
+* big picture [1/6]
+** TODO revisit iedit mode for evil for rectangular edits 
 ** TODO possible to make tabs nicer? 
 my idea is to use the curves from powerline to make nicer tabs. 
 ** TODO add to prefixes [/] 
@@ -163,20 +164,22 @@ Writing this file in org-mode allows me to export it as html (which happens auto
     (setq which-key-side-window-max-height 0.5)
     (which-key-mode 1)))
 #+end_src
-
-* evil-mode 
+* evil-mode
+** evil package 
 #+begin_src emacs-lisp
 (use-package evil 
   :ensure t
   :config (progn  
     (setcdr evil-insert-state-map nil)  ; no evil-mode in insert.
-    (define-key evil-insert-state-map [escape] 'evil-normal-state) 
+    (global-set-key evil-insert-state-map [escape] 'evil-normal-state) 
     (evil-mode 1))
 )
 #+end_src
 ** escape from everything
 http://www.totherme.org/configs/gds.html#orgheadline10
 #+begin_src emacs-lisp
+;; (use-package evil-escape
+;;  :bind ("<ESC>" evil-escape))
 (defun minibuffer-keyboard-quit ()
   "Abort recursive edit.
 In Delete Selection mode, if the mark is active, just deactivate it;
@@ -228,6 +231,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
     (setq ivy-extra-directories nil) ; default value: ("../" "./")
     (setq ivy-height 20)               ; set height of the ivy window
     (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
+    (define-key ivy-minibuffer-map (kbd "<escape>") 'minibuffer-keyboard-quit)
   ))
 #+end_src
 *** TODO add ivy hydra 
@@ -249,21 +253,9 @@ CLOSED: [2017-01-04 Wed 20:35]
 ** TODO Flyspell and flycheck 
 remember the osx hack that makes that nice.
 
-
-* markdown mode 
-- visual line wrapping (with evil)
-
-
 * applications [/]
 ** TODO ranger
-** calfw - a pretty calendar
-#+begin_src emacs-lisp
-; (use-package calfw
-;   :bind ("<f12>" . cfw:open-org-calendar)
-;   :config
-;   (use-package calfw-org))
-#+end_src
-* start server 
+** start server 
 
 * mode line 
 This is the last piece, but crucial. nice to get the spacemacs one
