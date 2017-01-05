@@ -12,21 +12,21 @@
 
 * NOTE: to execute, C-c C-v C-b 
 
-* big picture [1/5]
-** TODO turn off bells, the rest of the basic setup stuff. 
+* big picture [2/6]
 ** TODO possible to make tabs nicer? 
-** TODO add to prefixes:
+my idea is to use the curves from powerline to make nicer tabs. 
+** TODO add to prefixes [/] 
 *** TODO 0-9 jump to tab 
 *** TODO a (applications: todotxt, eventually mail)
 *** TODO c (commenting)
 *** TODO b (buffers) 
-*** TODO f (files) counsel-recentf, counsel-ag,
-*** TODO j jump ace-window, avy-char
+*** TODO f (files) counsel-recentf, counsel-ag, etc.
+*** TODO j jump ace-window, avy-char, ivy-avy
 *** TODO b (buffers)
 *** TODO x (text): some of the spacemacs stuff, also move line up(j), down(k)
-;;   
 ** DONE migrate back to org init
 CLOSED: [2016-12-31 Sat 09:28]
+** TODO turn on visual-line-mode in all text modes
 ** TODO set which-key to take half the window, on bottom 
 
 * Introduction
@@ -72,11 +72,6 @@ Writing this file in org-mode allows me to export it as html (which happens auto
 (use-package color-theme
   :ensure t)
 (setq custom-safe-themes t)
-(use-package zenburn-theme :disabled nil
-  :ensure t
-  :diminish "")
-  :config
-;; (load-theme 'zenburn)
 (use-package hc-zenburn-theme)
 (load-theme 'hc-zenburn)
 #+end_src 
@@ -106,6 +101,7 @@ Writing this file in org-mode allows me to export it as html (which happens auto
 #+begin_src emacs-lisp
 (use-package super-save 
   :init (super-save-mode +1) 
+  :diminish super-save-mode
   :config 
      (setq super-save-auto-save-when-idle t)
      (setq auto-save-default nil))
@@ -133,6 +129,13 @@ Writing this file in org-mode allows me to export it as html (which happens auto
 (setq default-fill-column 80)      ; toggle wrapping text at the 80th
 #+end_src 
 
+*** wrapping 
+#+begin_src emacs-lisp
+(use-package adaptive-wrap
+  :ensure t
+  :defer t
+  :init (add-hook 'visual-line-mode-hook #'adaptive-wrap-prefix-mode))
+#+end_src
 *** encoding
 #+begin_src emacs-lisp
 (setq coding-system-for-read 'utf-8)
@@ -150,18 +153,116 @@ Writing this file in org-mode allows me to export it as html (which happens auto
     (setq desktop-path '("~/.emacs.d/")))
 #+end_src 
 
+** which-key
+#+begin_src emacs-lisp
+(use-package which-key 
+  :diminish which-key-mode
+ :config (progn 
+    (which-key-setup-side-window-bottom)
+    (setq which-key-idle-delay 0.3)
+    (setq which-key-side-window-max-height 0.5)
+    (which-key-mode 1)))
+#+end_src
 
 * evil-mode 
-with leader or with general?
+#+begin_src emacs-lisp
+(use-package evil 
+  :ensure t
+  :config (progn  
+    (setcdr evil-insert-state-map nil)  ; no evil-mode in insert.
+    (define-key evil-insert-state-map [escape] 'evil-normal-state) 
+    (evil-mode 1))
+)
+#+end_src
+** escape from everything
+http://www.totherme.org/configs/gds.html#orgheadline10
+#+begin_src emacs-lisp
+(defun minibuffer-keyboard-quit ()
+  "Abort recursive edit.
+In Delete Selection mode, if the mark is active, just deactivate it;
+then it takes a second \\[keyboard-quit] to abort the minibuffer."
+  (interactive)
+  (if (and delete-selection-mode transient-mark-mode mark-active)
+      (setq deactivate-mark  t)
+    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+    (abort-recursive-edit)))
+(define-key evil-normal-state-map [escape] 'keyboard-quit)
+(define-key evil-visual-state-map [escape] 'keyboard-quit)
+(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
+(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+(global-set-key [escape] 'evil-exit-emacs-state)
+#+end_src
 
-* Flyspell and flycheck 
+* Markdown 
+#+begin_src emacs-lisp
+(use-package markdown-mode
+  :mode ("\\.\\(m\\(ark\\)?down\\|md\\)$" . markdown-mode)
+  :config (progn 
+   (add-hook 'markdown-mode-hook 'visual-line-mode)))
+#+end_src
+
+* Editing hacks 
+** Navigation with avy  
+#+begin_src emacs-lisp
+(use-package avy 
+  :ensure t
+  :bind (("s-," . avy-goto-char))
+  :config (progn 
+    (setq avy-background t)
+    (setq avy-style 'post)
+    (setq avy-all-windows 'all-frames)))
+#+end_src 
+** ivy
+#+begin_src emacs-lisp
+(use-package ivy :ensure t
+  :diminish (ivy-mode . "") ; does not display ivy in the modeline
+  :init (ivy-mode 1)        ; enable ivy globally at startup
+  :bind (:map ivy-mode-map  ; bind in the ivy buffer
+         ("C-'" . ivy-avy)) ; C-' to ivy-avy
+  :config (progn
+    (setq ivy-use-virtual-buffers t)   ; extend searching to bookmarks and …
+    (setq ivy-virtual-abbreviate 'full) ; Show the full virtual file paths
+    (setq ivy-extra-directories nil) ; default value: ("../" "./")
+    (setq ivy-height 20)               ; set height of the ivy window
+    (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
+  ))
+#+end_src
+*** TODO add ivy hydra 
+** counsel 
+CLOSED: [2017-01-04 Wed 20:35]
+#+begin_src emacs-lisp
+(use-package counsel :ensure t
+  :bind*                           ; load counsel when pressed
+  (("M-x"     . counsel-M-x)       ; M-x use counsel
+   ("C-x C-f" . counsel-find-file) ; C-x C-f use counsel-find-file
+   ("C-x C-r" . counsel-recentf)   ; search recently edited files
+  ))
+#+end_src 
+** swiper
+#+begin_src emacs-lisp
+(use-package swiper :ensure t
+  :bind* (("C-s" . swiper)))
+#+end_src
+** TODO Flyspell and flycheck 
 remember the osx hack that makes that nice.
+
 
 * markdown mode 
 - visual line wrapping (with evil)
 
-* which-key + tiny-menu 
 
+* applications [/]
+** TODO ranger
+** calfw - a pretty calendar
+#+begin_src emacs-lisp
+; (use-package calfw
+;   :bind ("<f12>" . cfw:open-org-calendar)
+;   :config
+;   (use-package calfw-org))
+#+end_src
 * start server 
 
 * mode line 
