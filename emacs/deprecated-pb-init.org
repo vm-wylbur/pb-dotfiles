@@ -227,14 +227,14 @@ General defines the leader key. This can be for all states, not just evil-normal
    :config (progn 
      (general-evil-setup 1)
      (general-define-key
-       :states '(normal insert emacs)
+       :states '(normal motion insert emacs)
        :prefix "M-SPC"
        :non-normal-prefix "M-SPC"
        "l" '(avy-goto-line)
        "a" 'align-regexp
        )
      (general-define-key
-       :states '(normal motion insert emacs)
+       :states '(normal)
        :prefix "SPC"
        "g"  '(:ignore t :which-key "Git")
        "gs" '(magit-status :which-key "git status")
