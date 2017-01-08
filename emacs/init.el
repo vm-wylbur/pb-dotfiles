@@ -13,19 +13,15 @@
 ;;  - double semis are block cmnts
 ;;  - triple semis are section headers
 ;;  - more than triple are sub* headings
-;;  - imenu+ to jump to headers in elisp
+;;  - imenu to jump to headers in elisp
 
 ;;; Todo
 ;; flycheck + flyspell
-;; [criticmarkup](https://github.com/joostkremers/criticmarkup-emacs)
-;; jump to tab
-;; why does avy-jump sometimes forget about other frames
-;; add view kill ring in [r]
 
 ;;;; long-term todo
-;; s-o should close screen, s-n should open screen
 
 ;;;; Done 
+;; s-o should close screen, s-n should open screen
 
 
 ;;; paths 
@@ -41,9 +37,9 @@
 (setq package-enable-at-startup nil)
 
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
 (package-initialize)
 (add-to-list 'load-path "~/.emacs.d/elpa")
+(add-to-list 'load-path "~/src/criticmarkup-emacs")
 
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -62,7 +58,7 @@
 (setq load-prefer-newer t)
 (require 'bind-key)
 
-;;; Org setup from local path 
+;;; Org setup from local path: git pull occasionally. 
 (use-package org
 	     :load-path "~/src/org-mode")
 
@@ -104,11 +100,11 @@
 (load-theme 'hc-zenburn)
 
 ;;;;; frame and window
-(setq ring-bell-function 'ignore)
 (show-paren-mode 1)
 (tool-bar-mode -1)
 (menu-bar-mode t)
 (setq show-paren-delay 0
+      ring-bell-function 'ignore
       column-number-mode 1
       inhibit-startup-message t)
 (setq-default cursor-type 'bar)
@@ -131,13 +127,18 @@
      (setq auto-save-default nil))
 (setq savehist-file "~/.emacs.d/savehist")
 (savehist-mode 1)
-(setq history-length t)
-(setq history-delete-duplicates t)
-(setq savehist-save-minibuffer-history 1)
-(setq savehist-additional-variables
-      '(kill-ring
-        search-ring
-        regexp-search-ring))
+(setq
+ history-length t
+ history-delete-duplicates t
+ savehist-save-minibuffer-hise\tory 1
+ savehist-additional-variables
+ '(kill-ring
+   search-ring
+   regexp-search-ring))
+
+;;;;; undo-tree
+(use-package undo-tree
+  :config (global-undo-tree-mode))
 
 ;;;;; behaviors
 (setq vc-follow-symlinks t)          ; don't ask for confirmation when opening
@@ -151,7 +152,6 @@
 (defun imenu-elisp-sections ()
   (setq imenu-prev-index-position-function nil)
   (add-to-list 'imenu-generic-expression '("Sections" "^;;; \\(.+\\)$" 1) t))
-;; (use-package imenu)
 (add-hook 'emacs-lisp-mode-hook 'imenu-add-menubar-index)
 (setq imenu-auto-rescan t)
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
@@ -176,10 +176,6 @@
     (setq desktop-path '("~/.emacs.d/")))
 
 ;;;;; minor editing tweaks
-(global-unset-key (kbd "s-w"))
-(global-set-key (kbd "s-w") 'elscreen-kill)
-(global-unset-key (kbd "s-n"))
-(global-set-key (kbd "s-n") 'elscreen-create)
 
 ;;;;; magit
 (use-package magit
@@ -311,21 +307,40 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (forward-line 1)
   (transpose-lines 1)
   (forward-line -1))
-
+ 
 (use-package crux)
 
 
 ;;; hydra 
 (use-package hydra)
+
+;; this doesn't work, but it's a good starting point.
+;; critic markdown should always be on for markdown, so turning on the
+;; minor mode is another start. then set the toggle.
+;; other good stuff for the hydra-markdown is add a comment,
+;; accept/reject changes interactively.
+;; (defun pb-toggle-criticmarkup-follow ()
+;;   "Toggle criticmarkup follow minor mode"
+;;   (interactive)
+;;   (if (get cm-follow-changes nil)
+;;       (setq cm-follow-changes 1)
+;;     (setq cm-follow-changes 0)))
+	
+;;(defhydra hydra-markdown (:color blue)
+;;  ("F" critic-follow "toggle-critic-follow-changes"))
+
 (defhydra hydra-applications (:color blue :columns 4)
   "Applications"
-  ("g" magit-status "git"))
+  ("g" magit-status "git")
+  ("m" hydra-markdown "markdown")
+  ("o" hydra-orgmode "org-mode"))
+
 ;; org-mode,  
 (defhydra hydra-buffer (:color blue :columns 3)
 ;; todo: make buffers open in new screen. 
   "Buffers"
   ("n" next-buffer "next" :color red)
-  ("b" ivy-switch-buffer "swith")
+  ("b" ivy-switch-buffer "switch")
   ("B" ibuffer "ibuffer")
   ("p" previous-buffer "prev" :color red)
   ("C-b" buffer-menu "buffer menu")
@@ -334,7 +349,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   ("d" kill-this-buffer "delete" :color red)
   ;; don't come back to previous buffer after delete
   ("D" (progn (kill-this-buffer) (next-buffer)) "Delete" :color red)
-  ("s" save-buffer "save" :color red)) 
+  ("s" save-buffer "save" :color red))
 
 ;; necessary? or should c be capture (t)odo (j)ournal?
 ;; (defhydra hydra-comment (:color blue))
@@ -342,8 +357,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (defhydra hydra-edit (:color blue)
   "Editing and text movement"
   ("j" move-line-down "line down" :color red)
-  ("k" move-line-up "line up" :color red))
-; iedit, crux stuff splitting/joining lines.  
+  ("k" move-line-up "line up" :color red)
+  ("y" counsel-yank-pop "browse kill ring")
+  ("v" undo-tree-visualize "vis undo tree"))
+; iedit, crux stuff splitting/joining lines. unfilling paragraphs.
 
 
 (defun save-all-buffers ()
@@ -369,7 +386,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   "Jumping"
   ("a" counsel-ag "ag")  ;; buggy! 
   ("s" swiper-all "swiper all buffs"))
-; avy, easymotion, imenu+, some searching, swoop, ag
+; imenu+, more searching, fix ag, maybe bookmarks 
 
 ;; (defhydra hydra-registers (:color blue))
 ; bookmarks, registers, rings 
@@ -389,6 +406,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   ("f" other-frame "other frame" :color red))
 
 ;; (defhydra hydra-text (:color blue))
+;; up/downcase, unfill graf, 
+
 ;; (defhydra hydra-zoom (:color blue))
 
 ;;;; general: this is the big-picture keybinding for everything 
@@ -428,8 +447,9 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;;;; markdown
 (use-package markdown-mode
   :mode ("\\.\\(m\\(ark\\)?down\\|md\\)$" . markdown-mode)
-  :config (progn 
-   (add-hook 'markdown-mode-hook 'visual-line-mode)))
+  :config 
+  (add-hook 'markdown-mode-hook 'visual-line-mode)
+  (require 'cm-mode))
 
 
 ;;; elscreen
@@ -438,7 +458,11 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (elscreen-start)
   (setq elscreen-tab-display-kill-screen nil)
   (setq elscreen-tab-display-control nil))
-  
+(global-unset-key (kbd "s-w"))
+(global-set-key (kbd "s-w") 'elscreen-kill)
+(global-unset-key (kbd "s-n"))
+(global-set-key (kbd "s-n") 'elscreen-create)
+
 (use-package elscreen-persist
   :config
   (elscreen-persist-mode 1))
@@ -450,13 +474,15 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :config
   (require 'spaceline-config)
   (spaceline-spacemacs-theme)
-  (spaceline-toggle-minor-modes-off)
+  (spaceline-toggle-minor-modes-on)
   (spaceline-toggle-buffer-modified-on)
   (spaceline-toggle-buffer-size-on)
   (spaceline-toggle-version-control-off)
   (setq
    spaceline-highlight-face-func 'spaceline-highlight-face-evil-state
-   powerline-default-separator 'contour))
+   powerline-default-separator 'contour
+   spaceline-helm-mode nil
+   spaceline-byte-compile t))
 
 ;;; done with port from org-mode 
 (message "PB dotemacs loaded.")
