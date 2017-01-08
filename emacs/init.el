@@ -217,7 +217,8 @@
     (setq avy-style 'post)
     (setq avy-all-windows 'all-frames)))
 
-;;;; ivy
+
+;; ;;;; ivy
 (use-package ivy :ensure t
   :diminish (ivy-mode . "") ; does not display ivy in the modeline
   :init (ivy-mode 1)        ; enable ivy globally at startup
@@ -232,7 +233,7 @@
     (define-key ivy-minibuffer-map (kbd "<escape>") 'minibuffer-keyboard-quit)
   ))
 
-(use-package imenu-anywhere)
+;; (use-package imenu-anywhere)
 ;;;;; TODO add ivy hydra 
 
 ;;;; counsel 
@@ -243,7 +244,7 @@
    ("C-x C-r" . counsel-recentf)   ; search recently edited files
   ))
 
-;;;; swiper
+;; ;;;; swiper
 (use-package swiper :ensure t
   :bind* (("C-s" . swiper)))
 
@@ -324,7 +325,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;; todo: make buffers open in new screen. 
   "Buffers"
   ("n" next-buffer "next" :color red)
-  ("b" ivy-switch-buffer "switch")
+  ("b" ivy-switch-buffer "swith")
   ("B" ibuffer "ibuffer")
   ("p" previous-buffer "prev" :color red)
   ("C-b" buffer-menu "buffer menu")
@@ -333,12 +334,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   ("d" kill-this-buffer "delete" :color red)
   ;; don't come back to previous buffer after delete
   ("D" (progn (kill-this-buffer) (next-buffer)) "Delete" :color red)
-  ("s" save-buffer "save" :color red))
+  ("s" save-buffer "save" :color red)) 
 
-(defhydra hydra-comment (:color blue))
+;; (defhydra hydra-comment (:color blue))
 ; necessary? or should c be capture (t)odo (j)ournal?
-(defhydra hydra-edit (:color blue))
-; iedit, move lines up/down,  
+;; (defhydra hydra-edit (:color blue))
+; iedit, move lines up/down,   
+
 
 (defun save-all-buffers () (interactive) (save-some-buffers t))
 (defhydra hydra-files (:color blue :columns 3)
@@ -347,23 +349,41 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   ("S" save-all-buffers "save all")
   ("e" eval-buffer "eval current")
   ("r" counsel-recentf "recent")
-  ("f" counsel-find-file "find")
-  ;; ("t" 
-  ("v" revert-buffer "revert"))
-; find file in screen, recent; eval file or buffer; save; find files or buffers if open
-(defhydra hydra-help (:color blue))
-(defhydra hydra-insert (:color blue))
+  ("f" counsel-find-files "find")
+  ("v" revert-buffer "revert")
+  ("c" elscreen-find-file "find-new screen")
+  ("u" elscreen-find-screen-by-buffer "file or buffer-screen"))
+
+;; (defhydra hydra-help (:color blue))
+
+;; (defhydra hydra-insert (:color blue))
 ; crux stuff 
-(defhydra hydra-jump (:color blue))
-; avy, easymotion, imenu+, some searching, swoop, ag, 
-(defhydra hydra-registers (:color blue))
+
+(defhydra hydra-jump (:color blue)
+  "Jumping"
+  ("a" counsel-ag "ag")
+  ("s" swiper-all "swiper all"))
+; avy, easymotion, imenu+, some searching, swoop, ag
+
+;; (defhydra hydra-registers (:color blue))
 ; bookmarks, registers, rings 
-(defhydra hydra-toggles (:color blue))
-(defhydra hydra-screens (:color blue)) 
-(defhydra hydra-windows (:color blue))
-; keep this window/delete other; 
-(defhydra hydra-text (:color blue))
-(defhydra hydra-zoom (:color blue))
+;; (defhydra hydra-toggles (:color blue))
+;; (defhydra hydra-screens (:color blue))  
+(defhydra hydra-windows (:color blue columns: 3)
+  "Windows and screens"
+  ("0" (elscreen-goto 0) "goto 0")
+  ("1" (elscreen-goto 1) "goto 1")
+  ("2" (elscreen-goto 1) "goto 2")
+; keep this window/delete other(s) in frame; 
+  ("3" (elscreen-goto 1) "goto 3")
+  ("4" (elscreen-goto 1) "goto 4")
+  ("5" (elscreen-goto 1) "goto 5")
+  ("k" delete-other-windows "keep this win")
+  ("o" other-window "other window" :color red)
+  ("f" other-frame "other frame" :color red))
+
+;; (defhydra hydra-text (:color blue))
+;; (defhydra hydra-zoom (:color blue))
 
 ;;;; general: this is the big-picture keybinding for everything 
 ;;     add the hydras in the previous stanza
@@ -391,7 +411,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
        "q" 'save-buffers-kill-terminal 
        "r" 'hydra-registers/body
        "t" 'pb-todo
-       "s" 'hydra-screens/body 
+       ;; "s" 'hydra-screens/body 
        "w" 'hydra-windows/body
        "x" 'hydra-text/body
        "z" 'hydra-zoom/body 
@@ -412,8 +432,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :config
   (elscreen-start)
   (setq elscreen-tab-display-kill-screen nil)
-  (setq elscreen-tab-display-control nil)
-  )
+  (setq elscreen-tab-display-control nil))
+  
 (use-package elscreen-persist
   :config
   (elscreen-persist-mode 1))
@@ -426,18 +446,18 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package spaceline
   :ensure t)
 
-(require 'spaceline-config
-	 :config (progn 
-		   (spaceline-spacemacs-theme)
-		   (spaceline-toggle-minor-modes-off)
-		   (spaceline-toggle-buffer-modified-on)
-		   (spaceline-toggle-selection-info-on)
-		   (spaceline-toggle-buffer-size-on)
-		   (spaceline-toggle-hud-on)
-		   (spaceline-toggle-org-clock-on)
-		   (spaceline-toggle-flycheck-info-on)))
+;; (require 'spaceline-config
+;; 	 :config (progn 
+;; 		   (spaceline-spacemacs-theme)
+;; 		   (spaceline-toggle-minor-modes-off)
+;; 		   (spaceline-toggle-buffer-modified-on)
+;; 		   (spaceline-toggle-selection-info-on)
+;; 		   (spaceline-toggle-buffer-size-on)
+;; 		   (spaceline-toggle-hud-on)
+;; 		   (spaceline-toggle-org-clock-on)
+;; 		   (spaceline-toggle-flycheck-info-on)))
 
-;;; done with port from org-mode 
+;; ;;; done with port from org-mode 
 (message "PB init loaded.")
 ;;(if (file-exists-p "~/dotfiles/emacs/pb-init.el")
 ;;    (delete-file "~/dotfiles/emacs/pb-init.el"))
