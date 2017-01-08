@@ -13,11 +13,23 @@
 ;;  - double semis are block cmnts
 ;;  - triple semis are section headers
 ;;  - more than triple are sub* headings
-;; 
+;;  - imenu+ to jump to headers in elisp
+
+;;; Todo
+;; flycheck + flyspell
+;; [criticmarkup](https://github.com/joostkremers/criticmarkup-emacs)
+;; jump to tab
+;; why does avy-jump sometimes forget about other frames
+;; add view kill ring in [r]
+;; s-o should close screen, s-n should open screen
+
+;;;; Done 
+
 
 ;;; paths 
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 (setq exec-path (append exec-path '("/usr/local/bin")))
+(server-start)
 
 ;;; packages 
 (require 'package)
@@ -61,15 +73,15 @@
 ;;; Introduction 
 
 ;;;; smart parens 
-(use-package smartparens-config
-    :ensure smartparens
-    :config
-    (progn
-      (show-smartparens-global-mode t)))
-(add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
-(add-hook 'markdown-mode-hook 'turn-on-smartparens-strict-mode)
+;; (use-package smartparens-config
+;;     :ensure smartparens
+;;     :config
+;;     (progn
+;;       (show-smartparens-global-mode t)))
+;; (add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
+;; (add-hook 'markdown-mode-hook 'turn-off-smartparens-strict-mode)
 
-;;;; customization
+;; ;;;; customization
 (setq custom-file "~/.emacs.d/custom.el"
  	  kill-buffer-query-functions
  	  (remq 'process-kill-buffer-query-function
@@ -100,6 +112,8 @@
 (setq-default cursor-type 'bar)
 ;; (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
 (fringe-mode '(8 . 2))
+(use-package beacon
+  :config (beacon-mode 1))
 
 ;;;;; backups, version control, backups, and history
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
@@ -129,6 +143,16 @@
 (setq ring-bell-function 'ignore )   ; silent bell when you make a mistake
 (setq sentence-end-double-space nil) ; sentence SHOULD end with only a point.
 (setq default-fill-column 80)        ; toggle wrapping text at the 80th
+(delete-selection-mode 1)
+
+;;;;; imenu
+(defun imenu-elisp-sections ()
+  (setq imenu-prev-index-position-function nil)
+  (add-to-list 'imenu-generic-expression '("Sections" "^;;;; \\(.+\\)$" 1) t))
+;; (use-package imenu)
+(add-hook 'emacs-lisp-mode-hook 'imenu-add-menubar-index)
+(setq imenu-auto-rescan t)
+(add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
 ;;;;; wrapping 
 (use-package adaptive-wrap
@@ -149,6 +173,27 @@
     (add-to-list 'desktop-globals-to-save 'file-name-history)
     (setq desktop-path '("~/.emacs.d/")))
 
+;;;;; minor editing tweaks
+(global-unset-key (kbd "s-w"))
+(global-set-key (kbd "s-w") 'elscreen-kill)
+(global-unset-key (kbd "s-n"))
+(global-set-key (kbd "s-n") 'elscreen-create)
+
+;;;;; magit
+(use-package magit
+  :init (progn
+	  (defadvice git-commit-commit (after delete-window activate)
+	    (delete-window))
+	  (defadvice git-commit-abort (after delete-window activate)
+	    (delete-window))
+	  ;; these two force a new line to be inserted into a commit window,
+	  ;; which stops the invalid style showing up.
+	  ;; From: http://git.io/rPBE0Q
+	  (defun magit-commit-mode-init ()
+	    (when (looking-at "\n")
+	      (open-line 1)))))
+	    
+
 ;;;; which-key
 (use-package which-key 
   :diminish which-key-mode
@@ -163,7 +208,8 @@
 ;;;; Navigation with avy  
 (use-package avy 
   :ensure t
-  :bind (("s-," . avy-goto-char))
+  :bind (("C-'" . avy-goto-char)
+	 ("s-," . avy-goto-char-timer))  ; this is pretty cool
   :config (progn 
     (setq avy-background t)
     (setq avy-style 'post)
@@ -184,6 +230,7 @@
     (define-key ivy-minibuffer-map (kbd "<escape>") 'minibuffer-keyboard-quit)
   ))
 
+(use-package imenu-anywhere)
 ;;;;; TODO add ivy hydra 
 
 ;;;; counsel 
@@ -263,10 +310,61 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (transpose-lines 1)
   (forward-line -1))
 
+(use-package crux)
+
+;;; hydra 
+(use-package hydra)
+(defhydra hydra-applications (:color blue :columns 4)
+  "Applications"
+  ("g" magit-status "git"))
+;; org-mode, magit-status 
+(defhydra hydra-buffer (:color blue :columns 3)
+;; todo: make buffers open in new screen. 
+  "Buffers"
+  ("n" next-buffer "next" :color red)
+  ("b" ivy-switch-buffer "switch")
+  ("B" ibuffer "ibuffer")
+  ("p" previous-buffer "prev" :color red)
+  ("C-b" buffer-menu "buffer menu")
+  ("N" evil-buffer-new "new")
+  ("e" eval-buffer "eval buff") 
+  ("d" kill-this-buffer "delete" :color red)
+  ;; don't come back to previous buffer after delete
+  ("D" (progn (kill-this-buffer) (next-buffer)) "Delete" :color red)
+  ("s" save-buffer "save" :color red))
+
+(defhydra hydra-comment (:color blue))
+; necessary? or should c be capture (t)odo (j)ournal?
+(defhydra hydra-edit (:color blue))
+; iedit, move lines up/down,  
+
+(defun save-all-buffers () (interactive) (save-some-buffers t))
+(defhydra hydra-files (:color blue :columns 3)
+  "Files"
+  ("s" save-buffer "save")
+  ("S" save-all-buffers "save all")
+  ("e" eval-buffer "eval current")
+  ("r" counsel-recentf "recent")
+  ("f" counsel-find-file "find") 
+  ("v" revert-buffer "revert"))
+; find file in screen, recent; eval file or buffer; save; find files or buffers if open
+(defhydra hydra-help (:color blue))
+(defhydra hydra-insert (:color blue))
+; crux stuff 
+(defhydra hydra-jump (:color blue))
+; avy, easymotion, imenu+, some searching, swoop, ag, 
+(defhydra hydra-registers (:color blue))
+; bookmarks, registers, rings 
+(defhydra hydra-toggles (:color blue))
+(defhydra hydra-screens (:color blue)) 
+(defhydra hydra-windows (:color blue))
+; keep this window/delete other; 
+(defhydra hydra-text (:color blue))
+(defhydra hydra-zoom (:color blue))
+
 ;;;; general: this is the big-picture keybinding for everything 
 ;;     add the hydras in the previous stanza
 ;;     keep an eye on [this page](https://sam217pa.github.io/2016/09/23/keybindings-strategies-in-emacs/) for good customizations with general
-;;     add the little-hacks to move lines up and down to the general nvmap n/m
 (use-package general :ensure t
    :config (progn 
      (general-evil-setup 1)
@@ -275,13 +373,27 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
        :prefix "SPC"
        :non-normal-prefix "M-SPC"
        "SPC" 'counsel-M-x
-       "l" 'avy-goto-line
-       "a" 'align-regexp
+       "'" 'avy-goto-char
+       ";" 'comment-line
+       "/" 'swiper
+       "a" 'hydra-applications/body  
+       "b" 'hydra-buffer/body
+       "c" 'hydra-comment/body
+       "e" 'hydra-edit/body 
+       "f" 'hydra-files/body
+       "h" 'hydra-help/body
+       "i" 'hydra-insert/body
+       "j" 'hydra-jump/body
+       "n" 'pb-journal
+       "r" 'hydra-registers/body
+       "t" 'pb-todo
+       "s" 'hydra-screens/body 
+       "w" 'hydra-windows/body
+       "x" 'hydra-text/body
+       "z" 'hydra-zoom/body 
        )
     (general-nvmap "j" 'evil-next-visual-line
-		   "k" 'evil-previous-visual-line
-		   "n" 'move-line-down
-		   "m" 'move-line-up)))
+		   "k" 'evil-previous-visual-line)))
 
 ;;; modes 
 ;;;; markdown
@@ -305,17 +417,21 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;;; modeline
 (use-package powerline
   :defer t
-  :config (setq powerline-default-separator 'utf-8))
+  :config (setq powerline-default-separator 'contour))
 
 (use-package spaceline
   :ensure t)
 
-(require 'spaceline-config)
-(spaceline-spacemacs-theme)
-(spaceline-toggle-minor-modes-off)
-(spaceline-toggle-buffer-size-off)
-(spaceline-toggle-hud-on)
-
+(require 'spaceline-config
+	 :config (progn 
+		   (spaceline-spacemacs-theme)
+		   (spaceline-toggle-minor-modes-off)
+		   (spaceline-toggle-buffer-modified-on)
+		   (spaceline-toggle-selection-info-on)
+		   (spaceline-toggle-buffer-size-on)
+		   (spaceline-toggle-hud-on)
+		   (spaceline-toggle-org-clock-on)
+		   (spaceline-toggle-flycheck-info-on)))
 
 ;;; done with port from org-mode 
 (message "PB init loaded.")
