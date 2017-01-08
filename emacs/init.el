@@ -21,6 +21,8 @@
 ;; jump to tab
 ;; why does avy-jump sometimes forget about other frames
 ;; add view kill ring in [r]
+
+;;;; long-term todo
 ;; s-o should close screen, s-n should open screen
 
 ;;;; Done 
@@ -148,7 +150,7 @@
 ;;;;; imenu
 (defun imenu-elisp-sections ()
   (setq imenu-prev-index-position-function nil)
-  (add-to-list 'imenu-generic-expression '("Sections" "^;;;; \\(.+\\)$" 1) t))
+  (add-to-list 'imenu-generic-expression '("Sections" "^;;; \\(.+\\)$" 1) t))
 ;; (use-package imenu)
 (add-hook 'emacs-lisp-mode-hook 'imenu-add-menubar-index)
 (setq imenu-auto-rescan t)
@@ -345,7 +347,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   ("S" save-all-buffers "save all")
   ("e" eval-buffer "eval current")
   ("r" counsel-recentf "recent")
-  ("f" counsel-find-file "find") 
+  ("f" counsel-find-file "find")
+  ;; ("t" 
   ("v" revert-buffer "revert"))
 ; find file in screen, recent; eval file or buffer; save; find files or buffers if open
 (defhydra hydra-help (:color blue))
@@ -385,6 +388,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
        "i" 'hydra-insert/body
        "j" 'hydra-jump/body
        "n" 'pb-journal
+       "q" 'save-buffers-kill-terminal 
        "r" 'hydra-registers/body
        "t" 'pb-todo
        "s" 'hydra-screens/body 
