@@ -233,15 +233,14 @@
     (define-key ivy-minibuffer-map (kbd "<escape>") 'minibuffer-keyboard-quit)
   ))
 
-;; (use-package imenu-anywhere)
 ;;;;; TODO add ivy hydra 
-
 ;;;; counsel 
 (use-package counsel :ensure t
   :bind*                           ; load counsel when pressed
   (("M-x"     . counsel-M-x)       ; M-x use counsel
    ("C-x C-f" . counsel-find-file) ; C-x C-f use counsel-find-file
    ("C-x C-r" . counsel-recentf)   ; search recently edited files
+   ("C-y"     . counsel-yank-pop)
   ))
 
 ;; ;;;; swiper
@@ -264,6 +263,9 @@
   (use-package evil-indent-textobject
     :ensure t)
   )
+(use-package evil-easymotion) 
+(evilem-default-keybindings "M-SPC")
+
 
 ;;;; evil-iedit and friends
 (use-package expand-region
@@ -293,8 +295,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;;;; hydras
 
 ;; a - applications
-;; b - buffers
-;; 0-9 - tabs
 ;; x - text 
 
 ;;;; little hacks for general
@@ -303,8 +303,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   "Move up the current line."
   (interactive)
   (transpose-lines 1)
-  (forward-line -2)
-  (indent-according-to-mode))
+  (forward-line -2))
 
 (defun move-line-down ()
   "Move down the current line."
@@ -315,12 +314,13 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (use-package crux)
 
+
 ;;; hydra 
 (use-package hydra)
 (defhydra hydra-applications (:color blue :columns 4)
   "Applications"
   ("g" magit-status "git"))
-;; org-mode, magit-status 
+;; org-mode,  
 (defhydra hydra-buffer (:color blue :columns 3)
 ;; todo: make buffers open in new screen. 
   "Buffers"
@@ -336,13 +336,19 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   ("D" (progn (kill-this-buffer) (next-buffer)) "Delete" :color red)
   ("s" save-buffer "save" :color red)) 
 
+;; necessary? or should c be capture (t)odo (j)ournal?
 ;; (defhydra hydra-comment (:color blue))
-; necessary? or should c be capture (t)odo (j)ournal?
-;; (defhydra hydra-edit (:color blue))
-; iedit, move lines up/down,   
+
+(defhydra hydra-edit (:color blue)
+  "Editing and text movement"
+  ("j" move-line-down "line down" :color red)
+  ("k" move-line-up "line up" :color red))
+; iedit, crux stuff splitting/joining lines.  
 
 
-(defun save-all-buffers () (interactive) (save-some-buffers t))
+(defun save-all-buffers ()
+  (interactive)
+  (save-some-buffers t))
 (defhydra hydra-files (:color blue :columns 3)
   "Files"
   ("s" save-buffer "save")
@@ -361,14 +367,14 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 (defhydra hydra-jump (:color blue)
   "Jumping"
-  ("a" counsel-ag "ag")
-  ("s" swiper-all "swiper all"))
+  ("a" counsel-ag "ag")  ;; buggy! 
+  ("s" swiper-all "swiper all buffs"))
 ; avy, easymotion, imenu+, some searching, swoop, ag
 
 ;; (defhydra hydra-registers (:color blue))
 ; bookmarks, registers, rings 
 ;; (defhydra hydra-toggles (:color blue))
-;; (defhydra hydra-screens (:color blue))  
+
 (defhydra hydra-windows (:color blue columns: 3)
   "Windows and screens"
   ("0" (elscreen-goto 0) "goto 0")
@@ -378,7 +384,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   ("3" (elscreen-goto 1) "goto 3")
   ("4" (elscreen-goto 1) "goto 4")
   ("5" (elscreen-goto 1) "goto 5")
-  ("k" delete-other-windows "keep this win")
+  ("k" delete-other-windows "keep only this win")
   ("o" other-window "other window" :color red)
   ("f" other-frame "other frame" :color red))
 
@@ -411,7 +417,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
        "q" 'save-buffers-kill-terminal 
        "r" 'hydra-registers/body
        "t" 'pb-todo
-       ;; "s" 'hydra-screens/body 
        "w" 'hydra-windows/body
        "x" 'hydra-text/body
        "z" 'hydra-zoom/body 
@@ -438,28 +443,21 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   :config
   (elscreen-persist-mode 1))
 
-;;; modeline
-(use-package powerline
-  :defer t
-  :config (setq powerline-default-separator 'contour))
 
+;;; modeline 
 (use-package spaceline
-  :ensure t)
+  :ensure t
+  :config
+  (require 'spaceline-config)
+  (spaceline-spacemacs-theme)
+  (spaceline-toggle-minor-modes-off)
+  (spaceline-toggle-buffer-modified-on)
+  (spaceline-toggle-buffer-size-on)
+  (spaceline-toggle-version-control-off)
+  (setq
+   spaceline-highlight-face-func 'spaceline-highlight-face-evil-state
+   powerline-default-separator 'contour))
 
-;; (require 'spaceline-config
-;; 	 :config (progn 
-;; 		   (spaceline-spacemacs-theme)
-;; 		   (spaceline-toggle-minor-modes-off)
-;; 		   (spaceline-toggle-buffer-modified-on)
-;; 		   (spaceline-toggle-selection-info-on)
-;; 		   (spaceline-toggle-buffer-size-on)
-;; 		   (spaceline-toggle-hud-on)
-;; 		   (spaceline-toggle-org-clock-on)
-;; 		   (spaceline-toggle-flycheck-info-on)))
-
-;; ;;; done with port from org-mode 
-(message "PB init loaded.")
-;;(if (file-exists-p "~/dotfiles/emacs/pb-init.el")
-;;    (delete-file "~/dotfiles/emacs/pb-init.el"))
+;;; done with port from org-mode 
 (message "PB dotemacs loaded.")
 ;; end
