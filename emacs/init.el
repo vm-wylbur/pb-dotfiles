@@ -1,6 +1,6 @@
 ;;; init.el - PB's init file. 
 
-;; Copyright (C) 2016
+;; Copyright (C) 2017
 ;; Author: Patrick Ball
 ;; Keywords: init, emacs
 
@@ -16,11 +16,13 @@
 ;;  - imenu to jump to headers in elisp
 
 ;;; Todo
-;; flycheck + flyspell
-
+;; add flycheck to python-mode
+;; imenu in editing
 ;;;; long-term todo
 
 ;;;; Done 
+;; flycheck + flyspell
+;; v nice integration of critic-markup 
 ;; s-o should close screen, s-n should open screen
 
 
@@ -28,6 +30,7 @@
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 (setq exec-path (append exec-path '("/usr/local/bin")))
 (server-start)
+(setq insert-directory-program "/usr/local/bin/gls")
 
 ;;; packages 
 (require 'package)
@@ -36,8 +39,17 @@
 (add-to-list 'load-path "~/src/org-mode")
 (setq package-enable-at-startup nil)
 
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives
+	     '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives
+	     '("marmalade" . "https://marmalade-repo.org/packages/") t)
+(add-to-list 'package-archives
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 (package-initialize)
+(setq package-archive-priorities
+      '(("melpa-stable" . 20)
+        ("marmalade" . 5)
+        ("melpa" . 10)))
 (add-to-list 'load-path "~/.emacs.d/elpa")
 (add-to-list 'load-path "~/src/criticmarkup-emacs")
 
@@ -59,11 +71,13 @@
 (require 'bind-key)
 
 ;;; Org setup from local path: git pull occasionally. 
-(use-package org
-	     :load-path "~/src/org-mode")
+(add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
+(use-package org :ensure t
+  :load-path "~/src/org-mode")
 
-;;; beginning the port from org-mode el to straight el
+(load-file "~/dotfiles/emacs/init-org.el") 
 
+;;;;; org & babel 
 (setq
  org-confirm-babel-evaluate nil
  org-src-fontify-natively t)
@@ -103,6 +117,9 @@
 (show-paren-mode 1)
 (tool-bar-mode -1)
 (menu-bar-mode t)
+(setq-default indicate-empty-lines t)
+(when (not indicate-empty-lines)
+  (toggle-indicate-empty-lines))
 (setq show-paren-delay 0
       ring-bell-function 'ignore
       column-number-mode 1
@@ -147,6 +164,7 @@
 (setq sentence-end-double-space nil) ; sentence SHOULD end with only a point.
 (setq default-fill-column 80)        ; toggle wrapping text at the 80th
 (delete-selection-mode 1)
+(defalias 'yes-or-no-p 'y-or-n-p)
 
 ;;;;; imenu
 (defun imenu-elisp-sections ()
@@ -161,6 +179,7 @@
   :ensure t
   :defer t
   :init (add-hook 'visual-line-mode-hook #'adaptive-wrap-prefix-mode))
+(use-package unfill)
 
 ;;;;; UTF-8
 (setq coding-system-for-read 'utf-8)
@@ -175,9 +194,27 @@
     (add-to-list 'desktop-globals-to-save 'file-name-history)
     (setq desktop-path '("~/.emacs.d/")))
 
-;;;;; minor editing tweaks
+;;;;; flyspell
+(use-package flyspell
+  :init
+  (progn
+    (add-hook 'text-mode-hook 'flyspell-mode)
+    (add-hook 'prog-mode-hook 'flyspell-prog-mode))
+  :config
+  (setq spell-personal-dictionary "~/.flydict"
+	ispell-program-name (executable-find "aspell")
+	ispell-extra-args
+	(list "--sug-mode=fast" ;; ultra|fast|normal|bad-spellers
+        "--lang=en_US"
+        "--ignore=3"))
+   :bind* ("C-;" . flyspell-auto-correct-previous-word))
+(add-hook 'org-mode-hook 'turn-on-flyspell)
 
-;;;;; magit
+;;;;; indent
+(use-package aggressive-indent
+  :config (global-aggressive-indent-mode 1))
+
+;;;; magit
 (use-package magit
   :init (progn
 	  (defadvice git-commit-commit (after delete-window activate)
@@ -228,6 +265,7 @@
     (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
     (define-key ivy-minibuffer-map (kbd "<escape>") 'minibuffer-keyboard-quit)
   ))
+(use-package ivy-hydra :ensure t)
 
 ;;;;; TODO add ivy hydra 
 ;;;; counsel 
@@ -241,7 +279,8 @@
 
 ;; ;;;; swiper
 (use-package swiper :ensure t
-  :bind* (("C-s" . swiper)))
+  :bind* (("C-s" . swiper)
+	  ("C-r" . swiper)))
 
 
 ;;; evil-mode
@@ -270,28 +309,23 @@
 (use-package evil-iedit-state)
 
 ;;;; escape from everything 
-(defun minibuffer-keyboard-quit ()
-  "Abort recursive edit.
-In Delete Selection mode, if the mark is active, just deactivate it;
-then it takes a second \\[keyboard-quit] to abort the minibuffer."
-  (interactive)
-  (if (and delete-selection-mode transient-mark-mode mark-active)
-      (setq deactivate-mark  t)
-    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
-    (abort-recursive-edit)))
-(define-key evil-normal-state-map [escape] 'keyboard-quit)
-(define-key evil-visual-state-map [escape] 'keyboard-quit)
-(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-(global-set-key [escape] 'evil-exit-emacs-state)
+(use-package evil-escape
+  :config
+  (evil-escape-mode)
+  (global-set-key (kbd "<esc>") 'evil-escape))
+;; (define-key evil-visual-state-map [escape] 'keyboard-quit)
+;; (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
+;; (define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
+;; (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
+;; (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
+;; (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+(define-key undo-tree-visualizer-mode-map [escape] 'undo-tree-visualizer-quit)
+(define-key undo-tree-map [escape] 'undo-tree-visualizer-quit)
+;; (define-key ivy-minibuffer-map (kbd "<escape>") 'minibuffer-keyboard-quit)
+;; (global-set-key [escape] 'evil-exit-emacs-state)
+;; (global-set-key [escape] 'keyboard-quit)
 
 ;;;; hydras
-
-;; a - applications
-;; x - text 
 
 ;;;; little hacks for general
 ;; from http://emacsredux.com/blog/2013/04/02/move-current-line-up-or-down/
@@ -326,16 +360,27 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 ;;       (setq cm-follow-changes 1)
 ;;     (setq cm-follow-changes 0)))
 	
-;;(defhydra hydra-markdown (:color blue)
-;;  ("F" critic-follow "toggle-critic-follow-changes"))
+(defhydra hydra-markdown (:color blue)
+  ("F" (cm-follow-changes 1) "mark changes")
+  ("f" (cm-follow-changes 0) "stop marking")
+  ("i" cm-accept/reject-change-at-point "accept/reject change")
+  ("I" cm-accept/reject-all-changes "accept/reject all"))
 
 (defhydra hydra-applications (:color blue :columns 4)
   "Applications"
   ("g" magit-status "git")
-  ("m" hydra-markdown "markdown")
-  ("o" hydra-orgmode "org-mode"))
+  ("m" hydra-markdown/body "markdown")
+  ("o" hydra-orgmode/body "org-mode"))
 
 ;; org-mode,  
+;; need lots here, but I haven't figured it out yet. which-key might get us there.
+(defhydra hydra-orgmode (:color blue :columns 5)
+  "Org-mode"
+  ("a" org-agenda "agenda")
+  ("w" org-iswitchb "switch") 
+  ("s" org-todo "change todo state")
+  )
+
 (defhydra hydra-buffer (:color blue :columns 3)
 ;; todo: make buffers open in new screen. 
   "Buffers"
@@ -359,9 +404,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   ("j" move-line-down "line down" :color red)
   ("k" move-line-up "line up" :color red)
   ("y" counsel-yank-pop "browse kill ring")
+  ("u" unfill-paragraph "unfill graf") 
   ("v" undo-tree-visualize "vis undo tree"))
-; iedit, crux stuff splitting/joining lines. unfilling paragraphs.
-
+;; iedit, crux stuff splitting/joining lines. unfilling paragraphs.
+;; 
 
 (defun save-all-buffers ()
   (interactive)
@@ -372,15 +418,16 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   ("S" save-all-buffers "save all")
   ("e" eval-buffer "eval current")
   ("r" counsel-recentf "recent")
-  ("f" counsel-find-files "find")
-  ("v" revert-buffer "revert")
-  ("c" elscreen-find-file "find-new screen")
-  ("u" elscreen-find-screen-by-buffer "file or buffer-screen"))
+  ("f" counsel-find-file "find")
+  ("v" revert-buffer "revert"))
+;; ("c" elscreen-find-file "find-new screen")
+;; ("u" elscreen-find-screen-by-buffer "file or buffer-screen"))
 
-;; (defhydra hydra-help (:color blue))
+;; ;; (defhydra hydra-help (:color blue))
+;; remind C-o in ivy-hydra
 
 ;; (defhydra hydra-insert (:color blue))
-; crux stuff 
+;; crux stuff
 
 (defhydra hydra-jump (:color blue)
   "Jumping"
@@ -388,60 +435,85 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   ("s" swiper-all "swiper all buffs"))
 ; imenu+, more searching, fix ag, maybe bookmarks 
 
+(defhydra hydra-evals (:color blue)
+  ("b" eval-buffer "buffer")
+  ("d" eval-defun "defun")
+  ("s" eval-last-sexp "sexp")) 
 ;; (defhydra hydra-registers (:color blue))
 ; bookmarks, registers, rings 
 ;; (defhydra hydra-toggles (:color blue))
 
 (defhydra hydra-windows (:color blue columns: 3)
   "Windows and screens"
-  ("0" (elscreen-goto 0) "goto 0")
-  ("1" (elscreen-goto 1) "goto 1")
-  ("2" (elscreen-goto 1) "goto 2")
-; keep this window/delete other(s) in frame; 
-  ("3" (elscreen-goto 1) "goto 3")
-  ("4" (elscreen-goto 1) "goto 4")
-  ("5" (elscreen-goto 1) "goto 5")
-  ("k" delete-other-windows "keep only this win")
+  ;; ("0" (elscreen-goto 0) "goto 0")
+  ;; ("1" (elscreen-goto 1) "goto 1")
+  ;; ("2" (elscreen-goto 1) "goto 2")
+  ;; ("3" (elscreen-goto 1) "goto 3")
+  ;; ("4" (elscreen-goto 1) "goto 4")
+  ;; ("5" (elscreen-goto 1) "goto 5")
+  ;; ("n" elscreen-create)
+  ;; ("k" delete-other-windows "keep only this win")
   ("o" other-window "other window" :color red)
   ("f" other-frame "other frame" :color red))
 
 ;; (defhydra hydra-text (:color blue))
 ;; up/downcase, unfill graf, 
 
-;; (defhydra hydra-zoom (:color blue))
+;; http://blog.vivekhaldar.com/post/4809065853/dotemacs-extract-interactively-change-font-size
+(defun my/zoom-in ()
+  "Increase font size by 10 points"
+  (interactive)
+  (set-face-attribute 'default nil
+                      :height
+                      (+ (face-attribute 'default :height)
+                         10)))
+
+(defun my/zoom-out ()
+  "Decrease font size by 10 points"
+  (interactive)
+  (set-face-attribute 'default nil
+                      :height
+                      (- (face-attribute 'default :height)
+                         10)))
+
+(defhydra hydra-zoom (:color red)
+  "Zoom font size"
+  ("=" my/zoom-in "zoom in")
+  ("-" my/zoom-out "zoom out"))
 
 ;;;; general: this is the big-picture keybinding for everything 
 ;;     add the hydras in the previous stanza
 ;;     keep an eye on [this page](https://sam217pa.github.io/2016/09/23/keybindings-strategies-in-emacs/) for good customizations with general
 (use-package general :ensure t
-   :config (progn 
-     (general-evil-setup 1)
-     (general-define-key
-       :states '(normal motion insert visual emacs)
-       :prefix "SPC"
-       :non-normal-prefix "M-SPC"
-       "SPC" 'counsel-M-x
-       "'" 'avy-goto-char
-       ";" 'comment-line
-       "/" 'swiper
-       "a" 'hydra-applications/body  
-       "b" 'hydra-buffer/body
-       "c" 'hydra-comment/body
-       "e" 'hydra-edit/body 
-       "f" 'hydra-files/body
-       "h" 'hydra-help/body
-       "i" 'hydra-insert/body
-       "j" 'hydra-jump/body
-       "n" 'pb-journal
-       "q" 'save-buffers-kill-terminal 
-       "r" 'hydra-registers/body
-       "t" 'pb-todo
-       "w" 'hydra-windows/body
-       "x" 'hydra-text/body
-       "z" 'hydra-zoom/body 
-       )
-    (general-nvmap "j" 'evil-next-visual-line
-		   "k" 'evil-previous-visual-line)))
+  :config (progn 
+	    (general-evil-setup 1)
+	    (general-define-key
+	     :states '(normal motion insert visual emacs)
+	     :prefix "SPC"
+	     :non-normal-prefix "M-SPC"
+	     "SPC" 'counsel-M-x
+	     "'" 'avy-goto-char
+	     ";" 'comment-line
+	     "/" 'swiper
+	     "a" 'hydra-applications/body  
+	     "b" 'hydra-buffer/body
+	     "c" 'hydra-comment/body
+	     "e" 'hydra-edit/body 
+	     "f" 'hydra-files/body
+	     "h" 'hydra-help/body
+	     "i" 'hydra-insert/body
+	     "j" 'hydra-jump/body
+	     "n" 'pb-journal
+	     "q" 'save-buffers-kill-terminal 
+	     "r" 'hydra-registers/body
+	     "t" 'org-capture
+	     "v" 'hydra-evals/body
+	     "w" 'hydra-windows/body
+	     "x" 'hydra-text/body
+	     "z" 'hydra-zoom/body 
+	     )
+	    (general-nmap "j" 'evil-next-visual-line
+			  "k" 'evil-previous-visual-line)))
 
 ;;; modes 
 ;;;; markdown
@@ -453,19 +525,19 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 
 ;;; elscreen
-(use-package elscreen
-  :config
-  (elscreen-start)
-  (setq elscreen-tab-display-kill-screen nil)
-  (setq elscreen-tab-display-control nil))
-(global-unset-key (kbd "s-w"))
-(global-set-key (kbd "s-w") 'elscreen-kill)
-(global-unset-key (kbd "s-n"))
-(global-set-key (kbd "s-n") 'elscreen-create)
+;; (use-package elscreen
+;;   :config
+;;   (elscreen-start)
+;;   (setq elscreen-tab-display-kill-screen nil)
+;;   (setq elscreen-tab-display-control nil))
+;; (global-unset-key (kbd "s-w"))
+;; (global-set-key (kbd "s-w") 'elscreen-kill)
+;; (global-unset-key (kbd "s-n"))
+;; (global-set-key (kbd "s-n") 'elscreen-create)
 
-(use-package elscreen-persist
-  :config
-  (elscreen-persist-mode 1))
+;; (use-package elscreen-persist
+;;   :config
+;;   (elscreen-persist-mode 1))
 
 
 ;;; modeline 
