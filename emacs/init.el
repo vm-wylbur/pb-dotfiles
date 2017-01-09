@@ -246,9 +246,10 @@
   :bind (("C-'" . avy-goto-char)
 	 ("s-," . avy-goto-char-timer))  ; this is pretty cool
   :config (progn 
-    (setq avy-background t)
-    (setq avy-style 'post)
-    (setq avy-all-windows 'all-frames)))
+	    (setq avy-background t)
+	    (setq avy-style 'post)
+	    (setq avy-all-windows 'all-frames)))
+(use-package ace-jump-buffer)
 
 
 ;; ;;;; ivy
@@ -256,15 +257,15 @@
   :diminish (ivy-mode . "") ; does not display ivy in the modeline
   :init (ivy-mode 1)        ; enable ivy globally at startup
   :bind (:map ivy-mode-map  ; bind in the ivy buffer
-         ("C-'" . ivy-avy)) ; C-' to ivy-avy
+	      ("C-'" . ivy-avy)) ; C-' to ivy-avy
   :config (progn
-    (setq ivy-use-virtual-buffers t)   ; extend searching to bookmarks and …
-    (setq ivy-virtual-abbreviate 'full) ; Show the full virtual file paths
-    (setq ivy-extra-directories nil) ; default value: ("../" "./")
-    (setq ivy-height 20)               ; set height of the ivy window
-    (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
-    (define-key ivy-minibuffer-map (kbd "<escape>") 'minibuffer-keyboard-quit)
-  ))
+	    (setq ivy-use-virtual-buffers t)   ; extend searching to bookmarks and …
+	    (setq ivy-virtual-abbreviate 'full) ; Show the full virtual file paths
+	    (setq ivy-extra-directories nil) ; default value: ("../" "./")
+	    (setq ivy-height 20)               ; set height of the ivy window
+	    (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
+	    (define-key ivy-minibuffer-map (kbd "<escape>") 'minibuffer-keyboard-quit)
+	    ))
 (use-package ivy-hydra :ensure t)
 
 ;;;;; TODO add ivy hydra 
@@ -495,6 +496,15 @@
 	     "'" 'avy-goto-char
 	     ";" 'comment-line
 	     "/" 'swiper
+	     "0" 'winum-select-window-0-or-10
+	     "1" 'winum-select-window-1
+	     "2" 'winum-select-window-2
+	     "3" 'winum-select-window-3
+	     "4" 'winum-select-window-4
+	     "5" 'winum-select-window-5
+	     "6" 'winum-select-window-6
+	     "7" 'winum-select-window-7
+	     "8" 'winum-select-window-8
 	     "a" 'hydra-applications/body  
 	     "b" 'hydra-buffer/body
 	     "c" 'hydra-comment/body
@@ -503,7 +513,7 @@
 	     "h" 'hydra-help/body
 	     "i" 'hydra-insert/body
 	     "j" 'hydra-jump/body
-	     "n" 'pb-journal
+	     "n" 'ace-jump-buffer
 	     "q" 'save-buffers-kill-terminal 
 	     "r" 'hydra-registers/body
 	     "t" 'org-capture
@@ -534,11 +544,13 @@
 ;; (global-set-key (kbd "s-w") 'elscreen-kill)
 ;; (global-unset-key (kbd "s-n"))
 ;; (global-set-key (kbd "s-n") 'elscreen-create)
-
 ;; (use-package elscreen-persist
 ;;   :config
 ;;   (elscreen-persist-mode 1))
-
+;;; winum
+(use-package winum)
+(setq winum-auto-setup-mode-line nil)
+(winum-mode)
 
 ;;; modeline 
 (use-package spaceline
@@ -550,6 +562,7 @@
   (spaceline-toggle-buffer-modified-on)
   (spaceline-toggle-buffer-size-on)
   (spaceline-toggle-version-control-off)
+  (spaceline-toggle-window-number-on)
   (setq
    spaceline-highlight-face-func 'spaceline-highlight-face-evil-state
    powerline-default-separator 'contour
