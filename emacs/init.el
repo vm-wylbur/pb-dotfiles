@@ -93,13 +93,13 @@
 ;; (add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
 ;; (add-hook 'markdown-mode-hook 'turn-off-smartparens-strict-mode)
 
-;; ;;;; customization
+;;;;;; customization
 (setq custom-file "~/.emacs.d/custom.el"
- 	  kill-buffer-query-functions
- 	  (remq 'process-kill-buffer-query-function
- 			kill-buffer-query-functions)
- 	  user-full-name "Patrick Ball"
- 	  user-mail-address "pball@fastmail.fm")
+      kill-buffer-query-functions
+      (remq 'process-kill-buffer-query-function
+	    kill-buffer-query-functions)
+      user-full-name "Patrick Ball"
+      user-mail-address "pball@fastmail.fm")
 
 ;;;; UI and visuals
 
@@ -115,6 +115,7 @@
 
 ;;;;; frame and window
 (show-paren-mode 1)
+(global-hl-line-mode 1)
 (tool-bar-mode -1)
 (menu-bar-mode t)
 (setq-default indicate-empty-lines t)
@@ -344,6 +345,11 @@
   (forward-line -1))
  
 (use-package crux)
+(use-package ranger :ensure t
+  :config
+  (setq ranger-show-dotfiles t)
+  (setq ranger-dont-show-binary t)
+  (setq ranger-cleanup-eagerly t))
 
 
 ;;; hydra 
@@ -375,15 +381,16 @@
 
 ;; org-mode,  
 ;; need lots here, but I haven't figured it out yet. which-key might get us there.
-(defhydra hydra-orgmode (:color blue :columns 5)
+(defhydra hydra-orgmode (:color blue :columns 3)
   "Org-mode"
   ("a" org-agenda "agenda")
   ("w" org-iswitchb "switch") 
+  ("r" org-refile "refile")
   ("s" org-todo "change todo state")
   )
 
 (defhydra hydra-buffer (:color blue :columns 3)
-;; todo: make buffers open in new screen. 
+  ;; todo: make buffers open in new screen. 
   "Buffers"
   ("n" next-buffer "next" :color red)
   ("b" ivy-switch-buffer "switch")
@@ -397,9 +404,6 @@
   ("D" (progn (kill-this-buffer) (next-buffer)) "Delete" :color red)
   ("s" save-buffer "save" :color red))
 
-;; necessary? or should c be capture (t)odo (j)ournal?
-;; (defhydra hydra-comment (:color blue))
-
 (defhydra hydra-edit (:color blue)
   "Editing and text movement"
   ("j" move-line-down "line down" :color red)
@@ -408,7 +412,7 @@
   ("u" unfill-paragraph "unfill graf") 
   ("v" undo-tree-visualize "vis undo tree"))
 ;; iedit, crux stuff splitting/joining lines. unfilling paragraphs.
-;; 
+
 
 (defun save-all-buffers ()
   (interactive)
@@ -419,20 +423,16 @@
   ("S" save-all-buffers "save all")
   ("e" eval-buffer "eval current")
   ("r" counsel-recentf "recent")
+  ("R" ranger "ranger")  ; not working
   ("f" counsel-find-file "find")
   ("v" revert-buffer "revert"))
-;; ("c" elscreen-find-file "find-new screen")
-;; ("u" elscreen-find-screen-by-buffer "file or buffer-screen"))
 
 ;; ;; (defhydra hydra-help (:color blue))
 ;; remind C-o in ivy-hydra
 
-;; (defhydra hydra-insert (:color blue))
-;; crux stuff
-
 (defhydra hydra-jump (:color blue)
   "Jumping"
-  ("a" counsel-ag "ag")  ;; buggy! 
+  ("a" counsel-ag "ag")  ; buggy! 
   ("s" swiper-all "swiper all buffs"))
 ; imenu+, more searching, fix ag, maybe bookmarks 
 
@@ -440,20 +440,21 @@
   ("b" eval-buffer "buffer")
   ("d" eval-defun "defun")
   ("s" eval-last-sexp "sexp")) 
+
+(defhydra hydra-org (:color blue)
+  ;; ("a" "agenda TODOs")
+  ("c" org-todo "change TODO state")
+  ("r" org-archive-subtree-default "archive TODO")
+  ("s" org-schedule "schedule")
+  )
 ;; (defhydra hydra-registers (:color blue))
-; bookmarks, registers, rings 
+;; bookmarks, registers, rings, auto-complete
 ;; (defhydra hydra-toggles (:color blue))
+;; visual-line-mode, line-numbers
 
 (defhydra hydra-windows (:color blue columns: 3)
   "Windows and screens"
-  ;; ("0" (elscreen-goto 0) "goto 0")
-  ;; ("1" (elscreen-goto 1) "goto 1")
-  ;; ("2" (elscreen-goto 1) "goto 2")
-  ;; ("3" (elscreen-goto 1) "goto 3")
-  ;; ("4" (elscreen-goto 1) "goto 4")
-  ;; ("5" (elscreen-goto 1) "goto 5")
-  ;; ("n" elscreen-create)
-  ;; ("k" delete-other-windows "keep only this win")
+  ("k" delete-other-windows "keep only this win")
   ("o" other-window "other window" :color red)
   ("f" other-frame "other frame" :color red))
 
@@ -493,7 +494,6 @@
 	     :prefix "SPC"
 	     :non-normal-prefix "M-SPC"
 	     "SPC" 'counsel-M-x
-	     "'" 'avy-goto-char
 	     ";" 'comment-line
 	     "/" 'swiper
 	     "0" 'winum-select-window-0-or-10
@@ -506,20 +506,21 @@
 	     "7" 'winum-select-window-7
 	     "8" 'winum-select-window-8
 	     "a" 'hydra-applications/body  
-	     "b" 'hydra-buffer/body
-	     "c" 'hydra-comment/body
+	     "B" 'hydra-buffer/body
+	     "b" 'ace-jump-buffer
+	     "c" 'org-capture
 	     "e" 'hydra-edit/body 
 	     "f" 'hydra-files/body
 	     "h" 'hydra-help/body
-	     "i" 'hydra-insert/body
-	     "j" 'hydra-jump/body
+	     "j" 'avy-goto-char
+	     "J" 'hydra-jump/body
 	     "n" 'ace-jump-buffer
+	     "o" 'hydra-org/body 
 	     "q" 'save-buffers-kill-terminal 
 	     "r" 'hydra-registers/body
-	     "t" 'org-capture
+	     "t" 'hydra-text/body
 	     "v" 'hydra-evals/body
 	     "w" 'hydra-windows/body
-	     "x" 'hydra-text/body
 	     "z" 'hydra-zoom/body 
 	     )
 	    (general-nmap "j" 'evil-next-visual-line
@@ -533,20 +534,6 @@
   (add-hook 'markdown-mode-hook 'visual-line-mode)
   (require 'cm-mode))
 
-
-;;; elscreen
-;; (use-package elscreen
-;;   :config
-;;   (elscreen-start)
-;;   (setq elscreen-tab-display-kill-screen nil)
-;;   (setq elscreen-tab-display-control nil))
-;; (global-unset-key (kbd "s-w"))
-;; (global-set-key (kbd "s-w") 'elscreen-kill)
-;; (global-unset-key (kbd "s-n"))
-;; (global-set-key (kbd "s-n") 'elscreen-create)
-;; (use-package elscreen-persist
-;;   :config
-;;   (elscreen-persist-mode 1))
 ;;; winum
 (use-package winum)
 (setq winum-auto-setup-mode-line nil)
@@ -558,7 +545,7 @@
   :config
   (require 'spaceline-config)
   (spaceline-spacemacs-theme)
-  (spaceline-toggle-minor-modes-on)
+  (spaceline-toggle-minor-modes-off)
   (spaceline-toggle-buffer-modified-on)
   (spaceline-toggle-buffer-size-on)
   (spaceline-toggle-version-control-off)

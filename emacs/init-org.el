@@ -5,6 +5,7 @@
 
 ;;;; org-mode locations 
 (setq org-directory "~/Documents/notes") 
+(setq org-archive-location "~/Documents/notes/archive")
 (setq org-default-notes-file (concat org-directory "/todo.org"))
 (setq org-use-fast-todo-selection t)
 (setq org-agenda-files (quote ("~/Documents/notes/refile.org"
@@ -90,4 +91,5 @@
               ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
 
 
+(org-agenda nil "a")
 ;; end. 
