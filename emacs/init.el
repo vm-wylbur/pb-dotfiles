@@ -73,6 +73,7 @@
 ;;; Org setup from local path: git pull occasionally. 
 (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
 (use-package org :ensure t
+  :pin local 
   :load-path "~/src/org-mode")
 
 (load-file "~/dotfiles/emacs/init-org.el") 
@@ -166,6 +167,7 @@
 (setq default-fill-column 80)        ; toggle wrapping text at the 80th
 (delete-selection-mode 1)
 (defalias 'yes-or-no-p 'y-or-n-p)
+(setq tab-always-indent 'complete)
 
 ;;;;; imenu
 (defun imenu-elisp-sections ()
@@ -242,16 +244,18 @@
 ;;; Editing hacks 
 
 ;;;; Navigation with avy  
-(use-package avy 
+(use-package avy
   :ensure t
+  :pin melpa
   :bind (("C-'" . avy-goto-char)
 	 ("s-," . avy-goto-char-timer))  ; this is pretty cool
   :config (progn 
 	    (setq avy-background t)
 	    (setq avy-style 'post)
 	    (setq avy-all-windows 'all-frames)))
-(use-package ace-jump-buffer)
 
+(use-package ace-jump-buffer
+  :pin melpa)
 
 ;; ;;;; ivy
 (use-package ivy :ensure t
@@ -542,6 +546,7 @@
 ;;; modeline 
 (use-package spaceline
   :ensure t
+  :pin melpa 
   :config
   (require 'spaceline-config)
   (spaceline-spacemacs-theme)
