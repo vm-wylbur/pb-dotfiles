@@ -1,4 +1,4 @@
-;;; init.el - PB's init file. 
+;;; init.el - PB's init file.
 
 ;; Copyright (C) 2017
 ;; Author: Patrick Ball
@@ -20,19 +20,19 @@
 ;; imenu in editing
 ;;;; long-term todo
 
-;;;; Done 
+;;;; Done
 ;; flycheck + flyspell
-;; v nice integration of critic-markup 
+;; v nice integration of critic-markup
 ;; s-o should close screen, s-n should open screen
 
 
-;;; paths 
+;;; paths
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 (setq exec-path (append exec-path '("/usr/local/bin")))
 (server-start)
 (setq insert-directory-program "/usr/local/bin/gls")
 
-;;; packages 
+;;; packages
 (require 'package)
 (package-initialize t)
 ;; Override the packages with the git version of Org and other packages
@@ -70,29 +70,20 @@
 (setq load-prefer-newer t)
 (require 'bind-key)
 
-;;; Org setup from local path: git pull occasionally. 
+;;; Org setup from local path: git pull occasionally.
 (add-to-list 'auto-mode-alist '("\\.\\(org\\|org_archive\\|txt\\)$" . org-mode))
 (use-package org :ensure t
-  :pin local 
+  ;; :pin local
   :load-path "~/src/org-mode")
 
-(load-file "~/dotfiles/emacs/init-org.el") 
+(load-file "~/dotfiles/emacs/init-org.el")
 
-;;;;; org & babel 
+;;;;; org & babel
 (setq
  org-confirm-babel-evaluate nil
  org-src-fontify-natively t)
 
-;;; Introduction 
-
-;;;; smart parens 
-;; (use-package smartparens-config
-;;     :ensure smartparens
-;;     :config
-;;     (progn
-;;       (show-smartparens-global-mode t)))
-;; (add-hook 'prog-mode-hook 'turn-on-smartparens-strict-mode)
-;; (add-hook 'markdown-mode-hook 'turn-off-smartparens-strict-mode)
+;;; Introduction
 
 ;;;;;; customization
 (setq custom-file "~/.emacs.d/custom.el"
@@ -138,10 +129,10 @@
 (setq version-control t)
 (setq vc-make-backup-files t)
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
-(use-package super-save 
-  :init (super-save-mode +1) 
+(use-package super-save
+  :init (super-save-mode +1)
   :diminish super-save-mode
-  :config 
+  :config
      (setq super-save-auto-save-when-idle t)
      (setq auto-save-default nil))
 (setq savehist-file "~/.emacs.d/savehist")
@@ -168,6 +159,7 @@
 (delete-selection-mode 1)
 (defalias 'yes-or-no-p 'y-or-n-p)
 (setq tab-always-indent 'complete)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;;;;; imenu
 (defun imenu-elisp-sections ()
@@ -177,7 +169,7 @@
 (setq imenu-auto-rescan t)
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
-;;;;; wrapping 
+;;;;; wrapping
 (use-package adaptive-wrap
   :ensure t
   :defer t
@@ -230,10 +222,10 @@
 	  (defun magit-commit-mode-init ()
 	    (when (looking-at "\n")
 	      (open-line 1)))))
-	    
+
 
 ;;;; which-key
-(use-package which-key 
+(use-package which-key
   :diminish which-key-mode
  :config (progn
     (which-key-setup-side-window-bottom)
@@ -241,15 +233,15 @@
     (setq which-key-side-window-max-height 0.5)
     (which-key-mode 1)))
 
-;;; Editing hacks 
+;;; Editing hacks
 
-;;;; Navigation with avy  
+;;;; Navigation with avy
 (use-package avy
   :ensure t
   :pin melpa
   :bind (("C-'" . avy-goto-char)
 	 ("s-," . avy-goto-char-timer))  ; this is pretty cool
-  :config (progn 
+  :config (progn
 	    (setq avy-background t)
 	    (setq avy-style 'post)
 	    (setq avy-all-windows 'all-frames)))
@@ -273,8 +265,8 @@
 	    ))
 (use-package ivy-hydra :ensure t)
 
-;;;;; TODO add ivy hydra 
-;;;; counsel 
+;;;;; TODO add ivy hydra
+;;;; counsel
 (use-package counsel :ensure t
   :bind*                           ; load counsel when pressed
   (("M-x"     . counsel-M-x)       ; M-x use counsel
@@ -290,12 +282,12 @@
 
 
 ;;; evil-mode
-;;;; evil itself 
-(use-package evil 
+;;;; evil itself
+(use-package evil
   :ensure t
-  :config (progn  
+  :config (progn
     (setcdr evil-insert-state-map nil)  ; no evil-mode in insert.
-    (define-key evil-insert-state-map [escape] 'evil-normal-state) 
+    (define-key evil-insert-state-map [escape] 'evil-normal-state)
     (evil-mode 1))
   (use-package evil-surround
     :ensure t
@@ -304,7 +296,7 @@
   (use-package evil-indent-textobject
     :ensure t)
   )
-(use-package evil-easymotion) 
+(use-package evil-easymotion)
 (evilem-default-keybindings "M-SPC")
 
 
@@ -314,7 +306,7 @@
 (use-package iedit)
 (use-package evil-iedit-state)
 
-;;;; escape from everything 
+;;;; escape from everything
 (use-package evil-escape
   :config
   (evil-escape-mode)
@@ -347,7 +339,7 @@
   (forward-line 1)
   (transpose-lines 1)
   (forward-line -1))
- 
+
 (use-package crux)
 (use-package ranger :ensure t
   :config
@@ -356,7 +348,7 @@
   (setq ranger-cleanup-eagerly t))
 
 
-;;; hydra 
+;;; hydra
 (use-package hydra)
 
 ;; this doesn't work, but it's a good starting point.
@@ -370,31 +362,31 @@
 ;;   (if (get cm-follow-changes nil)
 ;;       (setq cm-follow-changes 1)
 ;;     (setq cm-follow-changes 0)))
-	
+
+(defhydra hydra-applications (:color blue :columns 3)
+  "Applications"
+  ("g" magit-status "git")
+  ("m" hydra-markdown/body "markdown")
+  ("o" hydra-orgmode/body "org-mode"))
+
 (defhydra hydra-markdown (:color blue)
   ("F" (cm-follow-changes 1) "mark changes")
   ("f" (cm-follow-changes 0) "stop marking")
   ("i" cm-accept/reject-change-at-point "accept/reject change")
   ("I" cm-accept/reject-all-changes "accept/reject all"))
 
-(defhydra hydra-applications (:color blue :columns 4)
-  "Applications"
-  ("g" magit-status "git")
-  ("m" hydra-markdown/body "markdown")
-  ("o" hydra-orgmode/body "org-mode"))
-
-;; org-mode,  
+;; org-mode,
 ;; need lots here, but I haven't figured it out yet. which-key might get us there.
-(defhydra hydra-orgmode (:color blue :columns 3)
-  "Org-mode"
-  ("a" org-agenda "agenda")
-  ("w" org-iswitchb "switch") 
+(defhydra hydra-org (:color blue)
+  ("a" org-archive-subtree-default "archive TODO")
+  ("c" org-todo "change TODO state")
+  ;; ("g" "agenda TODOs")
   ("r" org-refile "refile")
-  ("s" org-todo "change todo state")
+  ("s" org-schedule "schedule")
+  ("w" org-iswitchb "switch org buff")
   )
 
 (defhydra hydra-buffer (:color blue :columns 3)
-  ;; todo: make buffers open in new screen. 
   "Buffers"
   ("n" next-buffer "next" :color red)
   ("b" ivy-switch-buffer "switch")
@@ -402,9 +394,8 @@
   ("p" previous-buffer "prev" :color red)
   ("C-b" buffer-menu "buffer menu")
   ("N" evil-buffer-new "new")
-  ("e" eval-buffer "eval buff") 
+  ("e" eval-buffer "eval buff")
   ("d" kill-this-buffer "delete" :color red)
-  ;; don't come back to previous buffer after delete
   ("D" (progn (kill-this-buffer) (next-buffer)) "Delete" :color red)
   ("s" save-buffer "save" :color red))
 
@@ -413,7 +404,7 @@
   ("j" move-line-down "line down" :color red)
   ("k" move-line-up "line up" :color red)
   ("y" counsel-yank-pop "browse kill ring")
-  ("u" unfill-paragraph "unfill graf") 
+  ("u" unfill-paragraph "unfill graf")
   ("v" undo-tree-visualize "vis undo tree"))
 ;; iedit, crux stuff splitting/joining lines. unfilling paragraphs.
 
@@ -436,21 +427,15 @@
 
 (defhydra hydra-jump (:color blue)
   "Jumping"
-  ("a" counsel-ag "ag")  ; buggy! 
+  ("a" counsel-ag "ag")  ; buggy!
   ("s" swiper-all "swiper all buffs"))
-; imenu+, more searching, fix ag, maybe bookmarks 
+; imenu+, more searching, fix ag, maybe bookmarks
 
 (defhydra hydra-evals (:color blue)
   ("b" eval-buffer "buffer")
   ("d" eval-defun "defun")
-  ("s" eval-last-sexp "sexp")) 
+  ("s" eval-last-sexp "sexp"))
 
-(defhydra hydra-org (:color blue)
-  ;; ("a" "agenda TODOs")
-  ("c" org-todo "change TODO state")
-  ("r" org-archive-subtree-default "archive TODO")
-  ("s" org-schedule "schedule")
-  )
 ;; (defhydra hydra-registers (:color blue))
 ;; bookmarks, registers, rings, auto-complete
 ;; (defhydra hydra-toggles (:color blue))
@@ -463,7 +448,7 @@
   ("f" other-frame "other frame" :color red))
 
 ;; (defhydra hydra-text (:color blue))
-;; up/downcase, unfill graf, 
+;; up/downcase, unfill graf,
 
 ;; http://blog.vivekhaldar.com/post/4809065853/dotemacs-extract-interactively-change-font-size
 (defun my/zoom-in ()
@@ -487,11 +472,11 @@
   ("=" my/zoom-in "zoom in")
   ("-" my/zoom-out "zoom out"))
 
-;;;; general: this is the big-picture keybinding for everything 
+;;;; general: this is the big-picture keybinding for everything
 ;;     add the hydras in the previous stanza
 ;;     keep an eye on [this page](https://sam217pa.github.io/2016/09/23/keybindings-strategies-in-emacs/) for good customizations with general
 (use-package general :ensure t
-  :config (progn 
+  :config (progn
 	    (general-evil-setup 1)
 	    (general-define-key
 	     :states '(normal motion insert visual emacs)
@@ -500,41 +485,41 @@
 	     "SPC" 'counsel-M-x
 	     ";" 'comment-line
 	     "/" 'swiper
-	     "0" 'winum-select-window-0-or-10
+	     ;; "0" 'winum-select-window-0-or-10
 	     "1" 'winum-select-window-1
 	     "2" 'winum-select-window-2
 	     "3" 'winum-select-window-3
 	     "4" 'winum-select-window-4
 	     "5" 'winum-select-window-5
-	     "6" 'winum-select-window-6
-	     "7" 'winum-select-window-7
-	     "8" 'winum-select-window-8
-	     "a" 'hydra-applications/body  
+	     ;; "6" 'winum-select-window-6
+	     ;; "7" 'winum-select-window-7
+	     ;; "8" 'winum-select-window-8
+	     "a" 'hydra-applications/body
 	     "B" 'hydra-buffer/body
 	     "b" 'ace-jump-buffer
 	     "c" 'org-capture
-	     "e" 'hydra-edit/body 
+	     "e" 'hydra-edit/body
 	     "f" 'hydra-files/body
 	     "h" 'hydra-help/body
 	     "j" 'avy-goto-char
 	     "J" 'hydra-jump/body
 	     "n" 'ace-jump-buffer
-	     "o" 'hydra-org/body 
-	     "q" 'save-buffers-kill-terminal 
+	     "o" 'hydra-org/body
+	     "q" 'save-buffers-kill-terminal
 	     "r" 'hydra-registers/body
 	     "t" 'hydra-text/body
 	     "v" 'hydra-evals/body
 	     "w" 'hydra-windows/body
-	     "z" 'hydra-zoom/body 
+	     "z" 'hydra-zoom/body
 	     )
 	    (general-nmap "j" 'evil-next-visual-line
 			  "k" 'evil-previous-visual-line)))
 
-;;; modes 
+;;; modes
 ;;;; markdown
 (use-package markdown-mode
   :mode ("\\.\\(m\\(ark\\)?down\\|md\\)$" . markdown-mode)
-  :config 
+  :config
   (add-hook 'markdown-mode-hook 'visual-line-mode)
   (require 'cm-mode))
 
@@ -543,10 +528,10 @@
 (setq winum-auto-setup-mode-line nil)
 (winum-mode)
 
-;;; modeline 
+;;; modeline
 (use-package spaceline
   :ensure t
-  :pin melpa 
+  :pin melpa
   :config
   (require 'spaceline-config)
   (spaceline-spacemacs-theme)
@@ -561,6 +546,6 @@
    spaceline-helm-mode nil
    spaceline-byte-compile t))
 
-;;; done with port from org-mode 
+;;; done with port from org-mode
 (message "PB dotemacs loaded.")
 ;; end

@@ -1,31 +1,38 @@
 ;;; init-org.el
 
 ;; this contains my org-mode init stuff. It's so sprawling that it gets it's own
-;; file.
+;; file. it should refuse to eval if org-mode isn't loaded.
 
-;;;; org-mode locations 
-(setq org-directory "~/Documents/notes") 
+;;; evil keys for org-mode
+;; (define-key org-agenda-mode-map "j" 'evil-next-line)
+;; (define-key org-agenda-mode-map "k" 'evil-previous-line)
+
+;;;; org-mode locations
+(setq org-directory "~/Documents/notes")
 (setq org-archive-location "~/Documents/notes/archive.org::* From %s")
 (setq org-default-notes-file (concat org-directory "/todo.org"))
 (setq org-use-fast-todo-selection t)
 (setq org-agenda-files (quote ("~/Documents/notes/refile.org"
-			       "~/Documents/notes/todo.org"
-                               "~/Documents/notes/emacs.org"
-                               "~/Documents/notes/mbp.org"
-			       "~/Documents/notes/SY.org"
-			       "~/Documents/notes/policing.org"
-			       "~/Documents/notes/outreach.org")))
+			       "~/Documents/notes/todo-misc.org"
+                               "~/Documents/notes/todo-emacs.org"
+                               "~/Documents/notes/todo-mbp.org"
+			       "~/Documents/notes/todo-SY.org"
+			       "~/Documents/notes/todo-fundraising.org"
+			       "~/Documents/notes/todo-policing.org"
+			       "~/Documents/notes/todo-outreach.org")))
 
 (setq org-refile-use-outline-path nil)
 (setq org-refile-targets '((org-agenda-files :maxlevel . 2)))
 (setq org-log-done 'time)
+(add-hook 'org-mode-hook
+	  (lambda () (imenu-add-to-menubar "Imenu")))
 
 ;;;;; Bernt Hansen's TODO setup
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
 
-;;;;;; todo states 
+;;;;;; todo states
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
               ("NEXT" :foreground "blue" :weight bold)
@@ -92,4 +99,4 @@
 
 
 ;; (org-agenda nil "a")
-;; end. 
+;; end.
