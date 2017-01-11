@@ -21,11 +21,13 @@
 			       "~/Documents/notes/todo-policing.org"
 			       "~/Documents/notes/todo-outreach.org")))
 
+(global-set-key (kbd "C-,") 'org-cycle-agenda-files)
 (setq org-refile-use-outline-path nil)
 (setq org-refile-targets '((org-agenda-files :maxlevel . 2)))
 (setq org-log-done 'time)
 (add-hook 'org-mode-hook
 	  (lambda () (imenu-add-to-menubar "Imenu")))
+(setq org-invisible-edits 'smart)
 
 ;;;;; Bernt Hansen's TODO setup
 (setq org-todo-keywords

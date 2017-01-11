@@ -267,13 +267,12 @@
 
 ;;;;; TODO add ivy hydra
 ;;;; counsel
+(use-package smex :ensure t)       ; needed for counsel
 (use-package counsel :ensure t
   :bind*                           ; load counsel when pressed
   (("M-x"     . counsel-M-x)       ; M-x use counsel
-   ("C-x C-f" . counsel-find-file) ; C-x C-f use counsel-find-file
-   ("C-x C-r" . counsel-recentf)   ; search recently edited files
    ("C-y"     . counsel-yank-pop)
-  ))
+   ))
 
 ;; ;;;; swiper
 (use-package swiper :ensure t
