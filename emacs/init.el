@@ -261,6 +261,12 @@ See help of `format-time-string' for possible replacements")
 (global-set-key (kbd "C-t d") 'insert-current-date-time)
 (global-set-key (kbd "C-t t") 'insert-current-date-short)
 
+;;;; ibuffer settings
+(setq ibuffer-expert t)
+(add-hook 'ibuffer-mode-hook
+	  '(lambda ()
+	     (ibuffer-auto-mode 1)
+	     (ibuffer-switch-to-saved-filter-groups "home")))
 
 ;;;; Navigation with avy
 (use-package avy
@@ -270,7 +276,6 @@ See help of `format-time-string' for possible replacements")
 	 ("s-," . avy-goto-char-timer))  ; this is pretty cool
   :config (progn
 	    (setq avy-background t)
-	    (setq avy-style 'post)
 	    (setq avy-all-windows 'all-frames)))
 
 (use-package ace-jump-buffer
