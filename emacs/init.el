@@ -41,6 +41,7 @@
 
 (add-to-list 'package-archives
 	     '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives
 	     '("marmalade" . "https://marmalade-repo.org/packages/") t)
 (add-to-list 'package-archives
@@ -48,8 +49,9 @@
 (package-initialize)
 (setq package-archive-priorities
       '(("melpa-stable" . 20)
-        ("marmalade" . 5)
-        ("melpa" . 10)))
+        ("marmalade" . 10)
+	("gnu" . 5)
+        ("melpa" . 15)))
 (add-to-list 'load-path "~/.emacs.d/elpa")
 (add-to-list 'load-path "~/src/criticmarkup-emacs")
 
@@ -104,11 +106,14 @@
 (setq custom-safe-themes t)
 (use-package hc-zenburn-theme)
 (load-theme 'hc-zenburn)
+(set-face-attribute 'region nil :background "#666")
 
 ;;;;; frame and window
 (show-paren-mode 1)
+(setq show-paren-style 'mixed)
 (global-hl-line-mode 1)
 (tool-bar-mode -1)
+(scroll-bar-mode -1)
 (menu-bar-mode t)
 (setq-default indicate-empty-lines t)
 (when (not indicate-empty-lines)
@@ -117,12 +122,35 @@
       ring-bell-function 'ignore
       column-number-mode 1
       inhibit-startup-message t)
+(use-package rainbow-delimiters
+  :config
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+
 (setq-default cursor-type 'bar)
 ;; (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
 (fringe-mode '(8 . 2))
 (use-package beacon
   :config (beacon-mode 1))
 
+;;;;; nlinum
+(use-package nlinum
+  :pin gnu
+  :config
+  (set-face-attribute 'linum nil :height 100)
+  (add-hook 'prog-mode-hook 'linum-mode))
+;; (use-package nlinum-relative
+;;   :pin melpa
+;;   :config
+;;   ;; something else you want
+;;   (nlinum-relative-setup-evil)
+;;   (add-hook 'text-mode-hook 'nlinum-relative-mode)
+;;   (add-hook 'prog-mode-hook 'nlinum-relative-mode))
+;; (require 'nlinum-relative)
+;; (nlinum-relative-setup-evil)                    ;; setup for evil
+;; (add-hook 'prog-mode-hook 'nlinum-relative-mode)
+;; (setq nlinum-relative-redisplay-delay 0)      ;; delay
+;; (setq nlinum-relative-current-symbol "->")      ;; or "" for display current line number
+;; (setq nlinum-relative-offset 0)                 ;; 1 if you want 0, 2, 3...
 
 ;;;;; backups, version control, backups, and history
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
