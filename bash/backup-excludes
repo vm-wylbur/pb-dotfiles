@@ -1,0 +1,53 @@
+*cache/*
+*Cache/*
+*Caches/*
+*cache
+*cacheable*
+*/Maildir/*
+*/.mu/*
+*.DS_Store
+*/.Trash/*
+*/.pyenv/*
+*/anaconda3/*
+*/__pycache__/*
+*/MobileSync/*
+*/.git/*
+*/mse_hashes/*
+*/Messages.noindex/*
+*/Database.noindex/*
+*/Library/Application Support/Google/Chrome/Default/Web Applications/*
+*/Pictures/Photos Library.photoslibrary/Thumbnails/*
+*/Mobile Applications/*
+*/Movies/*
+*/TV Shows/*
+*/Box Sync/*
+*/.fseventsd/*
+*/lost+found/*
+*/.Spotlight*/*
+*/.com.apple*/*
+*/Adium.app/*
+*/iLifeAssetManagement.framework/*
+*/iLifeSlideshow.framework/*
+*/FacebookPublisher.publisher/*
+*/Book Themes/*
+*/Icon
+*/Applications/*
+*/gnus/*
+*.svn-base/*
+*.svn/*
+*.pyc
+*.git/*
+*/texlive/*
+*/usr/share/emacs/*
+*/.abw.bz2
+*/.rtf.bz2
+*/private/*
+*/.RecoverySets/*
+*/.file*
+*/Automator/*
+*/.Trashes/*
+*/myZaurus/*
+*/terrier/meanie/*
+*trash*
+*junk*
+*Trash*

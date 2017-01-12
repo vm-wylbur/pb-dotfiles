@@ -123,6 +123,7 @@
 (use-package beacon
   :config (beacon-mode 1))
 
+
 ;;;;; backups, version control, backups, and history
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 (setq delete-old-versions -1)
@@ -227,13 +228,39 @@
 ;;;; which-key
 (use-package which-key
   :diminish which-key-mode
- :config (progn
-    (which-key-setup-side-window-bottom)
-    (setq which-key-idle-delay 0.3)
-    (setq which-key-side-window-max-height 0.5)
-    (which-key-mode 1)))
+  :config (progn
+	    (which-key-setup-side-window-bottom)
+	    (setq which-key-idle-delay 0.3)
+	    (setq which-key-side-window-max-height 0.5)
+	    (which-key-mode 1)))
 
 ;;; Editing hacks
+;;;; insert date and time
+;; http://stackoverflow.com/questions/251908/how-can-i-insert-current-date-and-time-into-a-file-using-emacs
+(defvar current-date-time-format "%a %b %d %H:%M:%S %Z %Y"
+  "Format of date to insert with `insert-current-date-time' func
+See help of `format-time-string' for possible replacements")
+
+(defvar current-date-time-short-format "%Y-%m-%dT%H:%M%Z"
+  "Format of date to insert with `insert-current-date-short' func")
+
+(defun insert-current-date-short ()
+  "insert the current date and time into current buffer.
+    Uses `current-date-time-format-short for the formatting the date/time."
+  (interactive)
+  (insert (format-time-string current-date-time-short-format (current-time)))
+  )
+
+(defun insert-current-date-time ()
+  "insert the current date and time into current buffer.
+    Uses `current-date-time-format' for the formatting the date/time."
+  (interactive)
+  (insert (format-time-string current-date-time-format (current-time)))
+  )
+(global-unset-key (kbd "C-t"))
+(global-set-key (kbd "C-t d") 'insert-current-date-time)
+(global-set-key (kbd "C-t t") 'insert-current-date-short)
+
 
 ;;;; Navigation with avy
 (use-package avy
@@ -285,9 +312,9 @@
 (use-package evil
   :ensure t
   :config (progn
-    (setcdr evil-insert-state-map nil)  ; no evil-mode in insert.
-    (define-key evil-insert-state-map [escape] 'evil-normal-state)
-    (evil-mode 1))
+	    (setcdr evil-insert-state-map nil)  ; no evil-mode in insert.
+	    (define-key evil-insert-state-map [escape] 'evil-normal-state)
+	    (evil-mode 1))
   (use-package evil-surround
     :ensure t
     :config
@@ -396,7 +423,8 @@
   ("e" eval-buffer "eval buff")
   ("d" kill-this-buffer "delete" :color red)
   ("D" (progn (kill-this-buffer) (next-buffer)) "Delete" :color red)
-  ("s" save-buffer "save" :color red))
+  ("s" save-buffer "save" :color red)
+  ("S" bs-show "Show"))
 
 (defhydra hydra-edit (:color blue)
   "Editing and text movement"
@@ -428,7 +456,7 @@
   "Jumping"
   ("a" counsel-ag "ag")  ; buggy!
   ("s" swiper-all "swiper all buffs"))
-; imenu+, more searching, fix ag, maybe bookmarks
+; imenu+, more searching, fix ag, maybe bookmarks ; ; ; ; ; ; ; ; ; ; ;
 
 (defhydra hydra-evals (:color blue)
   ("b" eval-buffer "buffer")

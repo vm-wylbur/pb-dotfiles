@@ -12,6 +12,7 @@
 (setq org-archive-location "~/Documents/notes/archive.org::* From %s")
 (setq org-default-notes-file (concat org-directory "/todo.org"))
 (setq org-use-fast-todo-selection t)
+;; this should include all ~/Documents/notes/todo-*.org + refile b
 (setq org-agenda-files (quote ("~/Documents/notes/refile.org"
 			       "~/Documents/notes/todo-misc.org"
                                "~/Documents/notes/todo-emacs.org"
