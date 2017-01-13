@@ -111,7 +111,7 @@
 ;;;;; frame and window
 (show-paren-mode 1)
 (setq show-paren-style 'parenthesis)
-;; (global-hl-line-mode 1)
+;; (global-hl-line-mode 1)  ; FIXME maybe come back to this after fixing nlinum
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (menu-bar-mode t)
@@ -134,7 +134,7 @@
 (use-package nlinum
   :pin gnu
   :config
-  ;; (set-face-attribute 'linum nil :height 100)
+  (set-face-attribute 'linum nil :height 100)
   (setq nlinum-highlight-current-line 1)
   (add-hook 'prog-mode-hook 'linum-mode))
 
@@ -300,29 +300,36 @@ See help of `format-time-string' for possible replacements")
 (use-package ace-jump-buffer
   :pin melpa)
 
+;;; company-mode
+
+
 ;;; helm
+
 (use-package helm
   :diminish helm-mode
+  :pin melpa-stable
   :init
   (progn
+    (use-package helm-swoop)
+    (use-package helm-ag
+      :init
+      (custom-set-variables
+       '(helm-ag-base-command "pt -e --nocolor --nogroup")))
     (require 'helm-config)
-    (setq helm-candidate-number-limit 100)
-    ;; From https://gist.github.com/antifuchs/9238468
     (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
-          helm-input-idle-delay 0.01  ; this actually updates things
-          helm-quick-update t
-          helm-M-x-requires-pattern nil
-          helm-ff-skip-boring-files t)
-    (helm-mode))
-  :bind (("C-c h" . helm-mini)
-         ("C-h a" . helm-apropos)
-         ("C-x C-b" . helm-buffers-list)
-         ("C-x b" . helm-buffers-list)
-         ("M-y" . helm-show-kill-ring)
-         ("M-x" . helm-M-x)
-         ("C-x c o" . helm-occur)
-         ("C-x c s" . helm-swoop)
-         ("C-x c SPC" . helm-all-mark-rings)))
+	  helm-input-idle-delay 0.01  ; this actually updates things
+	  helm-candidate-number-limit 100
+	  helm-quick-update t
+	  helm-buffers-fuzzy-matching t
+	  helm-recentf-fuzzy-match t
+	  helm-M-x-requires-pattern nil
+	  helm-ff-file-name-history-use-recentf t
+	  helm-swoop-speed-or-color t
+	  helm-ff-skip-boring-files t))
+  :config
+  (progn
+    (define-key helm-map [escape] 'helm-keyboard-quit)))
+
 
 ;; ;;;;;; ivy
 ;; (use-package ivy :ensure t
@@ -421,7 +428,6 @@ See help of `format-time-string' for possible replacements")
   (setq ranger-dont-show-binary t)
   (setq ranger-cleanup-eagerly t))
 
-
 ;;; hydra
 (use-package hydra)
 
@@ -463,10 +469,11 @@ See help of `format-time-string' for possible replacements")
 (defhydra hydra-buffer (:color blue :columns 3)
   "Buffers"
   ("n" next-buffer "next" :color red)
-  ("b" ivy-switch-buffer "switch")
+  ("b" helm-buffers-list "switch")
   ("B" ibuffer "ibuffer")
   ("p" previous-buffer "prev" :color red)
   ("C-b" buffer-menu "buffer menu")
+  ("m" helm-mini "helm-mini")
   ("N" evil-buffer-new "new")
   ("e" eval-buffer "eval buff")
   ("d" kill-this-buffer "delete" :color red)
@@ -476,9 +483,11 @@ See help of `format-time-string' for possible replacements")
 
 (defhydra hydra-edit (:color blue)
   "Editing and text movement"
+  ;; helm swoop and occur
   ("j" move-line-down "line down" :color red)
   ("k" move-line-up "line up" :color red)
-  ("y" counsel-yank-pop "browse kill ring")
+  ("r" helm-occur "occur")
+  ("y" helm-show-kill-ring "browse kill ring")
   ("u" unfill-paragraph "unfill graf")
   ("v" undo-tree-visualize "vis undo tree"))
 ;; iedit, crux stuff splitting/joining lines. unfilling paragraphs.
@@ -489,12 +498,12 @@ See help of `format-time-string' for possible replacements")
   (save-some-buffers t))
 (defhydra hydra-files (:color blue :columns 3)
   "Files"
+  ("f" helm-find-files "find")
   ("s" save-buffer "save")
   ("S" save-all-buffers "save all")
   ("e" eval-buffer "eval current")
-  ("r" counsel-recentf "recent")
+  ("m" helm-mini "helm-mini")
   ("R" ranger "ranger")  ; not working
-  ("f" counsel-find-file "find")
   ("v" revert-buffer "revert"))
 
 ;; ;; (defhydra hydra-help (:color blue))
@@ -502,9 +511,12 @@ See help of `format-time-string' for possible replacements")
 
 (defhydra hydra-jump (:color blue)
   "Jumping"
-  ("a" counsel-ag "ag")  ; buggy!
-  ("s" swiper-all "swiper all buffs"))
-; imenu+, more searching, fix ag, maybe bookmarks ; ; ; ; ; ; ; ; ; ; ;
+  ("a" helm-ag "ag")  ; buggy!
+  ("o" helm-multi-swoop-org "swoop org")
+  ("w" helm-swoop "swoop")
+  ("W" helm-multi-swoop-all "swoop all")
+  )
+; imenu+, more searching, fix ag, maybe bookmarks ; ; ; ; ; ; ; ; ; ; ; ;
 
 (defhydra hydra-evals (:color blue)
   ("b" eval-buffer "buffer")
@@ -557,9 +569,9 @@ See help of `format-time-string' for possible replacements")
 	     :states '(normal motion insert visual emacs)
 	     :prefix "SPC"
 	     :non-normal-prefix "M-SPC"
-	     "SPC" 'counsel-M-x
+	     "SPC" 'helm-M-x
 	     ";" 'comment-line
-	     "/" 'swiper
+	     "/" 'helm-swoop
 	     ;; "0" 'winum-select-window-0-or-10
 	     "1" 'winum-select-window-1
 	     "2" 'winum-select-window-2
@@ -618,7 +630,7 @@ See help of `format-time-string' for possible replacements")
   (setq
    spaceline-highlight-face-func 'spaceline-highlight-face-evil-state
    powerline-default-separator 'contour
-   spaceline-helm-mode nil
+   spaceline-helm-mode t
    spaceline-byte-compile t))
 
 ;;; done with port from org-mode
