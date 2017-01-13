@@ -328,6 +328,7 @@ See help of `format-time-string' for possible replacements")
 	  helm-ff-skip-boring-files t))
   :config
   (progn
+    (helm-autoresize-mode t)
     (define-key helm-map [escape] 'helm-keyboard-quit)))
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
 (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB work in terminal
@@ -344,6 +345,12 @@ See help of `format-time-string' for possible replacements")
 
 (add-hook 'helm-minibuffer-set-up-hook
           'spacemacs//helm-hide-minibuffer-maybe)
+
+(require 'helm-eshell)
+(add-hook 'eshell-mode-hook
+          #'(lambda ()
+              (define-key eshell-mode-map (kbd "C-c C-l")  'helm-eshell-history)))
+(define-key minibuffer-local-map (kbd "C-c C-l") 'helm-minibuffer-history)
 
 
 ;;; evil-mode
@@ -500,7 +507,12 @@ See help of `format-time-string' for possible replacements")
   ("d" eval-defun "defun")
   ("s" eval-last-sexp "sexp"))
 
-;; (defhydra hydra-registers (:color blue))
+(defhydra hydra-registers (:color blue)
+  "Registers"
+  ;; add copy to register, prepend, append, insert into buffer
+  ("m" helm-all-mark-rings "markers")
+  ("v" helm-register "view")
+  )
 ;; bookmarks, registers, rings, auto-complete
 ;; (defhydra hydra-toggles (:color blue))
 ;; visual-line-mode, line-numbers
