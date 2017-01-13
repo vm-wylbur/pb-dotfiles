@@ -110,8 +110,8 @@
 
 ;;;;; frame and window
 (show-paren-mode 1)
-(setq show-paren-style 'mixed)
-(global-hl-line-mode 1)
+(setq show-paren-style 'parenthesis)
+;; (global-hl-line-mode 1)
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (menu-bar-mode t)
@@ -126,8 +126,6 @@
   :config
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
-(setq-default cursor-type 'bar)
-;; (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
 (fringe-mode '(8 . 2))
 (use-package beacon
   :config (beacon-mode 1))
@@ -136,21 +134,9 @@
 (use-package nlinum
   :pin gnu
   :config
-  (set-face-attribute 'linum nil :height 100)
+  ;; (set-face-attribute 'linum nil :height 100)
+  (setq nlinum-highlight-current-line 1)
   (add-hook 'prog-mode-hook 'linum-mode))
-;; (use-package nlinum-relative
-;;   :pin melpa
-;;   :config
-;;   ;; something else you want
-;;   (nlinum-relative-setup-evil)
-;;   (add-hook 'text-mode-hook 'nlinum-relative-mode)
-;;   (add-hook 'prog-mode-hook 'nlinum-relative-mode))
-;; (require 'nlinum-relative)
-;; (nlinum-relative-setup-evil)                    ;; setup for evil
-;; (add-hook 'prog-mode-hook 'nlinum-relative-mode)
-;; (setq nlinum-relative-redisplay-delay 0)      ;; delay
-;; (setq nlinum-relative-current-symbol "->")      ;; or "" for display current line number
-;; (setq nlinum-relative-offset 0)                 ;; 1 if you want 0, 2, 3...
 
 ;;;;; backups, version control, backups, and history
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
@@ -189,6 +175,11 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 (setq tab-always-indent 'complete)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
+;; deletes all the whitespace when you hit backspace or delete
+(use-package hungry-delete
+  :ensure t
+  :config
+  (global-hungry-delete-mode))
 
 ;;;;; imenu
 (defun imenu-elisp-sections ()
@@ -309,35 +300,59 @@ See help of `format-time-string' for possible replacements")
 (use-package ace-jump-buffer
   :pin melpa)
 
-;; ;;;; ivy
-(use-package ivy :ensure t
-  :diminish (ivy-mode . "") ; does not display ivy in the modeline
-  :init (ivy-mode 1)        ; enable ivy globally at startup
-  :bind (:map ivy-mode-map  ; bind in the ivy buffer
-	      ("C-'" . ivy-avy)) ; C-' to ivy-avy
-  :config (progn
-	    (setq ivy-use-virtual-buffers t)   ; extend searching to bookmarks and …
-	    (setq ivy-virtual-abbreviate 'full) ; Show the full virtual file paths
-	    (setq ivy-extra-directories nil) ; default value: ("../" "./")
-	    (setq ivy-height 20)               ; set height of the ivy window
-	    (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
-	    (define-key ivy-minibuffer-map (kbd "<escape>") 'minibuffer-keyboard-quit)
-	    ))
-(use-package ivy-hydra :ensure t)
+;;; helm
+(use-package helm
+  :diminish helm-mode
+  :init
+  (progn
+    (require 'helm-config)
+    (setq helm-candidate-number-limit 100)
+    ;; From https://gist.github.com/antifuchs/9238468
+    (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
+          helm-input-idle-delay 0.01  ; this actually updates things
+          helm-quick-update t
+          helm-M-x-requires-pattern nil
+          helm-ff-skip-boring-files t)
+    (helm-mode))
+  :bind (("C-c h" . helm-mini)
+         ("C-h a" . helm-apropos)
+         ("C-x C-b" . helm-buffers-list)
+         ("C-x b" . helm-buffers-list)
+         ("M-y" . helm-show-kill-ring)
+         ("M-x" . helm-M-x)
+         ("C-x c o" . helm-occur)
+         ("C-x c s" . helm-swoop)
+         ("C-x c SPC" . helm-all-mark-rings)))
 
-;;;;; TODO add ivy hydra
-;;;; counsel
-(use-package smex :ensure t)       ; needed for counsel
-(use-package counsel :ensure t
-  :bind*                           ; load counsel when pressed
-  (("M-x"     . counsel-M-x)       ; M-x use counsel
-   ("C-y"     . counsel-yank-pop)
-   ))
+;; ;;;;;; ivy
+;; (use-package ivy :ensure t
+;;   :diminish (ivy-mode . "") ; does not display ivy in the modeline
+;;   :init (ivy-mode 1)        ; enable ivy globally at startup
+;;   :bind (:map ivy-mode-map  ; bind in the ivy buffer
+;; 	      ("C-'" . ivy-avy)) ; C-' to ivy-avy
+;;   :config (progn
+;; 	    (setq ivy-use-virtual-buffers t)   ; extend searching to bookmarks and …
+;; 	    (setq ivy-virtual-abbreviate 'full) ; Show the full virtual file paths
+;; 	    (setq ivy-extra-directories nil) ; default value: ("../" "./")
+;; 	    (setq ivy-height 20)               ; set height of the ivy window
+;; 	    (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
+;; 	    (define-key ivy-minibuffer-map (kbd "<escape>") 'minibuffer-keyboard-quit)
+;; 	    ))
+;; (use-package ivy-hydra :ensure t)
 
-;; ;;;; swiper
-(use-package swiper :ensure t
-  :bind* (("C-s" . swiper)
-	  ("C-r" . swiper)))
+;; ;;;;; TODO add ivy hydra
+;; ;;;; counsel
+;; (use-package smex :ensure t)       ; needed for counsel
+;; (use-package counsel :ensure t
+;;   :bind*                           ; load counsel when pressed
+;;   (("M-x"     . counsel-M-x)       ; M-x use counsel
+;;    ("C-y"     . counsel-yank-pop)
+;;    ))
+
+;; ;; ;;;; swiper
+;; (use-package swiper :ensure t
+;;   :bind* (("C-s" . swiper)
+;; 	  ("C-r" . swiper)))
 
 
 ;;; evil-mode
