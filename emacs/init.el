@@ -33,6 +33,7 @@
 (setq insert-directory-program "/usr/local/bin/gls")
 
 ;;; packages
+(setq package-check-signature nil) ; this is bad!
 (require 'package)
 (package-initialize t)
 ;; Override the packages with the git version of Org and other packages
@@ -301,6 +302,66 @@ See help of `format-time-string' for possible replacements")
   :pin melpa)
 
 ;;; company-mode
+(use-package company
+  :diminish ""
+  :init
+  ;; (add-hook 'prog-mode-hook 'company-mode)
+  ;; (add-hook 'comint-mode-hook 'company-mode)
+  :config
+  (global-company-mode)
+  ;; Quick-help (popup documentation for suggestions).
+  ;; (use-package company-quickhelp
+  ;;   :if window-system
+  ;;   :init (company-quickhelp-mode 1))
+  ;; Company settings.
+  (setq company-tooltip-limit 20)
+  (setq company-idle-delay 0.1)
+  (setq company-echo-delay 0)
+  (setq company-minimum-prefix-length 3)
+  (setq company-require-match nil)
+  (setq company-selection-wrap-around t)
+  (setq company-tooltip-align-annotations t)
+  ;; weight by frequency
+  (setq company-transformers '(company-sort-by-occurrence))
+
+  (define-key company-active-map (kbd "M-n") nil)
+  (define-key company-active-map (kbd "M-p") nil)
+  (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
+  (define-key company-active-map (kbd "C-n") 'company-select-next)
+  (define-key company-active-map (kbd "C-n") 'company-select-next)
+  (define-key company-active-map (kbd "C-k") 'company-select-previous)
+  (define-key company-active-map (kbd "C-j") 'company-select-previous)
+  (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+  (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
+  (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
+
+  ;; =======================
+  ;; Adding company backends
+  ;; =======================
+  (setq company-backends
+	'((company-files          ; files & directory
+	   company-keywords       ; keywords
+	   company-elisp
+	   company-capf
+	   company-yasnippet
+	   )
+	  (company-abbrev company-dabbrev)
+	  ))
+  ;; Python auto completion
+  (use-package company-jedi
+    :init
+    (setq company-jedi-python-bin "python3")
+    :config
+    (add-to-list 'company-backends 'company-jedi))
+
+  (use-package company-statistics
+    :config
+    (add-hook 'after-init-hook 'company-statistics-mode))
+  (use-package helm-company
+    :config
+    (progn
+      (define-key company-mode-map (kbd "C-:") 'helm-company)
+      (define-key company-active-map (kbd "C-:") 'helm-company))))
 
 
 ;;; helm
@@ -329,8 +390,10 @@ See help of `format-time-string' for possible replacements")
   :config
   (progn
     (helm-autoresize-mode t)
-    (define-key helm-map [escape] 'helm-keyboard-quit)))
-(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
+    (define-key helm-map [escape] 'helm-keyboard-quit)
+    (helm-mode 1)))
+
+    (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
 (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB work in terminal
 (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
 (defun spacemacs//helm-hide-minibuffer-maybe ()
@@ -351,7 +414,7 @@ See help of `format-time-string' for possible replacements")
           #'(lambda ()
               (define-key eshell-mode-map (kbd "C-c C-l")  'helm-eshell-history)))
 (define-key minibuffer-local-map (kbd "C-c C-l") 'helm-minibuffer-history)
-
+(ido-mode -1)
 
 ;;; evil-mode
 ;;;; evil itself

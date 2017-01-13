@@ -75,10 +75,10 @@
     (org-remove-empty-drawer-at "LOGBOOK" (point))))
 
 (add-hook 'org-clock-out-hook 'bh/remove-empty-drawer-on-clock-out 'append)
-
+(require 'helm-org)
 
 ;;;;;; refiling
-; Targets include this file and any file contributing to the agenda - up to 9 levels deep
+					; Targets include this file and any file contributing to the agenda - up to 9 levels deep
 (setq org-refile-targets (quote ((nil :maxlevel . 9)
                                  (org-agenda-files :maxlevel . 9))))
 
@@ -100,6 +100,8 @@
               ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
               ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
 
+(setq org-completion-use-ido nil
+      org-completion-use-iswitchb nil)
 
 ;; (org-agenda nil "a")
 ;; end.
