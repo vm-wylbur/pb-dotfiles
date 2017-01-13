@@ -329,37 +329,21 @@ See help of `format-time-string' for possible replacements")
   :config
   (progn
     (define-key helm-map [escape] 'helm-keyboard-quit)))
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
+(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB work in terminal
+(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+(defun spacemacs//helm-hide-minibuffer-maybe ()
+  "Hide minibuffer in Helm session if we use the header line as input field."
+  (when (with-helm-buffer helm-echo-input-in-header-line)
+    (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+      (overlay-put ov 'window (selected-window))
+      (overlay-put ov 'face
+                   (let ((bg-color (face-background 'default nil)))
+                     `(:background ,bg-color :foreground ,bg-color)))
+      (setq-local cursor-type nil))))
 
-
-;; ;;;;;; ivy
-;; (use-package ivy :ensure t
-;;   :diminish (ivy-mode . "") ; does not display ivy in the modeline
-;;   :init (ivy-mode 1)        ; enable ivy globally at startup
-;;   :bind (:map ivy-mode-map  ; bind in the ivy buffer
-;; 	      ("C-'" . ivy-avy)) ; C-' to ivy-avy
-;;   :config (progn
-;; 	    (setq ivy-use-virtual-buffers t)   ; extend searching to bookmarks and …
-;; 	    (setq ivy-virtual-abbreviate 'full) ; Show the full virtual file paths
-;; 	    (setq ivy-extra-directories nil) ; default value: ("../" "./")
-;; 	    (setq ivy-height 20)               ; set height of the ivy window
-;; 	    (setq ivy-count-format "(%d/%d) ") ; count format, from the ivy help page
-;; 	    (define-key ivy-minibuffer-map (kbd "<escape>") 'minibuffer-keyboard-quit)
-;; 	    ))
-;; (use-package ivy-hydra :ensure t)
-
-;; ;;;;; TODO add ivy hydra
-;; ;;;; counsel
-;; (use-package smex :ensure t)       ; needed for counsel
-;; (use-package counsel :ensure t
-;;   :bind*                           ; load counsel when pressed
-;;   (("M-x"     . counsel-M-x)       ; M-x use counsel
-;;    ("C-y"     . counsel-yank-pop)
-;;    ))
-
-;; ;; ;;;; swiper
-;; (use-package swiper :ensure t
-;;   :bind* (("C-s" . swiper)
-;; 	  ("C-r" . swiper)))
+(add-hook 'helm-minibuffer-set-up-hook
+          'spacemacs//helm-hide-minibuffer-maybe)
 
 
 ;;; evil-mode
@@ -392,17 +376,8 @@ See help of `format-time-string' for possible replacements")
   :config
   (evil-escape-mode)
   (global-set-key (kbd "<esc>") 'evil-escape))
-;; (define-key evil-visual-state-map [escape] 'keyboard-quit)
-;; (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
-;; (define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
-;; (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
-;; (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
-;; (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 (define-key undo-tree-visualizer-mode-map [escape] 'undo-tree-visualizer-quit)
 (define-key undo-tree-map [escape] 'undo-tree-visualizer-quit)
-;; (define-key ivy-minibuffer-map (kbd "<escape>") 'minibuffer-keyboard-quit)
-;; (global-set-key [escape] 'evil-exit-emacs-state)
-;; (global-set-key [escape] 'keyboard-quit)
 
 ;;;; hydras
 
@@ -511,12 +486,14 @@ See help of `format-time-string' for possible replacements")
 
 (defhydra hydra-jump (:color blue)
   "Jumping"
-  ("a" helm-ag "ag")  ; buggy!
+  ("a" helm-ag "ag")
+  ("i" helm-semantic-or-imenu "imenu")
+  ("m" helm-all-mark-rings "markers")
   ("o" helm-multi-swoop-org "swoop org")
   ("w" helm-swoop "swoop")
   ("W" helm-multi-swoop-all "swoop all")
   )
-; imenu+, more searching, fix ag, maybe bookmarks ; ; ; ; ; ; ; ; ; ; ; ;
+;; imenu+, more searching, maybe bookmarks
 
 (defhydra hydra-evals (:color blue)
   ("b" eval-buffer "buffer")
