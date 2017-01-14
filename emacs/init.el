@@ -507,14 +507,14 @@ See help of `format-time-string' for possible replacements")
 
 ;; org-mode,
 ;; need lots here, but I haven't figured it out yet. which-key might get us there.
-(defhydra hydra-org (:color blue)
+(defhydra hydra-org (:color blue :columns 3)
+  "Org mode"
   ("a" org-archive-subtree-default "archive TODO")
-  ("c" org-todo "change TODO state")
+  ("t" org-todo "change TODO state")
   ;; ("g" "agenda TODOs")
   ("r" org-refile "refile")
   ("s" org-schedule "schedule")
-  ("w" org-iswitchb "switch org buff")
-  )
+  ("b" org-iswitchb "switch org buff"))
 
 (defhydra hydra-buffer (:color blue :columns 3)
   "Buffers"
