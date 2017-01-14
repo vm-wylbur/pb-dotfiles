@@ -13,14 +13,17 @@
 (setq org-default-notes-file (concat org-directory "/todo.org"))
 (setq org-use-fast-todo-selection t)
 ;; this should include all ~/Documents/notes/todo-*.org + refile b
-(setq org-agenda-files (quote ("~/Documents/notes/refile.org"
-			       "~/Documents/notes/todo-misc.org"
-                               "~/Documents/notes/todo-emacs.org"
-                               "~/Documents/notes/todo-mbp.org"
-			       "~/Documents/notes/todo-SY.org"
-			       "~/Documents/notes/todo-fundraising.org"
-			       "~/Documents/notes/todo-policing.org"
-			       "~/Documents/notes/todo-outreach.org")))
+;; (setq org-agenda-files (quote ("~/Documents/notes/refile.org"
+;; 			       "~/Documents/notes/todo-misc.org"
+;;                                "~/Documents/notes/todo-emacs.org"
+;;                                "~/Documents/notes/todo-mbp.org"
+;; 			       "~/Documents/notes/todo-SY.org"
+;; 			       "~/Documents/notes/todo-fundraising.org"
+;; 			       "~/Documents/notes/todo-policing.org"
+;; 			       "~/Documents/notes/todo-outreach.org")))
+(setq org-agenda-files (append
+			'("~/Documents/notes/refile.org")
+			(file-expand-wildcards "~/DOcuments/notes/todo-*.org")))
 
 (global-set-key (kbd "C-,") 'org-cycle-agenda-files)
 (setq org-refile-use-outline-path nil)
@@ -32,7 +35,7 @@
 
 ;;;;; Bernt Hansen's TODO setup
 (setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+      (quote ((sequence "TODO(t!)" "NEXT(n!)" "|" "DONE(d!)")
               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
 
 ;;;;;; todo states
@@ -51,19 +54,19 @@
 ;;;;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
 (setq org-capture-templates
       (quote (("t" "todo" entry (file+headline "~/Documents/notes/refile.org" "Inbox")
-               "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+               "* TODO %?\n%U\n%a\n")
               ("r" "respond" entry (file "~/Documents/notes/refile.org")
-               "** NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+               "** NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :immediate-finish t)
               ("n" "note" entry (file "~/Documents/notes/refile.org")
-               "** %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+               "** %? :NOTE:\n%U\n%a\n")
               ("j" "Journal" entry (file+datetree "~/Documents/notes/diary.org")
-               "** %?\n%U\n" :clock-in t :clock-resume t)
+               "** %?\n%U\n")
               ("w" "org-protocol" entry (file "~/Documents/notes/refile.org")
                "** TODO Review %c\n%U\n" :immediate-finish t)
               ("m" "Meeting" entry (file "~/Documents/notes/refile.org")
-               "** MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
+               "** MEETING with %? :MEETING:\n%U")
               ("p" "Phone call" entry (file "~/Documents/notes/refile.org")
-               "** PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
+               "** PHONE %? :PHONE:\n%U")
               ("h" "Habit" entry (file "~/Documents/notes/refile.org")
                "** NEXT %?\n%U\n%a\nSCHEDULED: %(format-time-string \"%&lt;&lt;%Y-%m-%d %a .+1d/3d&gt;&gt;\")\n:PROPERTIES:\n:STYLE: habit\n:REPEAT_TO_STATE: NEXT\n:END:\n"))))
 
@@ -82,14 +85,12 @@
 (setq org-refile-targets (quote ((nil :maxlevel . 9)
                                  (org-agenda-files :maxlevel . 2))))
 
-; Use full outline paths for refile targets - we file directly with IDO
-(setq org-refile-use-outline-path t)
-
-; Targets complete directly with IDO
-(setq org-outline-path-complete-in-steps nil)
-
-; Allow refile to create parent tasks with confirmation
-(setq org-refile-allow-creating-parent-nodes (quote confirm))
+(setq org-refile-use-outline-path t
+      org-outline-path-complete-in-steps nil
+      org-completion-use-ido nil
+      org-completion-use-iswitchb nil
+      org-completion-fallback-command helm-org-headings-max-depth
+      org-refile-allow-creating-parent-nodes (quote confirm))
 
 (setq org-todo-state-tags-triggers
       (quote (("CANCELLED" ("CANCELLED" . t))
@@ -100,8 +101,6 @@
               ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
               ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
 
-(setq org-completion-use-ido nil
-      org-completion-use-iswitchb nil)
-
+(load-file "~/.emacs.d/lisp/sacha-refiling-org.el")
 ;; (org-agenda nil "a")
 ;; init-org end.

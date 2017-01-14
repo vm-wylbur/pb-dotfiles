@@ -255,7 +255,9 @@
 	    (which-key-mode 1)))
 
 ;;; Editing hacks
+;;;; personal keybindings
 (global-set-key (kbd "s-/") 'comment-line)
+(global-set-key (kbd "M-x") 'helm-M-x)
 
 ;;;; insert date and time
 ;; http://stackoverflow.com/questions/251908/how-can-i-insert-current-date-and-time-into-a-file-using-emacs
@@ -529,17 +531,27 @@ See help of `format-time-string' for possible replacements")
   ("s" save-buffer "save" :color red)
   ("S" bs-show "Show"))
 
-(defhydra hydra-edit (:color blue)
-  "Editing and text movement"
-  ;; helm swoop and occur
-  ("j" move-line-down "line down" :color red)
+(defhydra hydra-edit (:color blue :columns 3)
+  "Editing"
   ("k" move-line-up "line up" :color red)
+  ("i"  (progn (evil-insert-state) (iedit-mode)) "iedit")
+  ("n" narrow-to-region "narrow")
+  ("j" move-line-down "line down" :color red)
   ("r" helm-occur "occur")
+  ("w" widen "widen")
   ("y" helm-show-kill-ring "browse kill ring")
   ("u" unfill-paragraph "unfill graf")
   ("v" undo-tree-visualize "vis undo tree"))
 ;; iedit, crux stuff splitting/joining lines. unfilling paragraphs.
 
+(defun show-file-name ()
+  "Show the full path file name in the minibuffer."
+  (interactive)
+  (message (buffer-file-name)))
+
+(setq frame-title-format
+      (list (format "%s %%S: %%j " (system-name))
+	    '(buffer-file-name "%f" (dired-directory dired-directory "%b"))))
 
 (defun save-all-buffers ()
   (interactive)
@@ -550,6 +562,7 @@ See help of `format-time-string' for possible replacements")
   ("s" save-buffer "save")
   ("S" save-all-buffers "save all")
   ("e" eval-buffer "eval current")
+  ("p" show-file-name "full path")
   ("m" helm-mini "helm-mini")
   ("R" ranger "ranger")  ; not working
   ("v" revert-buffer "revert"))
@@ -564,9 +577,7 @@ See help of `format-time-string' for possible replacements")
   ("r" jump-to-register "register")
   ("R" helm-register "helm register")
   ("w" helm-swoop "swoop")
-  ("W" helm-multi-swoop-all "swoop all")
-  )
-;; imenu+, more searching, maybe bookmarks
+  ("W" helm-multi-swoop-all "swoop all"))
 
 (defhydra hydra-evals (:color blue)
   ("b" eval-buffer "buffer")
@@ -603,9 +614,9 @@ See help of `format-time-string' for possible replacements")
   "Increase font size by 10 points"
   (interactive)
   (set-face-attribute 'default nil
-                      :height
-                      (+ (face-attribute 'default :height)
-                         10)))
+		      :height
+		      (+ (face-attribute 'default :height)
+			 10)))
 
 (defun my/zoom-out ()
   "Decrease font size by 10 points"
@@ -697,3 +708,5 @@ See help of `format-time-string' for possible replacements")
 ;;; done with port from org-mode
 (message "PB dotemacs loaded.")
 ;; end
+(put 'narrow-to-page 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
