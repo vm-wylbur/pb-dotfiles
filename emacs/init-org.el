@@ -78,9 +78,9 @@
 (require 'helm-org)
 
 ;;;;;; refiling
-					; Targets include this file and any file contributing to the agenda - up to 9 levels deep
+;; Targets any file contributing to the agenda - up to 9 levels deep
 (setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                 (org-agenda-files :maxlevel . 9))))
+                                 (org-agenda-files :maxlevel . 2))))
 
 ; Use full outline paths for refile targets - we file directly with IDO
 (setq org-refile-use-outline-path t)
@@ -104,4 +104,4 @@
       org-completion-use-iswitchb nil)
 
 ;; (org-agenda nil "a")
-;; end.
+;; init-org end.

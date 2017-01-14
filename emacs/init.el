@@ -255,6 +255,8 @@
 	    (which-key-mode 1)))
 
 ;;; Editing hacks
+(global-set-key (kbd "s-/") 'comment-line)
+
 ;;;; insert date and time
 ;; http://stackoverflow.com/questions/251908/how-can-i-insert-current-date-and-time-into-a-file-using-emacs
 (defvar current-date-time-format "%a %b %d %H:%M:%S %Z %Y"
@@ -360,12 +362,12 @@ See help of `format-time-string' for possible replacements")
   (use-package helm-company
     :config
     (progn
-      (define-key company-mode-map (kbd "C-:") 'helm-company)
-      (define-key company-active-map (kbd "C-:") 'helm-company))))
+      ;; the idea is that M-i calls helm, as in isearch.
+      (define-key company-mode-map (kbd "M-i") 'helm-company)
+      (define-key company-active-map (kbd "M-i") 'helm-company))))
 
 
 ;;; helm
-
 (use-package helm
   :diminish helm-mode
   :pin melpa-stable
@@ -392,10 +394,13 @@ See help of `format-time-string' for possible replacements")
     (helm-autoresize-mode t)
     (define-key helm-map [escape] 'helm-keyboard-quit)
     (helm-mode 1)))
-
-    (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
 (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB work in terminal
 (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+(global-set-key (kbd "C-h a")    #'helm-apropos)
+;; (global-set-key (kbd "C-h i")    #'helm-info-emacs)
+(global-set-key (kbd "C-h b")    #'helm-descbinds)
+
 (defun spacemacs//helm-hide-minibuffer-maybe ()
   "Hide minibuffer in Helm session if we use the header line as input field."
   (when (with-helm-buffer helm-echo-input-in-header-line)
@@ -430,9 +435,18 @@ See help of `format-time-string' for possible replacements")
     (global-evil-surround-mode))
   (use-package evil-indent-textobject
     :ensure t)
+  (use-package evil-snipe
+    :pin melpa
+    :ensure t
+    :config
+    ;; (evil-snipe-mode 1)
+    (evil-snipe-override-mode 1)
+    (evil-define-key 'visual evil-snipe-mode-map "z" 'evil-snipe-s)
+    (evil-define-key 'visual evil-snipe-mode-map "Z" 'evil-snipe-S)
+    (setq evil-snipe-scope 'whole-visible))
   )
 (use-package evil-easymotion)
-(evilem-default-keybindings "M-SPC")
+(evilem-default-keybindings "M-n")
 
 
 ;;;; evil-iedit and friends
@@ -442,6 +456,7 @@ See help of `format-time-string' for possible replacements")
 (use-package evil-iedit-state)
 
 ;;;; escape from everything
+;; evil-escape is fantastic;
 (use-package evil-escape
   :config
   (evil-escape-mode)
@@ -475,18 +490,6 @@ See help of `format-time-string' for possible replacements")
 
 ;;; hydra
 (use-package hydra)
-
-;; this doesn't work, but it's a good starting point.
-;; critic markdown should always be on for markdown, so turning on the
-;; minor mode is another start. then set the toggle.
-;; other good stuff for the hydra-markdown is add a comment,
-;; accept/reject changes interactively.
-;; (defun pb-toggle-criticmarkup-follow ()
-;;   "Toggle criticmarkup follow minor mode"
-;;   (interactive)
-;;   (if (get cm-follow-changes nil)
-;;       (setq cm-follow-changes 1)
-;;     (setq cm-follow-changes 0)))
 
 (defhydra hydra-applications (:color blue :columns 3)
   "Applications"
@@ -551,15 +554,15 @@ See help of `format-time-string' for possible replacements")
   ("R" ranger "ranger")  ; not working
   ("v" revert-buffer "revert"))
 
-;; ;; (defhydra hydra-help (:color blue))
-;; remind C-o in ivy-hydra
-
-(defhydra hydra-jump (:color blue)
-  "Jumping"
+(defhydra hydra-jump (:color blue :columns 3)
+  "Jumping" ;; add registers and bookmarks here.
   ("a" helm-ag "ag")
-  ("i" helm-semantic-or-imenu "imenu")
+  ("i" imenu "imenu")
+  ("h" helm-semantic-or-imenu "helm imenu")
   ("m" helm-all-mark-rings "markers")
   ("o" helm-multi-swoop-org "swoop org")
+  ("r" jump-to-register "register")
+  ("R" helm-register "helm register")
   ("w" helm-swoop "swoop")
   ("W" helm-multi-swoop-all "swoop all")
   )
@@ -568,19 +571,25 @@ See help of `format-time-string' for possible replacements")
 (defhydra hydra-evals (:color blue)
   ("b" eval-buffer "buffer")
   ("d" eval-defun "defun")
+  ("r" eval-region "region")
   ("s" eval-last-sexp "sexp"))
 
-(defhydra hydra-registers (:color blue)
+(defhydra hydra-registers (:color blue :columns 3)
   "Registers"
   ;; add copy to register, prepend, append, insert into buffer
-  ("m" helm-all-mark-rings "markers")
-  ("v" helm-register "view")
-  )
-;; bookmarks, registers, rings, auto-complete
-;; (defhydra hydra-toggles (:color blue))
-;; visual-line-mode, line-numbers
+  ("b" bookmark-set "bookmark")
+  ("B" helm-filtered-bookmarks "show bookmarks")
+  ("c" copy-to-register "copy")
+  ("i" insert-register "insert")
+  ("m" helm-mark-ring "show marks")
+  ("e" jump-to-register "execute macro")
+  ("M" kmacro-to-register "macro")
+  ("j" jump-to-register "jump")
+  ("l" list-registers "list")
+  ("p" point-to-register "point")
+  ("R" helm-register "Register view"))
 
-(defhydra hydra-windows (:color blue columns: 3)
+(defhydra hydra-windows (:color blue :columns 3)
   "Windows and screens"
   ("k" delete-other-windows "keep only this win")
   ("o" other-window "other window" :color red)
@@ -640,7 +649,7 @@ See help of `format-time-string' for possible replacements")
 	     "e" 'hydra-edit/body
 	     "f" 'hydra-files/body
 	     "h" 'hydra-help/body
-	     "j" 'avy-goto-char
+	     "j" 'avy-goto-char-2
 	     "J" 'hydra-jump/body
 	     "n" 'ace-jump-buffer
 	     "o" 'hydra-org/body
