@@ -29,9 +29,17 @@
 (setq org-refile-use-outline-path nil)
 (setq org-refile-targets '((org-agenda-files :maxlevel . 2)))
 (setq org-log-done 'time)
+(setq org-log-into-drawer t)
 (add-hook 'org-mode-hook
 	  (lambda () (imenu-add-to-menubar "Imenu")))
 (setq org-invisible-edits 'smart)
+(defun add-property-with-date-captured ()
+  "Add DATE_CAPTURED property to the current item."
+  (interactive)
+  (org-set-property "DATE_CAPTURED" (format-time-string "%Y-%m-%dT%H:%M%Z")))
+
+(add-hook 'org-capture-after-finalize-hook 'add-property-with-date-captured)
+
 
 ;;;;; Bernt Hansen's TODO setup
 (setq org-todo-keywords
@@ -54,7 +62,7 @@
 ;;;;; Capture templates for: TODO tasks, Notes, appointments, phone calls, meetings, and org-protocol
 (setq org-capture-templates
       (quote (("t" "todo" entry (file+headline "~/Documents/notes/refile.org" "Inbox")
-               "* TODO %?\n%U\n%a\n")
+               "* TODO %?\n%U\n")
               ("r" "respond" entry (file "~/Documents/notes/refile.org")
                "** NEXT Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :immediate-finish t)
               ("n" "note" entry (file "~/Documents/notes/refile.org")
@@ -81,9 +89,9 @@
 (require 'helm-org)
 
 ;;;;;; refiling
-;; Targets any file contributing to the agenda - up to 9 levels deep
-(setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                 (org-agenda-files :maxlevel . 2))))
+;; Targets any file contributing to the agenda but only at 1 level deep
+(setq org-refile-targets (quote ((nil :level . 1)
+                                 (org-agenda-files :level . 1))))
 
 (setq org-refile-use-outline-path t
       org-outline-path-complete-in-steps nil
@@ -100,7 +108,8 @@
               ("TODO" ("WAITING") ("CANCELLED") ("HOLD"))
               ("NEXT" ("WAITING") ("CANCELLED") ("HOLD"))
               ("DONE" ("WAITING") ("CANCELLED") ("HOLD")))))
-
+(add-hook 'org-capture-mode-hook 'evil-insert-state)
 (load-file "~/.emacs.d/lisp/sacha-refiling-org.el")
+(global-set-key (kbd "C-t") 'org-capture) ; doesn't work
 ;; (org-agenda nil "a")
 ;; init-org end.

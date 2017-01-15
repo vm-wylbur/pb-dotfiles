@@ -259,6 +259,13 @@
 (global-set-key (kbd "s-/") 'comment-line)
 (global-set-key (kbd "M-x") 'helm-M-x)
 
+;;;; keep track of keypress stats
+;; M-x keyfreq-show gets the results
+(use-package keyfreq
+  :config
+  (keyfreq-mode 1)
+  (keyfreq-autosave-mode 1))
+
 ;;;; insert date and time
 ;; http://stackoverflow.com/questions/251908/how-can-i-insert-current-date-and-time-into-a-file-using-emacs
 (defvar current-date-time-format "%a %b %d %H:%M:%S %Z %Y"
@@ -650,7 +657,7 @@ See help of `format-time-string' for possible replacements")
 	     "3" 'winum-select-window-3
 	     "4" 'winum-select-window-4
 	     "5" 'winum-select-window-5
-	     ;; "6" 'winum-select-window-6
+	     "6" 'winum-select-window-5
 	     ;; "7" 'winum-select-window-7
 	     ;; "8" 'winum-select-window-8
 	     "a" 'hydra-applications/body
