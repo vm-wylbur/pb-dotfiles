@@ -1,10 +1,13 @@
 ;;; init.el - PB's init file.
 
-;; Copyright (C) 2017
+;; Date: <2017-01-28 09:38PST pball>  last saved
 ;; Author: Patrick Ball
+;; Copyright (C) 2017
 ;; Keywords: init, emacs
 
-;; this file is not part of GNU/emacs. It is placed in the public domain.
+;; this file is not part of GNU/emacs. It is placed in the public domain. It's
+;; just my dot-emacs which I've stolen from a zillion other people. Not cited as
+;; much as it should be, either.
 
 ;;; Commentary:
 
@@ -16,19 +19,14 @@
 ;;  - imenu to jump to headers in elisp
 
 ;;; Todo
-;; add flycheck to python-mode
-;; imenu in editing
-;;;; long-term todo
-
-;;;; Done
-;; flycheck + flyspell
-;; v nice integration of critic-markup
-;; s-o should close screen, s-n should open screen
+;; org mode is where all the remaining action is.
 
 
 ;;; paths
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
 (setq exec-path (append exec-path '("/usr/local/bin")))
+(setenv "PATH" (concat (getenv "PATH") ":/Users/pball/anaconda3/bin"))
+(setq exec-path (append exec-path '("/Users/pball/anaconda3/bin")))
 (server-start)
 (setq insert-directory-program "/usr/local/bin/gls")
 
@@ -167,20 +165,24 @@
   :config (global-undo-tree-mode))
 
 ;;;;; behaviors
-(setq vc-follow-symlinks t)          ; don't ask for confirmation when opening
-(setq inhibit-startup-screen t)      ; inhibit useless and old-school startup screen
-(setq ring-bell-function 'ignore )   ; silent bell when you make a mistake
-(setq sentence-end-double-space nil) ; sentence SHOULD end with only a point.
-(setq default-fill-column 80)        ; toggle wrapping text at the 80th
-(delete-selection-mode 1)
+(setq vc-follow-symlinks t
+      inhibit-startup-screen t
+      ring-bell-function 'ignore
+      sentence-end-double-space nil
+      default-fill-column 80
+      delete-selection-mode 1
+      tab-always-indent 'complete)
 (defalias 'yes-or-no-p 'y-or-n-p)
-(setq tab-always-indent 'complete)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 ;; deletes all the whitespace when you hit backspace or delete
 (use-package hungry-delete
   :ensure t
   :config
   (global-hungry-delete-mode))
+
+;;;;;; time stamping
+(add-hook 'before-save-hook 'time-stamp)
+(setq time-stamp-pattern "8/Date:[ \t]+\\\\?[\"<]+%:y-%02m-%02d %02H:%02M%Z %u\\\\?[\">]")
 
 ;;;;; imenu
 (defun imenu-elisp-sections ()
@@ -227,8 +229,8 @@
 (add-hook 'org-mode-hook 'turn-on-flyspell)
 
 ;;;;; indent
-(use-package aggressive-indent
-  :config (global-aggressive-indent-mode 1))
+;; (use-package aggressive-indent
+;;   :config (global-aggressive-indent-mode 1))
 
 ;;;; magit
 (use-package magit
@@ -254,10 +256,33 @@
 	    (setq which-key-side-window-max-height 0.5)
 	    (which-key-mode 1)))
 
+;;; file hacks
+(defun rename-file-and-buffer ()
+  "Rename the current buffer and file it is visiting."
+  (interactive)
+  (let ((filename (buffer-file-name)))
+    (if (not (and filename (file-exists-p filename)))
+        (message "Buffer is not visiting a file!")
+      (let ((new-name (read-file-name "New name: " filename)))
+        (cond
+         ((vc-backend filename) (vc-rename-file filename new-name))
+         (t
+          (rename-file filename new-name t)
+          (set-visited-file-name new-name t t)))))))
+
 ;;; Editing hacks
 ;;;; personal keybindings
 (global-set-key (kbd "s-/") 'comment-line)
 (global-set-key (kbd "M-x") 'helm-M-x)
+
+(defun copy-line (arg)
+  "Copy lines (as many as prefix argument) in the kill ring"
+  (interactive "p")
+  (kill-ring-save (line-beginning-position)
+		  (line-beginning-position (+ 1 arg)))
+  (message "%d line%s copied" arg (if (= 1 arg) "" "s")))
+;; optional key binding
+(global-set-key "\C-c\C-k" 'copy-line)
 
 ;;;; keep track of keypress stats
 ;; M-x keyfreq-show gets the results
@@ -303,7 +328,7 @@ See help of `format-time-string' for possible replacements")
 (use-package avy
   :ensure t
   :pin melpa
-  :bind (("C-'" . avy-goto-char)
+  :bind (("C-j" . avy-goto-char-2)
 	 ("s-," . avy-goto-char-timer))  ; this is pretty cool
   :config (progn
 	    (setq avy-background t)
@@ -311,6 +336,10 @@ See help of `format-time-string' for possible replacements")
 
 (use-package ace-jump-buffer
   :pin melpa)
+;;; ESS
+(use-package ess
+  :ensure t
+  :init (require 'ess-site))
 
 ;;; company-mode
 (use-package company
@@ -339,9 +368,9 @@ See help of `format-time-string' for possible replacements")
   (define-key company-active-map (kbd "M-p") nil)
   (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
   (define-key company-active-map (kbd "C-n") 'company-select-next)
-  (define-key company-active-map (kbd "C-n") 'company-select-next)
+  (define-key company-active-map (kbd "C-j") 'company-select-next)
   (define-key company-active-map (kbd "C-k") 'company-select-previous)
-  (define-key company-active-map (kbd "C-j") 'company-select-previous)
+  (define-key company-active-map (kbd "C-p") 'company-select-previous)
   (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
   (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
   (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
@@ -571,7 +600,7 @@ See help of `format-time-string' for possible replacements")
   ("e" eval-buffer "eval current")
   ("p" show-file-name "full path")
   ("m" helm-mini "helm-mini")
-  ("R" ranger "ranger")  ; not working
+  ("r" rename-file-and-buffer "rename")
   ("v" revert-buffer "revert"))
 
 (defhydra hydra-jump (:color blue :columns 3)
@@ -717,3 +746,4 @@ See help of `format-time-string' for possible replacements")
 ;; end
 (put 'narrow-to-page 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
