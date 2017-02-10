@@ -1,6 +1,6 @@
 ;;; init.el - PB's init file.
 
-;; Date: <2017-01-28 09:38PST pball>  last saved
+;; Date: <2017-02-10 06:24GMT pball>  last saved
 ;; Author: Patrick Ball
 ;; Copyright (C) 2017
 ;; Keywords: init, emacs
@@ -29,6 +29,7 @@
 (setq exec-path (append exec-path '("/Users/pball/anaconda3/bin")))
 (server-start)
 (setq insert-directory-program "/usr/local/bin/gls")
+(setq locate-command "mdfind")
 
 ;;; packages
 (setq package-check-signature nil) ; this is bad!
@@ -388,11 +389,11 @@ See help of `format-time-string' for possible replacements")
 	  (company-abbrev company-dabbrev)
 	  ))
   ;; Python auto completion
-  (use-package company-jedi
-    :init
-    (setq company-jedi-python-bin "python3")
-    :config
-    (add-to-list 'company-backends 'company-jedi))
+  ;; (use-package company-jedi
+  ;;   :init
+  ;;   (setq company-jedi-python-bin "python3")
+  ;;   :config
+  ;;   (add-to-list 'company-backends 'company-jedi))
 
   (use-package company-statistics
     :config
