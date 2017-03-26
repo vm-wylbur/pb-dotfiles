@@ -8,6 +8,7 @@ alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
+alias cg="cd ~/projects/hrdag"
 
 # Shortcuts
 alias dl="cd ~/Downloads"
@@ -18,6 +19,7 @@ alias gs="git status"
 alias h="history"
 alias j="jobs"
 alias mm="make -f src/Makefile"
+alias btd="~/src/testdummy/testdummy $1"
 alias ccat="pygmentize $1"
 
 # Detect which `ls` flavor is in use
