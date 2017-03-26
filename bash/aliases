@@ -8,7 +8,13 @@ alias ....="cd ../../.."
 alias .....="cd ../../../.."
 alias ~="cd ~" # `cd` is probably faster to type though
 alias -- -="cd -"
-alias cg="cd ~/projects/hrdag"
+
+function _cg() {
+# alias cg="cd ~/projects/hrdag/$1". # FIXME
+	cd ~/projects/hrdag
+	cd "$1"
+}
+alias cg="_cg $1"
 
 # Shortcuts
 alias dl="cd ~/Downloads"
