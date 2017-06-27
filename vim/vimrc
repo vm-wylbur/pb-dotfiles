@@ -13,6 +13,11 @@
 set nocompatible
 filetype plugin on
 " }}}
+" leader {{{
+let mapleader = ','
+nnoremap <leader>w :w <CR>
+nnoremap <leader>e :ll <CR>
+" }}}
 " Python {{{
 let python_highlight_all = 1
 au FileType python syn keyword pythonDecorator True None False self
