@@ -4,6 +4,7 @@
 " install by symlinking to ~/.vimrc  
 " }}}
 " todo: {{{
+" * where is F being remapped? not ok! 
 " * open_file_under_cursor
 " * leader stuff
 " * add machinename to status line
@@ -26,13 +27,14 @@ au FileType python set cindent
 au FileType python set cinkeys-=0#
 au FileType python set indentkeys-=0#
 " }}}
-" Auto-save {{{
+" Auto commands at save {{{
 set autoread
 augroup autoSaveAndRead
     autocmd!
     autocmd TextChanged,InsertLeave,FocusLost * silent! wall
     autocmd CursorHold * silent! checktime
 augroup END
+autocmd BufWritePre * :%s/\s\+$//e
 " }}} 
 " Plug {{{
 call plug#begin('~/.vim/plugged')
