@@ -1,14 +1,14 @@
-" Preamble {{{ 
+" Preamble {{{
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
-" install by symlinking to ~/.vimrc  
+" install by symlinking to ~/.vimrc
 " }}}
 " todo: {{{
-" * where is F being remapped? not ok! 
+" * where is F being remapped? not ok!
 " * open_file_under_cursor
 " * leader stuff
 " * add machinename to status line
-" * indenting in vimrc? 
+" * indenting in vimrc?
 " }}}
 " setup {{{
 set nocompatible
@@ -34,12 +34,13 @@ augroup autoSaveAndRead
     autocmd TextChanged,InsertLeave,FocusLost * silent! wall
     autocmd CursorHold * silent! checktime
 augroup END
-autocmd BufWritePre * :%s/\s\+$//e
-" }}} 
+autocmd BufWritePre * :%s/\s\+$//e  " removes training whitespace
+" }}}
 " Plug {{{
 call plug#begin('~/.vim/plugged')
 Plug 'reedes/vim-pencil'
 Plug 'itchyny/lightline.vim'
+Plug 'nathanaelkane/vim-indent-guides'
 Plug 'vim-syntastic/syntastic'
 Plug 'ervandew/supertab'
 Plug 'davidhalter/jedi-vim'
@@ -56,7 +57,6 @@ augroup pencil
     autocmd FileType markdown,mkd  call pencil#init()
     autocmd FileType text          call pencil#init()
 augroup END
-
 autocmd FileType markdown,mkd setlocal spell
 " }}}
 " syntastic {{{
@@ -72,7 +72,7 @@ let g:syntastic_check_on_wq = 0
 " }}}
 " status line {{{
 set laststatus=2
-" todo: shorten mode name 
+" todo: shorten mode name
 let g:lightline = {
         \ 'colorscheme': 'wombat',
         \ 'active': {
@@ -119,7 +119,7 @@ let g:lightline = {
         function! MyFiletype()
             return winwidth('.') > 70 ? (strlen(&filetype) ? &filetype : 'no ft') : ''
         endfunction
-	
+
 " }}}
 " interface {{{
 set relativenumber
@@ -133,8 +133,14 @@ nnoremap <C-h> :set number! relativenumber! <CR>
 " sets diff cursors for modes
 let &t_SI = "\<Esc>]50;CursorShape=1\x7"
 let &t_SR = "\<Esc>]50;CursorShape=2\x7"
-let &t_EI = "\<Esc>]50;CursorShape=0\x7"  
+let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 " }}}
+" whitespace vis {{{
+highlight Conceal guibg=NONE ctermbg=NONE ctermfg=DarkGrey
+autocmd BufWinEnter,BufReadPre * setlocal conceallevel=2 concealcursor=nv
+autocmd BufWinEnter,BufReadPre * syn match LeadingSpace /\(^ *\)\@<= / containedin=ALL conceal cchar=·
+set list listchars=tab:→\ ,eol:¬
+" " }}}
 " Folding {{{
 set foldenable
 set foldlevelstart=10
@@ -143,5 +149,5 @@ nnoremap <space> za
 set foldmethod=indent
 " }}}
 
+set modelines=1
 " vim:foldmethod=marker:foldlevel=0
-" done. 
