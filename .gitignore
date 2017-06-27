@@ -4,3 +4,5 @@
 */.emacs.desktop
 .DS_Store
 /emacs/deprecated/.emacs.desktop
+*.swp
+
