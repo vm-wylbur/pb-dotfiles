@@ -1,10 +1,17 @@
 " Preamble {{{ 
-" Author: Patrick Ball
+" Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 " install by symlinking to ~/.vimrc  
 " }}}
 " todo: {{{
 " * open_file_under_cursor
+" * leader stuff
+" * add machinename to status line
+" * indenting in vimrc? 
+" }}}
+" setup {{{
+set nocompatible
+filetype plugin on
 " }}}
 " Python {{{
 let python_highlight_all = 1
@@ -25,9 +32,6 @@ augroup END
 " Plug {{{
 call plug#begin('~/.vim/plugged')
 Plug 'reedes/vim-pencil'
-" Plug ''
-" Plug 'vim-airline/vim-airline'
-" Plug 'vim-airline/vim-airline-themes'
 Plug 'itchyny/lightline.vim'
 Plug 'vim-syntastic/syntastic'
 Plug 'tpope/vim-sensible'
@@ -35,6 +39,12 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'altercation/vim-colors-solarized'
 call plug#end()
+" initialize plugins
+augroup pencil
+    autocmd!
+    autocmd FileType markdown,mkd  call pencil#init()
+    autocmd FileType text          call pencil#init()
+augroup END
 " }}}
 " syntastic {{{
 let g:syntastic_python_checkers=['pep8']
