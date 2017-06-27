@@ -39,12 +39,16 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-surround'
 Plug 'altercation/vim-colors-solarized'
 call plug#end()
-" initialize plugins
+" }}}
+" initialize plugins {{{
+let g:pencil#wrapModeDefault = 'soft'   " default is 'hard'
 augroup pencil
     autocmd!
     autocmd FileType markdown,mkd  call pencil#init()
     autocmd FileType text          call pencil#init()
 augroup END
+
+autocmd FileType markdown,mkd setlocal spell
 " }}}
 " syntastic {{{
 let g:syntastic_python_checkers=['pep8']
