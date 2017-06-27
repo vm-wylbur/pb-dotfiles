@@ -1,5 +1,5 @@
 # -*-mode: shell-script-*-
-alias cur="cd ~/projects/hrdag/SY/match/DCHRS+SCSR+SNHR+VDC/"
+alias cur="cd ~/projects/hrdag/CO/individual/PN"
 
 # Easier navigation: .., ..., ...., ....., ~ and -
 alias ..="cd .."

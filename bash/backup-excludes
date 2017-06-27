@@ -15,7 +15,15 @@
 */mse_hashes/*
 */Messages.noindex/*
 */Database.noindex/*
-*/Library/Application Support/Google/Chrome/Default/Web Applications/*
+*/Library/Application\ Support/Google/Chrome/Default/Web\ Applications/*
+*/Library/Containers/*
+*/Library/Calendars/*
+*/Library/Cookies/*
+*/Library/IdentityServices/*
+*/Library/Safari/*
+*/Library/SyncedPreferences/*
+*/Library/com.apple.nsurlsessiond/*
+*/Library/Saved*
 */Pictures/Photos Library.photoslibrary/Thumbnails/*
 */Mobile Applications/*
 */Movies/*
@@ -51,3 +59,5 @@
 *trash*
 *junk*
 *Trash*
+*/.snap/*
+*/.com.apple*

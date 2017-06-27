@@ -61,3 +61,5 @@ export GPG_TTY
 
 # this sets up the pyenv virtual environment manager
 eval "$(pyenv init -)"
+
+test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
