@@ -40,7 +40,7 @@ autocmd BufWritePre * :%s/\s\+$//e  " removes training whitespace
 call plug#begin('~/.vim/plugged')
 Plug 'reedes/vim-pencil'
 Plug 'itchyny/lightline.vim'
-Plug 'nathanaelkane/vim-indent-guides'
+" Plug 'nathanaelkane/vim-indent-guides'
 Plug 'vim-syntastic/syntastic'
 Plug 'ervandew/supertab'
 Plug 'davidhalter/jedi-vim'
@@ -136,9 +136,9 @@ let &t_SR = "\<Esc>]50;CursorShape=2\x7"
 let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 " }}}
 " whitespace vis {{{
-highlight Conceal guibg=NONE ctermbg=NONE ctermfg=DarkGrey
-autocmd BufWinEnter,BufReadPre * setlocal conceallevel=2 concealcursor=nv
-autocmd BufWinEnter,BufReadPre * syn match LeadingSpace /\(^ *\)\@<= / containedin=ALL conceal cchar=·
+" highlight Conceal guibg=NONE ctermbg=NONE ctermfg=DarkGrey
+" autocmd BufWinEnter,BufReadPre * setlocal conceallevel=2 concealcursor=nv
+" autocmd BufWinEnter,BufReadPre * syn match LeadingSpace /\(^ *\)\@<= / containedin=ALL conceal cchar=·
 set list listchars=tab:→\ ,eol:¬
 " " }}}
 " Folding {{{
