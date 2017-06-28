@@ -18,6 +18,14 @@ filetype plugin on
 let mapleader = ','
 nnoremap <leader>w :w <CR>
 nnoremap <leader>e :ll <CR>
+nnoremap <leader>m :marks <CR>       " go w single-quote '
+nnoremap <leader>r :registers <CR>   " access w double-quote "
+nnoremap <leader>f :browse oldfiles <CR>
+" nnoremap <leader>b :tab sball <CR>   " moves all buffers to tabs
+nnoremap <leader>1 1gt
+nnoremap <leader>2 2gt
+nnoremap <leader>3 3gt
+nnoremap <leader>4 4gt
 " }}}
 " Python {{{
 let python_highlight_all = 1
@@ -38,16 +46,15 @@ autocmd BufWritePre * :%s/\s\+$//e  " removes training whitespace
 " }}}
 " Plug {{{
 call plug#begin('~/.vim/plugged')
-Plug 'reedes/vim-pencil'
-Plug 'itchyny/lightline.vim'
-" Plug 'nathanaelkane/vim-indent-guides'
-Plug 'vim-syntastic/syntastic'
-Plug 'ervandew/supertab'
-Plug 'davidhalter/jedi-vim'
 Plug 'tpope/vim-sensible'
-Plug 'tpope/vim-commentary'
+Plug 'itchyny/lightline.vim'
+Plug 'vim-syntastic/syntastic'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-commentary'
+Plug 'ervandew/supertab'
+Plug 'reedes/vim-pencil'
 Plug 'altercation/vim-colors-solarized'
+" Plug 'haya14busa/incsearch.vim'  " seems to work sporadically
 call plug#end()
 " }}}
 " initialize plugins {{{
@@ -58,6 +65,10 @@ augroup pencil
     autocmd FileType text          call pencil#init()
 augroup END
 autocmd FileType markdown,mkd setlocal spell
+" doesn't really work?
+" nnoremap z/  <Plug>(incsearch-forward)
+" nnoremap z?  <Plug>(incsearch-backward)
+
 " }}}
 " syntastic {{{
 let g:syntastic_python_checkers=['pep8']
@@ -73,6 +84,7 @@ let g:syntastic_check_on_wq = 0
 " status line {{{
 set laststatus=2
 " todo: shorten mode name
+" this was stolen from someone, can't remember whom
 let g:lightline = {
         \ 'colorscheme': 'wombat',
         \ 'active': {
@@ -96,7 +108,6 @@ let g:lightline = {
         \ 'separator': { 'left': ' ', 'right': ' ' },
         \ 'subseparator': { 'left': ' ', 'right': ' ' }
         \ }
-	" http://dotshare.it/dots/377/0/raw/
         let g:lightline.mode_map = {
             \ 'n'      : ' N ',
             \ 'i'      : ' I ',
@@ -121,7 +132,7 @@ let g:lightline = {
         endfunction
 
 " }}}
-" interface {{{
+" visual interface: colors, cursors, numbering {{{
 set relativenumber
 set number
 set noshowmode
@@ -139,7 +150,8 @@ let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 " highlight Conceal guibg=NONE ctermbg=NONE ctermfg=DarkGrey
 " autocmd BufWinEnter,BufReadPre * setlocal conceallevel=2 concealcursor=nv
 " autocmd BufWinEnter,BufReadPre * syn match LeadingSpace /\(^ *\)\@<= / containedin=ALL conceal cchar=·
-set list listchars=tab:→\ ,eol:¬
+" set list listchars=tab:→\ ,eol:¬
+set list listchars=tab:→\ ,
 " " }}}
 " Folding {{{
 set foldenable
