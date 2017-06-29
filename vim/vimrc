@@ -36,6 +36,7 @@ au FileType python set cinkeys-=0#
 au FileType python set indentkeys-=0#
 " }}}
 " Auto commands at save {{{
+set omnifunc=syntaxcomplete#Complete
 set autoread
 augroup autoSaveAndRead
     autocmd!
