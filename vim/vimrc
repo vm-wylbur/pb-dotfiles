@@ -24,7 +24,8 @@ nnoremap <leader>e :ll <CR>
 nnoremap <leader>m :marks <CR>       " go w single-quote '
 " nnoremap <leader>r :registers <CR>   " access w double-quote "
 nnoremap <leader>f :browse oldfiles <CR>
-nnoremap <leader>r :Dispatch run % <CR>
+" this doesn't work but it's in the right direction
+" nnoremap <leader>r :lcd %:p:h<CR>:Dispatch! run <CR>
 
 nnoremap <leader>b :ls<CR>:b<Space>
 nnoremap <leader>o :MBEOpen<CR>
