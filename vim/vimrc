@@ -2,6 +2,7 @@
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 " moved to github at vm-wylbur/pb-dotfiles
+" git@github.com:vm-wylbur/pb-dotfiles.git
 " install by symlinking to ~/.vimrc
 " }}}
 " todo: {{{
