@@ -13,6 +13,7 @@
 " setup {{{
 set nocompatible
 filetype plugin on
+set directory^=$HOME/.backups//
 " }}}
 " leader {{{
 let mapleader = ','
@@ -21,11 +22,28 @@ nnoremap <leader>e :ll <CR>
 nnoremap <leader>m :marks <CR>       " go w single-quote '
 nnoremap <leader>r :registers <CR>   " access w double-quote "
 nnoremap <leader>f :browse oldfiles <CR>
+
+nnoremap <leader>b :ls<CR>:b<Space>
+nnoremap <leader>o :MBEOpen<CR>
+nnoremap <leader>c :MBEClose<CR>
+nnoremap <leader>t :MBEToggle<CR>
 " nnoremap <leader>b :tab sball <CR>   " moves all buffers to tabs
-nnoremap <leader>1 1gt
-nnoremap <leader>2 2gt
-nnoremap <leader>3 3gt
-nnoremap <leader>4 4gt
+nnoremap <leader>1 :b1<CR>
+nnoremap <leader>2 :b2 <CR>
+nnoremap <leader>3 :b3 <CR>
+nnoremap <leader>4 :b4 <CR>
+nnoremap <leader>5 :b5 <CR>
+nnoremap <leader>6 :b6 <CR>
+nnoremap <leader>7 :b7 <CR>
+nnoremap <leader>8 :b8 <CR>
+nnoremap <leader>9 :b9 <CR>
+" }}}
+" general remaps {{{
+map <C-K> <C-W>k<C-W>_
+map <C-H> <C-W>h<C-W>_
+map <C-L> <C-W>l<C-W>_
+map <C-J> <C-W>j<C-W>_
+
 " }}}
 " Python {{{
 let python_highlight_all = 1
@@ -54,6 +72,10 @@ Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
 Plug 'ervandew/supertab'
 Plug 'reedes/vim-pencil'
+Plug 'kien/ctrlp.vim'
+" Plug 'zefei/vim-wintabs'
+" Plug 'jlanzarotta/bufexplorer'  " <leader>be
+Plug 'fholgado/minibufexpl.vim'
 Plug 'altercation/vim-colors-solarized'
 " Plug 'haya14busa/incsearch.vim'  " seems to work sporadically
 call plug#end()
@@ -66,6 +88,12 @@ augroup pencil
     autocmd FileType text          call pencil#init()
 augroup END
 autocmd FileType markdown,mkd setlocal spell
+" the C-TAB fails bc iTerm owns that (switches tabs)
+" needs a keystroke.
+" noremap <C-TAB>   :MBEbf<CR>
+" let g:wintabs_switchbuf='useopen'
+" noremap <C-b>   :MBEbf<CR>
+" noremap <C-S-TAB> :MBEbb<CR>
 " doesn't really work?
 " nnoremap z/  <Plug>(incsearch-forward)
 " nnoremap z?  <Plug>(incsearch-backward)
@@ -141,11 +169,17 @@ syntax enable
 set background=dark
 colorscheme solarized
 set guifont=Monaco:h14
-nnoremap <C-h> :set number! relativenumber! <CR>
+" nnoremap <C-h> :set number! relativenumber! <CR>
 " sets diff cursors for modes
 let &t_SI = "\<Esc>]50;CursorShape=1\x7"
 let &t_SR = "\<Esc>]50;CursorShape=2\x7"
 let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+
+augroup BgHighlight
+    autocmd!
+    autocmd WinEnter * set cul
+    autocmd WinLeave * set nocul
+augroup END
 " }}}
 " whitespace vis {{{
 " highlight Conceal guibg=NONE ctermbg=NONE ctermfg=DarkGrey
