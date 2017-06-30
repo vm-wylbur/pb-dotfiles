@@ -37,6 +37,7 @@ nnoremap <leader>6 :b6 <CR>
 nnoremap <leader>7 :b7 <CR>
 nnoremap <leader>8 :b8 <CR>
 nnoremap <leader>9 :b9 <CR>
+
 " }}}
 " general remaps {{{
 map <C-K> <C-W>k<C-W>_
@@ -73,9 +74,8 @@ Plug 'tpope/vim-commentary'
 Plug 'ervandew/supertab'
 Plug 'reedes/vim-pencil'
 Plug 'kien/ctrlp.vim'
-" Plug 'zefei/vim-wintabs'
-" Plug 'jlanzarotta/bufexplorer'  " <leader>be
-Plug 'fholgado/minibufexpl.vim'
+" Plug 'fholgado/minibufexpl.vim'
+Plug 'ap/vim-buftabline'
 Plug 'tpope/vim-obsession'
 Plug 'altercation/vim-colors-solarized'
 " Plug 'haya14busa/incsearch.vim'  " seems to work sporadically
@@ -89,6 +89,10 @@ augroup pencil
     autocmd FileType text          call pencil#init()
 augroup END
 autocmd FileType markdown,mkd setlocal spell
+let g:buftabline_numbers=1
+let g:buftabline_indicators='on' " this is helpful.
+let g:buftabline_separators='on'
+
 " the C-TAB fails bc iTerm owns that (switches tabs)
 " needs a keystroke.
 " noremap <C-TAB>   :MBEbf<CR>
