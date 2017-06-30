@@ -20,8 +20,9 @@ let mapleader = ','
 nnoremap <leader>w :w <CR>
 nnoremap <leader>e :ll <CR>
 nnoremap <leader>m :marks <CR>       " go w single-quote '
-nnoremap <leader>r :registers <CR>   " access w double-quote "
+" nnoremap <leader>r :registers <CR>   " access w double-quote "
 nnoremap <leader>f :browse oldfiles <CR>
+nnoremap <leader>r :Dispatch run % <CR>
 
 nnoremap <leader>b :ls<CR>:b<Space>
 nnoremap <leader>o :MBEOpen<CR>
@@ -71,6 +72,7 @@ Plug 'itchyny/lightline.vim'
 Plug 'vim-syntastic/syntastic'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-dispatch'
 Plug 'ervandew/supertab'
 Plug 'reedes/vim-pencil'
 Plug 'kien/ctrlp.vim'
@@ -185,6 +187,11 @@ augroup BgHighlight
     autocmd WinEnter * set cul
     autocmd WinLeave * set nocul
 augroup END
+
+
+" automatically leave insert mode after 'updatetime' milliseconds of inaction
+au CursorHoldI * stopinsert
+
 " }}}
 " whitespace vis {{{
 " highlight Conceal guibg=NONE ctermbg=NONE ctermfg=DarkGrey
@@ -215,6 +222,27 @@ function! LastModified()
   endif
 endfun
 autocmd BufWritePre * call LastModified()
+
+command! -complete=shellcmd -nargs=+ Shell call s:RunShellCommand(<q-args>)
+function! s:RunShellCommand(cmdline)
+  echo a:cmdline
+  let expanded_cmdline = a:cmdline
+  for part in split(a:cmdline, ' ')
+     if part[0] =~ '\v[%#<]'
+        let expanded_part = fnameescape(expand(part))
+        let expanded_cmdline = substitute(expanded_cmdline, part, expanded_part, '')
+     endif
+  endfor
+  botright new
+  setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile nowrap
+  call setline(1, 'You entered:    ' . a:cmdline)
+  call setline(2, 'Expanded Form:  ' .expanded_cmdline)
+  call setline(3,substitute(getline(2),'.','=','g'))
+  execute '$read !'. expanded_cmdline
+  setlocal nomodifiable
+  1
+endfunction
+
 " }}}
 set modelines=1
 " vim:foldmethod=marker:foldlevel=0
