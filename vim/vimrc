@@ -33,13 +33,15 @@ iab xsdate <c-r>=strftime("%Y-%m-%dT%H:%M%Z")<CR>
 iab xldate <c-r>=strftime("%a %d %b %Y %H:%M:%S%Z")<CR>
 
 " }}}
-" Python {{{
+" filetype specific {{{
 let python_highlight_all = 1
 au FileType python syn keyword pythonDecorator True None False self
 au FileType python map <buffer> F :set foldmethod=indent<cr>
 au FileType python set cindent
 au FileType python set cinkeys-=0#
 au FileType python set indentkeys-=0#
+
+autocmd Filetype r setlocal ts=4 sts=4 sw=4 expandtab
 " }}}
 " Auto commands at save {{{
 set omnifunc=syntaxcomplete#Complete
