@@ -16,6 +16,9 @@
 set nocompatible
 filetype plugin on
 set directory^=$HOME/.backups//
+" set shell=/bin/bash\ -ic
+set shell=/bin/bash\ -l
+set shellcmdflag=-ic
 " }}}
 " leader {{{
 let mapleader = ','
@@ -48,6 +51,12 @@ map <C-K> <C-W>k<C-W>_
 map <C-H> <C-W>h<C-W>_
 map <C-L> <C-W>l<C-W>_
 map <C-J> <C-W>j<C-W>_
+" select last paste in visual mode
+nnoremap <expr> gb '`[' . strpart(getregtype(), 0, 1) . '`]'
+
+" abbreviations for quick datestamping in Insert mode
+iab xsdate <c-r>=strftime("%Y-%m-%dT%H:%M%Z")<CR>
+iab xldate <c-r>=strftime("%a %d %b %Y %H:%M:%S%Z")<CR>
 
 " }}}
 " Python {{{
