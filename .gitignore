@@ -1,8 +1,8 @@
 *~
 */.#*
-*/pb-init.el 
+*/pb-init.el
 */.emacs.desktop
 .DS_Store
 /emacs/deprecated/.emacs.desktop
 *.swp
-
+*.swo

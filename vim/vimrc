@@ -20,32 +20,6 @@ set directory^=$HOME/.backups//
 set shell=/bin/bash\ -l
 set shellcmdflag=-ic
 " }}}
-" leader {{{
-let mapleader = ','
-nnoremap <leader>w :w <CR>
-nnoremap <leader>e :ll <CR>
-nnoremap <leader>m :marks <CR>       " go w single-quote '
-" nnoremap <leader>r :registers <CR>   " access w double-quote "
-nnoremap <leader>f :browse oldfiles <CR>
-" this doesn't work but it's in the right direction
-" nnoremap <leader>r :lcd %:p:h<CR>:Dispatch! run <CR>
-
-nnoremap <leader>b :ls<CR>:b<Space>
-nnoremap <leader>o :MBEOpen<CR>
-nnoremap <leader>c :MBEClose<CR>
-nnoremap <leader>t :MBEToggle<CR>
-" nnoremap <leader>b :tab sball <CR>   " moves all buffers to tabs
-nnoremap <leader>1 :b1<CR>
-nnoremap <leader>2 :b2 <CR>
-nnoremap <leader>3 :b3 <CR>
-nnoremap <leader>4 :b4 <CR>
-nnoremap <leader>5 :b5 <CR>
-nnoremap <leader>6 :b6 <CR>
-nnoremap <leader>7 :b7 <CR>
-nnoremap <leader>8 :b8 <CR>
-nnoremap <leader>9 :b9 <CR>
-
-" }}}
 " general remaps {{{
 map <C-K> <C-W>k<C-W>_
 map <C-H> <C-W>h<C-W>_
@@ -88,7 +62,7 @@ Plug 'tpope/vim-dispatch'
 Plug 'ervandew/supertab'
 Plug 'reedes/vim-pencil'
 Plug 'kien/ctrlp.vim'
-" Plug 'fholgado/minibufexpl.vim'
+Plug 'qpkorr/vim-bufkill'
 Plug 'ap/vim-buftabline'
 Plug 'tpope/vim-obsession'
 Plug 'altercation/vim-colors-solarized'
@@ -106,7 +80,10 @@ autocmd FileType markdown,mkd setlocal spell
 let g:buftabline_numbers=1
 let g:buftabline_indicators='on' " this is helpful.
 let g:buftabline_separators='on'
-
+let g:ctrlp_cache_dir = $HOME . '.cache/ctrlp'
+if executable('ag')
+	let g:ctrp_user_command = 'ag %s -l --nocolor -g""'
+endif
 " the C-TAB fails bc iTerm owns that (switches tabs)
 " needs a keystroke.
 " noremap <C-TAB>   :MBEbf<CR>
@@ -116,6 +93,31 @@ let g:buftabline_separators='on'
 " doesn't really work?
 " nnoremap z/  <Plug>(incsearch-forward)
 " nnoremap z?  <Plug>(incsearch-backward)
+
+" }}}
+" leader {{{
+let mapleader = ','
+nnoremap <leader>w :w <CR>
+nnoremap <leader>d :BD<CR>   " kill buffer leave window
+nnoremap <leader>e :ll <CR>  " syntastic next error
+nnoremap <leader>m :marks <CR>       " go w single-quote '
+nnoremap <leader>f :browse oldfiles <CR>
+
+" this doesn't work but it's in the right direction
+" nnoremap <leader>r :lcd %:p:h<CR>:Dispatch! run <CR>
+
+" nnoremap <leader>o :MBEOpen<CR>
+" nnoremap <leader>c :MBEClose<CR>
+" nnoremap <leader>t :MBEToggle<CR>
+nnoremap <leader>1 :b1<CR>
+nnoremap <leader>2 :b2 <CR>
+nnoremap <leader>3 :b3 <CR>
+nnoremap <leader>4 :b4 <CR>
+nnoremap <leader>5 :b5 <CR>
+nnoremap <leader>6 :b6 <CR>
+nnoremap <leader>7 :b7 <CR>
+nnoremap <leader>8 :b8 <CR>
+nnoremap <leader>9 :b9 <CR>
 
 " }}}
 " syntastic {{{
@@ -196,7 +198,7 @@ let &t_SR = "\<Esc>]50;CursorShape=2\x7"
 let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 
 augroup BgHighlight
-    autocmd!
+		autocmd!
     autocmd WinEnter * set cul
     autocmd WinLeave * set nocul
 augroup END
@@ -212,7 +214,7 @@ au CursorHoldI * stopinsert
 " autocmd BufWinEnter,BufReadPre * syn match LeadingSpace /\(^ *\)\@<= / containedin=ALL conceal cchar=·
 " set list listchars=tab:→\ ,eol:¬
 set list listchars=tab:→\ ,
-" " }}}
+" }}}
 " Folding {{{
 set foldenable
 set foldlevelstart=10
@@ -258,4 +260,5 @@ endfunction
 
 " }}}
 set modelines=1
-" vim:foldmethod=marker:foldlevel=0
+" vim:foldmethod=marker:foldlevel=0:tabstop=4:softtabstop=4:shiftwidth=4:expandtab
+
