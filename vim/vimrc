@@ -1,13 +1,13 @@
 " Preamble {{{
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
-" moved to github at vm-wylbur/pb-dotfiles
-" git@github.com:vm-wylbur/pb-dotfiles.git
+" moved to github
+"    git@github.com:vm-wylbur/pb-dotfiles.git
 " install by symlinking to ~/.vimrc
+" if you keep getting a mess of swap files, use this at the shell:
+"    $ find . -type f -name "\.*sw[klmnop]" -delete
 " }}}
 " todo: {{{
-" * where is F being remapped? not ok!
-" * open_file_under_cursor
 " * leader stuff
 " * add machinename to status line
 " * indenting in vimrc?
@@ -16,15 +16,15 @@
 set nocompatible
 filetype plugin on
 set directory^=$HOME/.backups//
-" set shell=/bin/bash\ -ic
 set shell=/bin/bash\ -l
 set shellcmdflag=-ic
+set incsearch
 " }}}
 " general remaps {{{
-map <C-K> <C-W>k<C-W>_
+" map <C-K> <C-W>k<C-W>_
 map <C-H> <C-W>h<C-W>_
 map <C-L> <C-W>l<C-W>_
-map <C-J> <C-W>j<C-W>_
+" map <C-J> <C-W>j<C-W>_
 " select last paste in visual mode
 nnoremap <expr> gb '`[' . strpart(getregtype(), 0, 1) . '`]'
 
@@ -64,7 +64,10 @@ Plug 'reedes/vim-pencil'
 Plug 'kien/ctrlp.vim'
 Plug 'qpkorr/vim-bufkill'
 Plug 'ap/vim-buftabline'
+Plug 'justinmk/vim-sneak'
 Plug 'tpope/vim-obsession'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 Plug 'altercation/vim-colors-solarized'
 " Plug 'haya14busa/incsearch.vim'  " seems to work sporadically
 call plug#end()
@@ -80,35 +83,30 @@ autocmd FileType markdown,mkd setlocal spell
 let g:buftabline_numbers=1
 let g:buftabline_indicators='on' " this is helpful.
 let g:buftabline_separators='on'
+let g:sneak#label = 1
 let g:ctrlp_cache_dir = $HOME . '.cache/ctrlp'
 if executable('ag')
-	let g:ctrp_user_command = 'ag %s -l --nocolor -g""'
+    let g:ctrp_user_command = 'ag %s -l --nocolor -g""'
 endif
+let g:UltiSnipsExpandTrigger="<C-;>"
 " the C-TAB fails bc iTerm owns that (switches tabs)
 " needs a keystroke.
-" noremap <C-TAB>   :MBEbf<CR>
-" let g:wintabs_switchbuf='useopen'
-" noremap <C-b>   :MBEbf<CR>
-" noremap <C-S-TAB> :MBEbb<CR>
-" doesn't really work?
-" nnoremap z/  <Plug>(incsearch-forward)
-" nnoremap z?  <Plug>(incsearch-backward)
 
 " }}}
 " leader {{{
 let mapleader = ','
+" nnoremap <leader>f <Plug>Sneak_f
+" nnoremap <leader>F <Plug>Sneak_F
+" nnoremap <leader>t <Plug>Sneak_t
+" nnoremap <leader>T <Plug>Sneak_T
 nnoremap <leader>w :w <CR>
 nnoremap <leader>d :BD<CR>   " kill buffer leave window
 nnoremap <leader>e :ll <CR>  " syntastic next error
 nnoremap <leader>m :marks <CR>       " go w single-quote '
-nnoremap <leader>f :browse oldfiles <CR>
 
 " this doesn't work but it's in the right direction
 " nnoremap <leader>r :lcd %:p:h<CR>:Dispatch! run <CR>
 
-" nnoremap <leader>o :MBEOpen<CR>
-" nnoremap <leader>c :MBEClose<CR>
-" nnoremap <leader>t :MBEToggle<CR>
 nnoremap <leader>1 :b1<CR>
 nnoremap <leader>2 :b2 <CR>
 nnoremap <leader>3 :b3 <CR>
@@ -203,7 +201,6 @@ augroup BgHighlight
     autocmd WinLeave * set nocul
 augroup END
 
-
 " automatically leave insert mode after 'updatetime' milliseconds of inaction
 au CursorHoldI * stopinsert
 
@@ -260,5 +257,5 @@ endfunction
 
 " }}}
 set modelines=1
-" vim:foldmethod=marker:foldlevel=0:tabstop=4:softtabstop=4:shiftwidth=4:expandtab
+" vim:foldmethod=marker:foldlevel=0
 

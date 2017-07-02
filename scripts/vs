@@ -4,6 +4,17 @@
 # - If $1 is a file, just open it; if it is Session.vim, open as session
 # - if $1 is a dir and -f Session.vim, open the session
 # - if $1 is a dir, open all of it, and start Obsession
+# 
+# install by symlinking to ~/bin/vs 
+# 
+usage="$(basename "$0") [-h] file(s) -- opens vim with files or Session
+where:
+   -h show this help text
+"
+if [[ "$1" == "-h" ]] || [[ $# -eq 0 ]] ; then
+    echo "$usage" >&2
+    exit 1
+fi
 
 if [[ $# -gt 1 ]] ; then
     # open all the files
