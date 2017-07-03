@@ -40,7 +40,7 @@ au FileType python map <buffer> F :set foldmethod=indent<cr>
 au FileType python set cindent
 au FileType python set cinkeys-=0#
 au FileType python set indentkeys-=0#
-
+autocmd Filetype vim setlocal foldmethod=marker 
 autocmd Filetype r setlocal ts=4 sts=4 sw=4 expandtab
 " }}}
 " Auto commands at save {{{
@@ -58,6 +58,8 @@ call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-sensible'
 Plug 'itchyny/lightline.vim'
 Plug 'vim-syntastic/syntastic'
+" Plug 'vim-scripts/CursorLineCurrentWindow'
+Plug 'inside/vim-search-pulse'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dispatch'
@@ -71,10 +73,15 @@ Plug 'tpope/vim-obsession'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'altercation/vim-colors-solarized'
-" Plug 'haya14busa/incsearch.vim'  " seems to work sporadically
+" Plug 'vim-scripts/taglist.vim'
+Plug 'craigemery/vim-autotag'
 call plug#end()
 " }}}
 " initialize plugins {{{
+set cursorline
+
+let g:vim_search_pulse_mode = 'cursor_line'
+let tlist_r_settings = 'R;f:Functions;g:GlobalVariables;v:FunctionVariables'
 let g:pencil#wrapModeDefault = 'soft'   " default is 'hard'
 augroup pencil
     autocmd!
@@ -91,8 +98,6 @@ if executable('ag')
     let g:ctrp_user_command = 'ag %s -l --nocolor -g""'
 endif
 let g:UltiSnipsExpandTrigger="<C-;>"
-" the C-TAB fails bc iTerm owns that (switches tabs)
-" needs a keystroke.
 
 " }}}
 " leader {{{
@@ -119,10 +124,41 @@ nnoremap <leader>7 :b7 <CR>
 nnoremap <leader>8 :b8 <CR>
 nnoremap <leader>9 :b9 <CR>
 
+
+function! s:swap_lines(n1, n2)
+    let line1 = getline(a:n1)
+    let line2 = getline(a:n2)
+    call setline(a:n1, line2)
+    call setline(a:n2, line1)
+endfunction
+
+function! s:swap_up()
+    let n = line('.')
+    if n == 1
+        return
+    endif
+
+    call s:swap_lines(n, n - 1)
+    exec n - 1
+endfunction
+
+function! s:swap_down()
+    let n = line('.')
+    if n == line('$')
+        return
+    endif
+
+    call s:swap_lines(n, n + 1)
+    exec n + 1
+endfunction
+
+noremap <leader>k :call <SID>swap_up()<CR>
+noremap <leader>j :call <SID>swap_down()<CR>
+
 " }}}
 " syntastic {{{
 let g:syntastic_python_checkers=['pep8']
-"let g:syntastic_python_checkers=['flake8']
+" let g:syntastic_python_checkers=['flake8']
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 
@@ -130,7 +166,9 @@ let g:syntastic_always_populate_loc_list = 0
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
-let g:syntastic_enable_r_svtools_checker = 1
+" let g:syntastic_enable_r_svtools_checker = 1
+let g:loaded_syntastic_r_lintr_checker = 1
+let g:syntastic_r_checkers = ['lintr']
 " }}}
 " status line {{{
 set laststatus=2
@@ -188,6 +226,8 @@ set relativenumber
 set number
 set noshowmode
 syntax enable
+set cursorline
+set cursorcolumn
 set background=dark
 colorscheme solarized
 set guifont=Monaco:h14
@@ -198,20 +238,18 @@ let &t_SR = "\<Esc>]50;CursorShape=2\x7"
 let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 
 augroup BgHighlight
-		autocmd!
+autocmd!
     autocmd WinEnter * set cul
     autocmd WinLeave * set nocul
 augroup END
+" makes right margin diff color
+execute "set colorcolumn=" . join(range(81,335), ',')
 
 " automatically leave insert mode after 'updatetime' milliseconds of inaction
 au CursorHoldI * stopinsert
 
 " }}}
 " whitespace vis {{{
-" highlight Conceal guibg=NONE ctermbg=NONE ctermfg=DarkGrey
-" autocmd BufWinEnter,BufReadPre * setlocal conceallevel=2 concealcursor=nv
-" autocmd BufWinEnter,BufReadPre * syn match LeadingSpace /\(^ *\)\@<= / containedin=ALL conceal cchar=·
-" set list listchars=tab:→\ ,eol:¬
 set list listchars=tab:→\ ,
 " }}}
 " Folding {{{
