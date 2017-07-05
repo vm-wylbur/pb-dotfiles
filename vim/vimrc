@@ -21,12 +21,19 @@ set shellcmdflag=-ic
 set incsearch
 " }}}
 " general remaps {{{
-" map <C-K> <C-W>k<C-W>_
 map <C-H> <C-W>h<C-W>_
 map <C-L> <C-W>l<C-W>_
-" map <C-J> <C-W>j<C-W>_
+
+" shift-up,down moves lines or blocks
+nnoremap <S-Down> :m .+1<CR>
+nnoremap <S-Up> :m .-2<CR>
+vnoremap <S-Down> :m '>+1<CR>gv=gv
+vnoremap <S-up> :m '<-2<CR>gv=gv
+inoremap <S-Down> <ESC>:m .+1<CR>gi
+inoremap <S-Up> <ESC>:m .-2<CR>gi
+
 " select last paste in visual mode
-nnoremap <expr> gb '`[' . strpart(getregtype(), 0, 1) . '`]'
+" nnoremap <expr> gb '`[' . strpart(getregtype(), 0, 1) . '`]'
 
 " abbreviations for quick datestamping in Insert mode
 iab xsdate <c-r>=strftime("%Y-%m-%dT%H:%M%Z")<CR>
@@ -66,7 +73,11 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dispatch'
 Plug 'ervandew/supertab'
 Plug 'reedes/vim-pencil'
-" Plug 'kien/ctrlp.vim'
+Plug 'kana/vim-textobj-user'
+
+Plug 'kana/vim-textobj-function'
+Plug 'bps/vim-textobj-python'
+" Plug 'terryma/vim-expand-region'
 Plug 'mileszs/ack.vim'
 Plug 'qpkorr/vim-bufkill'
 Plug 'ap/vim-buftabline'
@@ -139,10 +150,6 @@ let g:UltiSnipsExpandTrigger="<C-;>"
 " }}}
 " leader {{{
 let mapleader = ','
-" nnoremap <leader>f <Plug>Sneak_f
-" nnoremap <leader>F <Plug>Sneak_F
-" nnoremap <leader>t <Plug>Sneak_t
-" nnoremap <leader>T <Plug>Sneak_T
 nnoremap <leader>w :w <CR>
 nnoremap <leader>d :BD<CR>   " kill buffer leave window
 nnoremap <leader>e :ll <CR>  " syntastic next error
