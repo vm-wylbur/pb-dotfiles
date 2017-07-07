@@ -9,16 +9,20 @@
 " }}}
 " todo: {{{
 " * leader stuff
-" * add machinename to status line
-" * indenting in vimrc?
+" * add machine name to status line
+" * indenting in vim?
 " }}}
 " setup {{{
+" testing bad spelling one two there
 set nocompatible
 filetype plugin on
 set directory^=$HOME/.backups//
 set shell=/bin/bash\ -l
 set shellcmdflag=-ic
 set incsearch
+set spelllang=en_us spell
+set wildmenu
+set wildmode=longest:list,full
 " }}}
 " general remaps {{{
 map <C-H> <C-W>h<C-W>_
@@ -156,10 +160,13 @@ let g:UltiSnipsExpandTrigger="<C-;>"
 let mapleader = "\<Space>"
 nnoremap <leader>w :w <CR>
 nnoremap <leader>d :BD<CR>   " kill buffer leave window
-nnoremap <leader>er :ll <CR>  " syntastic next error
+nnoremap <leader>r :ll <CR>  " syntastic next error
 nnoremap <leader>m :marks <CR>       " go w single-quote '
 
-" Quick edit file list
+" spelling hack
+nnoremap <leader>sp mt[s1z=`t
+
+" Quick edit file lst test.
 nnoremap <Leader>sv :source ~/dotfiles/vim/vimrc<CR>
 nnoremap <Leader>ev :e ~/dotfiles/vim/vimrc<CR>
 nnoremap <Leader>es :e ~/Documents/notes/vim-todo.md<CR>
@@ -196,7 +203,6 @@ let g:syntastic_python_checkers=['pep8']
 " let g:syntastic_python_checkers=['flake8']
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
-
 let g:syntastic_always_populate_loc_list = 0
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
