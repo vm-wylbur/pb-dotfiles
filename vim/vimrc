@@ -20,13 +20,16 @@ set directory^=$HOME/.backups//
 set shell=/bin/bash\ -l
 set shellcmdflag=-ic
 set incsearch
+set hlsearch
 set spelllang=en_us spell
 set wildmenu
 set wildmode=longest:list,full
 " }}}
 " general remaps {{{
-map <C-H> <C-W>h<C-W>_
-map <C-L> <C-W>l<C-W>_
+" map <C-H> <C-W>h<C-W>_
+" map <C-L> <C-W>l<C-W>_
+
+nnoremap <C-l> :nohlsearch<CR><C-l>
 
 " shift-up,down moves lines or blocks
 nnoremap <S-Down> :m .+1<CR>
@@ -36,21 +39,21 @@ vnoremap <S-up> :m '<-2<CR>gv=gv
 inoremap <S-Down> <ESC>:m .+1<CR>gi
 inoremap <S-Up> <ESC>:m .-2<CR>gi
 
-" still isn't really working, terribly slow
-" nnoremap <S-Up> :call <SID>swap_up()<CR>
-" nnoremap <S-Down> :call <SID>swap_down()<CR>
-" vnoremap <S-Down> :call <SID>swap_down()<CR>
-" vnoremap <S-up> :call <SID>swap_down()<CR>
+" m-j and m-k to drag lines 
+noremap ∆ :m+<CR>
+noremap ˚ :m-2<CR>
 
+nnoremap n nzz
+set scrolloff=10
+" }}}
+" abbreviations {{{
 " abbreviations for quick datestamping in Insert mode
 iab xsdate <c-r>=strftime("%Y-%m-%dT%H:%M%Z")<CR>
 iab xldate <c-r>=strftime("%a %d %b %Y %H:%M:%S%Z")<CR>
-
 " }}}
 " filetype specific {{{
 let python_highlight_all = 1
 au FileType python syn keyword pythonDecorator True None False self
-au FileType python map <buffer> F :set foldmethod=indent<cr>
 au FileType python set cindent
 au FileType python set cinkeys-=0#
 au FileType python set indentkeys-=0#
@@ -163,6 +166,16 @@ nnoremap <leader>d :BD<CR>   " kill buffer leave window
 nnoremap <leader>r :ll <CR>  " syntastic next error
 nnoremap <leader>m :marks <CR>       " go w single-quote '
 
+nnoremap <leader>h <C-W>h<C-W>_
+nnoremap <leader>l <C-W>l<C-W>_
+
+" Emacs bindings in command line mode
+cnoremap <c-a> <home>
+cnoremap <c-e> <end>
+
+" Keep the cursor in place while joining lines
+nnoremap J mzJ`z
+
 " spelling hack
 nnoremap <leader>sp mt[s1z=`t
 
@@ -172,6 +185,8 @@ nnoremap <Leader>ev :e ~/dotfiles/vim/vimrc<CR>
 nnoremap <Leader>es :e ~/Documents/notes/vim-todo.md<CR>
 nnoremap <Leader>et :e ~/Documents/notes/tech-todo.md<CR>
 nnoremap <Leader>en :e ~/Documents/notes/vim-notes.md<CR>
+
+nnoremap <leader>fo :setlocal foldmethod=marker<CR>
 
 " this doesn't work but it's in the right direction
 " nnoremap <leader>r :lcd %:p:h<CR>:Dispatch! run <CR>
@@ -362,6 +377,7 @@ function! s:swap_down()
     exec n + 1
 endfunction
 " }}}
-set modelines=1
-" vim: foldmethod=marker:foldlevel=0
+set modeline
+set modelines=5
+" vim: set foldmethod=marker foldlevel=0:
 
