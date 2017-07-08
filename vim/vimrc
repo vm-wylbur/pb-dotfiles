@@ -179,8 +179,8 @@ nnoremap <Leader>en :e ~/Documents/notes/vim-notes.md<CR>
 " leader for tagbartoggle:
 " todo: add a Toggle-aware so <leader>t goes back and forth.
 " might work with saving session? then popping to it?
-nnoremap <leader>t :only<CR> :TagbarToggle<CR>
-nnoremap <leader>r :TagbarToggle<CR> :vsp<CR>
+" nnoremap <leader>t :only<CR> :TagbarToggle<CR>
+" nnoremap <leader>r :TagbarToggle<CR> :vsp<CR>
 
 nnoremap <leader>z za
 nnoremap <leader>Z zA
