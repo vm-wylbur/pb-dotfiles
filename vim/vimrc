@@ -40,9 +40,6 @@ inoremap <S-Down> <ESC>:m .+1<CR>gi
 inoremap <S-Up> <ESC>:m .-2<CR>gi
 
 nnoremap <space> <C-d>
-" m-j and m-k to drag lines
-" noremap ∆ :m+<CR>
-" noremap ˚ :m-2<CR>
 
 nnoremap n nzz
 set scrolloff=10
@@ -182,7 +179,7 @@ nnoremap J mzJ`z
 nnoremap <leader>sp mt[s1z=`t
 
 " Quick edit file lst test.
-nnoremap <Leader>sv :source ~/dotfiles/vim/vimrc<CR>
+nnoremap <Leader>er :source ~/dotfiles/vim/vimrc<CR>
 nnoremap <Leader>ev :e ~/dotfiles/vim/vimrc<CR>
 nnoremap <Leader>es :e ~/Documents/notes/vim-todo.md<CR>
 nnoremap <Leader>et :e ~/Documents/notes/tech-todo.md<CR>
