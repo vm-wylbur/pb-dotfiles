@@ -1,10 +1,16 @@
-" another attempt to use Neovimj=
+" Preamble {{{
+" Author: [Patrick Ball](mailto://pball@hrdag.org)
+" (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
+" 
+" moved to github
+"    git@github.com:vm-wylbur/pb-dotfiles.git
+"
+" install by symlinking to ~/.vimrc
+" if you keep getting a mess of swap files, use this at the shell:
+"    $ find . -type f -name "\.*sw[klmnop]" -delete
+" }}}
 
-
-
-"*****************************************************************************
-"" Vim-PLug core
-"*****************************************************************************
+" boostrap {{{
 if has('vim_starting')
   set nocompatible               " Be iMproved
 endif
@@ -13,7 +19,9 @@ let vimplug_exists=expand('~/.config/nvim/autoload/plug.vim')
 
 let g:vim_bootstrap_langs = "python"
 let g:vim_bootstrap_editor = "nvim"				" nvim or vim
+" }}}
 
+" plugins setup and bootstrap {{{
 if !filereadable(vimplug_exists)
   if !executable("curl")
     echoerr "You have to install curl or first install vim-plug yourself!"
@@ -26,37 +34,67 @@ if !filereadable(vimplug_exists)
 
   autocmd VimEnter * PlugInstall
 endif
-
-" colors {{{
-set termguicolors
-:set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
-au VimLeave * set guicursor=a:block-blinkon0
 " }}}
 
-
-" Required:
+" plug packages {{{
 call plug#begin(expand('~/.config/nvim/plugged'))
 
-"*****************************************************************************
-"" Plug install packages
-"*****************************************************************************
-Plug 'scrooloose/nerdtree'
-Plug 'jistr/vim-nerdtree-tabs'
-Plug 'tpope/vim-commentary'
-" Plug 'tpope/vim-fugitive'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'airblade/vim-gitgutter'
-" Plug 'vim-scripts/grep.vim'
-Plug 'vim-scripts/CSApprox'
-" Plug 'bronson/vim-trailing-whitespace'
-Plug 'Raimondi/delimitMate'
-Plug 'majutsushi/tagbar'
-Plug 'scrooloose/syntastic'
-Plug 'Yggdroot/indentLine'
+" editing 
+
+Plug 'godlygeek/tabular'      " should align on regex :Tab /char
+Plug 'Yggdroot/indentLine'    " ??
+
+" colors and UI 
+Plug 'airblade/vim-gitgutter' " put chars in gutter
+Plug 'ap/vim-buftabline'
+
 Plug 'avelino/vim-bootstrap-updater'
-Plug 'sheerun/vim-polyglot'
+Plug 'bps/vim-textobj-python'
+" Plug 'craigemery/vim-autotag'
+Plug 'ervandew/supertab'
+Plug 'inside/vim-search-pulse'
+Plug 'itchyny/lightline.vim'
+Plug 'jistr/vim-nerdtree-tabs'
+Plug 'justinmk/vim-sneak'
+Plug 'kana/vim-textobj-function'
+Plug 'kana/vim-textobj-user'
+Plug 'luochen1990/rainbow'
+Plug 'majutsushi/tagbar'
+Plug 'qpkorr/vim-bufkill'
 Plug 'reedes/vim-pencil'
+Plug 'scrooloose/nerdtree'
+Plug 'scrooloose/syntastic'
+Plug 'tpope/vim-commentary'
+" Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-surround'
+Plug 'vim-syntastic/syntastic'
+
+" languages
+Plug 'sheerun/vim-polyglot'
+Plug 'davidhalter/jedi-vim'
+Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
+
+"" Vim-Session
+" Plug 'xolox/vim-misc'
+" Plug 'xolox/vim-session'
+
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'frankier/neovim-colors-solarized-truecolor-only'
+" Plug 'morhetz/gruvbox'
+" }}} 
+
+" Plug configs {{{
+set termguicolors
+set background=dark
+set rtp+=$HOME/src/solarized/vim-colors-solarized
+colorscheme solarized
+" set rtp+=$HOME/.config/nvim/plugged/gruvbox
+" colorscheme gruvbox
+" let g:gruvbox_italic = 0 
+
+source $HOME/dotfiles/vim-common/line.vimrc
+
 let g:pencil#wrapModeDefault = 'soft'   " default is 'hard'
   augroup pencil
     autocmd!
@@ -64,54 +102,29 @@ let g:pencil#wrapModeDefault = 'soft'   " default is 'hard'
     autocmd FileType text          call pencil#init()
   augroup END
 autocmd FileType markdown,mkd setlocal spell
-" FIXME
-" these aren't working but would be v useful. 
-let delimitMate_expand_cr = 2
-let delimitMateBackspace = 1
 
-" let g:make = 'gmake'
-" if exists('make')
-"         let g:make = 'make'
-" endif
-" Plug 'Shougo/vimproc.vim', {'do': g:make}
+let g:buftabline_numbers=1
+let g:buftabline_indicators='on' " this is helpful.
+let g:buftabline_separators='on'
 
-"" Vim-Session
-" Plug 'xolox/vim-misc'
-" Plug 'xolox/vim-session'
-
-if v:version >= 703
-  Plug 'Shougo/vimshell.vim'
-endif
-
-if v:version >= 704
-  "" Snippets
-  Plug 'SirVer/ultisnips'
-endif
-
-Plug 'honza/vim-snippets'
-
-"" Color
-Plug 'tomasr/molokai'
-
-"*****************************************************************************
-"" Custom bundles
-"*****************************************************************************
-
-" python
-"" Python Bundle
-Plug 'davidhalter/jedi-vim'
-Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
-
-
-"*****************************************************************************
-"*****************************************************************************
-
-"" Include user's extra bundle
-if filereadable(expand("~/.config/nvim/local_bundles.vim"))
-  source ~/.config/nvim/local_bundles.vim
-endif
+let g:sneak#label = 1
+" }}} 
 
 call plug#end()
+
+set modeline
+set modelines=5
+" vim: set foldmethod=marker foldlevel=0:
+
+" source $HOME/dotfiles/vim-common/plugins.vimrc 
+" }}}
+" 
+" cursor {{{
+set termguicolors
+:set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
+au VimLeave * set guicursor=a:block-blinkon0
+" }}}
+
 
 " Required:
 filetype plugin indent on
@@ -178,9 +191,6 @@ set ruler
 set number
 
 let no_buffers_menu=1
-if !exists('g:not_finish_vimplug')
-  colorscheme molokai
-endif
 
 set mousemodel=popup
 set t_Co=256
@@ -221,26 +231,12 @@ set title
 set titleold="Terminal"
 set titlestring=%F
 
-set statusline=%F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l\/%L,\ col\ %c)\
 
 " Search mappings: These will make it so that going to the next one in a
 " search will center on the line it's found in.
 nnoremap n nzzzv
 nnoremap N Nzzzv
-
 nnoremap <space> <C-d>
-
-if exists("*fugitive#statusline")
-  set statusline+=%{fugitive#statusline()}
-endif
-
-" vim-airline
-let g:airline_theme = 'powerlineish'
-let g:airline#extensions#syntastic#enabled = 1
-let g:airline#extensions#branch#enabled = 0
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tagbar#enabled = 1
-let g:airline_skip_empty_sections = 1
 
 "*****************************************************************************
 "" Abbreviations
@@ -335,15 +331,6 @@ set autoread
 " noremap <Leader>h :<C-u>split<CR>
 " noremap <Leader>v :<C-u>vsplit<CR>
 
-"" Git
-" noremap <Leader>ga :Gwrite<CR>
-" noremap <Leader>gc :Gcommit<CR>
-" noremap <Leader>gsh :Gpush<CR>
-" noremap <Leader>gll :Gpull<CR>
-" noremap <Leader>gs :Gstatus<CR>
-" noremap <Leader>gb :Gblame<CR>
-" noremap <Leader>gd :Gvdiff<CR>
-" noremap <Leader>gr :Gremove<CR>
 
 " session management
 nnoremap <leader>so :OpenSession<Space>
@@ -364,25 +351,6 @@ noremap <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
 
 "" Opens a tab edit command with the path of the currently edited file filled
 noremap <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
-
-"" fzf.vim
-" set wildmode=list:longest,list:full
-" set wildignore+=*.o,*.obj,.git,*.rbc,*.pyc,__pycache__
-" let $FZF_DEFAULT_COMMAND =  "find * -path '*/\.*' -prune -o -path 'node_modules/**' -prune -o -path 'target/**' -prune -o -path 'dist/**' -prune -o  -type f -print -o -type l -print 2> /dev/null"
-
-" " The Silver Searcher
-" if executable('ag')
-"   let $FZF_DEFAULT_COMMAND = 'ag --hidden --ignore .git -g ""'
-"   set grepprg=ag\ --nogroup\ --nocolor
-" endif
-
-" ripgrep
-" if executable('rg')
-"   let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
-"   set grepprg=rg\ --vimgrep
-"   command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
-" endif
-
 cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 nnoremap <silent> <leader>b :Buffers<CR>
 nnoremap <silent> <leader>e :FZF -m<CR>
@@ -486,7 +454,7 @@ let g:jedi#smart_auto_mappings = 0
 let g:syntastic_python_checkers=['python', 'flake8']
 
 " vim-airline
-let g:airline#extensions#virtualenv#enabled = 1
+" let g:airline#extensions#virtualenv#enabled = 1
 
 " Syntax highlight
 " Default highlight is better than polyglot
@@ -498,46 +466,46 @@ let python_highlight_all = 1
 "*****************************************************************************
 
 "" Include user's local vim config
-if filereadable(expand("~/.config/nvim/local_init.vim"))
-  source ~/.config/nvim/local_init.vim
-endif
+" if filereadable(expand("~/.config/nvim/local_init.vim"))
+"   source ~/.config/nvim/local_init.vim
+" endif
 
 "*****************************************************************************
 "" Convenience variables
 "*****************************************************************************
 
 " vim-airline
-if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
-endif
+" if !exists('g:airline_symbols')
+"   let g:airline_symbols = {}
+" endif
 
-if !exists('g:airline_powerline_fonts')
-  let g:airline#extensions#tabline#left_sep = ' '
-  let g:airline#extensions#tabline#left_alt_sep = '|'
-  let g:airline_left_sep          = '▶'
-  let g:airline_left_alt_sep      = '»'
-  let g:airline_right_sep         = '◀'
-  let g:airline_right_alt_sep     = '«'
-  let g:airline#extensions#branch#prefix     = '⤴' "➔, ➥, ⎇
-  let g:airline#extensions#readonly#symbol   = '⊘'
-  let g:airline#extensions#linecolumn#prefix = '¶'
-  let g:airline#extensions#paste#symbol      = 'ρ'
-  let g:airline_symbols.linenr    = '␊'
-  let g:airline_symbols.branch    = '⎇'
-  let g:airline_symbols.paste     = 'ρ'
-  let g:airline_symbols.paste     = 'Þ'
-  let g:airline_symbols.paste     = '∥'
-  let g:airline_symbols.whitespace = 'Ξ'
-else
-  let g:airline#extensions#tabline#left_sep = ''
-  let g:airline#extensions#tabline#left_alt_sep = ''
+" if !exists('g:airline_powerline_fonts')
+"   let g:airline#extensions#tabline#left_sep = ' '
+"   let g:airline#extensions#tabline#left_alt_sep = '|'
+"   let g:airline_left_sep          = '▶'
+"   let g:airline_left_alt_sep      = '»'
+"   let g:airline_right_sep         = '◀'
+"   let g:airline_right_alt_sep     = '«'
+"   let g:airline#extensions#branch#prefix     = '⤴' "➔, ➥, ⎇
+"   let g:airline#extensions#readonly#symbol   = '⊘'
+"   let g:airline#extensions#linecolumn#prefix = '¶'
+"   let g:airline#extensions#paste#symbol      = 'ρ'
+"   let g:airline_symbols.linenr    = '␊'
+"   let g:airline_symbols.branch    = '⎇'
+"   let g:airline_symbols.paste     = 'ρ'
+"   let g:airline_symbols.paste     = 'Þ'
+"   let g:airline_symbols.paste     = '∥'
+"   let g:airline_symbols.whitespace = 'Ξ'
+" else
+"   let g:airline#extensions#tabline#left_sep = ''
+"   let g:airline#extensions#tabline#left_alt_sep = ''
 
-  " powerline symbols
-  let g:airline_left_sep = ''
-  let g:airline_left_alt_sep = ''
-  let g:airline_right_sep = ''
-  let g:airline_right_alt_sep = ''
-  let g:airline_symbols.branch = ''
-  let g:airline_symbols.readonly = ''
-  let g:airline_symbols.linenr = ''
-endif
+"   " powerline symbols
+"   let g:airline_left_sep = ''
+"   let g:airline_left_alt_sep = ''
+"   let g:airline_right_sep = ''
+"   let g:airline_right_alt_sep = ''
+"   let g:airline_symbols.branch = ''
+"   let g:airline_symbols.readonly = ''
+"   let g:airline_symbols.linenr = ''
+" endif

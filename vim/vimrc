@@ -150,7 +150,6 @@ let g:buftabline_numbers=1
 let g:buftabline_indicators='on' " this is helpful.
 let g:buftabline_separators='on'
 let g:sneak#label = 1
-let g:ctrlp_cache_dir = $HOME . '.cache/ctrlp'
 if executable('ag')
     let g:ctrp_user_command = 'ag %s -l --nocolor -g""'
 endif
