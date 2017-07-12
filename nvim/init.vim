@@ -109,7 +109,7 @@ let g:sneak#label = 1
 :set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
 au VimLeave * set guicursor=a:block-blinkon0
 set cursorline
-set cursorcolumn 
+set cursorcolumn
 
 "" plugin enabled
 filetype plugin indent on
@@ -224,14 +224,11 @@ if has("gui_running")
   endif
 else
   let g:CSApprox_loaded = 1
-
   " IndentLine
   let g:indentLine_enabled = 1
   let g:indentLine_concealcursor = 0
   let g:indentLine_char = '┆'
   let g:indentLine_faster = 1
-
-
 endif
 
 "" Disable the blinking cursor.
@@ -248,16 +245,6 @@ set modelines=10
 " set title
 " set titleold="Terminal"
 " set titlestring=%F
-" }}}
-
-" key rempping {{{
-
-"" Search mappings:
-" These will make it so that going to the next one in a
-" search will center on the line it's found in.
-nnoremap n nzzzv
-nnoremap N Nzzzv
-nnoremap <space> <C-d>
 " }}}
 
 " Abbreviations {{{
@@ -328,22 +315,31 @@ set autoread
 
 " Mappings {{{
 
-" session management
+"" Search mappings:
+" These will make it so that going to the next one in a
+" search will center on the line it's found in.
+nnoremap n nzzzv
+nnoremap N Nzzzv
+nnoremap <space> <C-d>
+
+"" session management
 nnoremap <leader>so :OpenSession<Space>
 nnoremap <leader>ss :SaveSession<Space>
 nnoremap <leader>sd :DeleteSession<CR>
 nnoremap <leader>sc :CloseSession<CR>
 
 "" Set working directory
-nnoremap <leader>. :lcd %:p:h<CR>
+" doesn't work
+" nnoremap <leader>. :lcd %:p:h<CR>
 
 nnoremap <leader>w :w <CR>
 nnoremap <leader>d :BD<CR>   " kill buffer leave window
 noremap <leader>c :bd<CR>
 nnoremap <leader>r :ll <CR>  " syntastic next error
 
-" nnoremap <leader>h <C-W>h<C-W>_
-" nnoremap <leader>l <C-W>l<C-W>_
+" to normal mode with jj or jk
+inoremap jj <ESC>
+inoremap jk <ESC>
 
 " Emacs bindings in command line mode
 cnoremap <c-a> <home>
@@ -356,11 +352,13 @@ nnoremap J mzJ`z
 nnoremap <leader>sp mt[s1z=`t
 
 " Quick edit file lst test.
-nnoremap <Leader>er :source ~/dotfiles/vim/vimrc<CR>
+nnoremap <Leader>er :source ~/dotfiles/nvim/init.vim<CR>
 nnoremap <Leader>ev :e ~/dotfiles/nvim/init.vim<CR>
-nnoremap <Leader>es :e ~/Documents/notes/vim-todo.md<CR>
-nnoremap <Leader>et :e ~/Documents/notes/tech-todo.md<CR>
-nnoremap <Leader>en :e ~/Documents/notes/vim-notes.md<CR>
+
+"" add a freq-access-file list to draw from
+" nnoremap <Leader>es :e ~/Documents/notes/vim-todo.md<CR>
+" nnoremap <Leader>et :e ~/Documents/notes/tech-todo.md<CR>
+" nnoremap <Leader>en :e ~/Documents/notes/vim-notes.md<CR>
 
 " this doesn't work but it's in the right direction
 " nnoremap <leader>r :lcd %:p:h<CR>:Dispatch! run <CR>
@@ -381,14 +379,10 @@ nnoremap <leader>8 :b8 <CR>
 nnoremap <leader>9 :b9 <CR>
 
 " quickies
-" FIXME: what do these do? 
+" FIXME: what do these do?
 noremap YY "+y<CR>
 noremap <leader>p "+gP<CR>
 noremap XX "+x<CR>
-
-"" Close buffer
-" fixme: this hsould leave the window open
-" fixme: get spell leader and window maintainer
 
 "" Clean search (highlight)
 nnoremap <silent> <leader><space> :noh<cr>
@@ -406,6 +400,8 @@ vmap > >gv
 "" Move visual block
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
+
+"" not working but cool sounding stuff
 " Opens an edit command with the path of the currently edited file filled in
 " doesn't work :( would be v good!
 " noremap <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
