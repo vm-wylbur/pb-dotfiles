@@ -94,6 +94,7 @@ call plug#end()
 
 " Plug configs {{{
 set rtp+=$HOME/src/solarized/vim-colors-solarized
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 colorscheme solarized
 
 "" nerdtree {{{{
