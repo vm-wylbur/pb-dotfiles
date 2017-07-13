@@ -10,6 +10,10 @@
 "    $ find . -type f -name "\.*sw[klmnop]" -delete
 " }}}
 
+" todo {{{
+"
+" }}}
+
 " boostrap {{{
 if has('vim_starting')
   set nocompatible               " Be iMproved
@@ -42,8 +46,10 @@ endif
 
 " plug packages {{{
 call plug#begin(expand('~/.config/nvim/plugged'))
+" plugins themselves
+Plug 'tpope/vim-repeat'  " doesn't work? needs config for surround
 
-" editing
+" editing and formatting
 Plug 'godlygeek/tabular'      " should align on regex :Tab /char
 Plug 'Yggdroot/indentLine'    " ??
 Plug 'tpope/vim-surround'
@@ -53,15 +59,19 @@ Plug 'kana/vim-textobj-function'
 Plug 'kana/vim-textobj-user'
 Plug 'tpope/vim-commentary'
 
+" files, buffers, and tags
+Plug 'yegappan/mru'
+Plug 'qpkorr/vim-bufkill'
+Plug 'majutsushi/tagbar'
+Plug 'ap/vim-buftabline'
+Plug 'scrooloose/nerdtree'
+
 " colors and UI
 Plug 'frankier/neovim-colors-solarized-truecolor-only'
 Plug 'airblade/vim-gitgutter' " put chars in gutter
-Plug 'ap/vim-buftabline'
 Plug 'inside/vim-search-pulse'
-Plug 'itchyny/lightline.vim'
-Plug 'qpkorr/vim-bufkill'
+" Plug 'itchyny/lightline.vim'
 Plug 'luochen1990/rainbow'
-Plug 'majutsushi/tagbar'
 
 " languages
 Plug 'sheerun/vim-polyglot'
@@ -86,7 +96,16 @@ call plug#end()
 set rtp+=$HOME/src/solarized/vim-colors-solarized
 colorscheme solarized
 
-source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
+"" nerdtree {{{{
+" open nerdtree if vim opened wo file
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists(“s:std_in”) | NERDTree | endif
+
+
+
+" }}}}
+
+" source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
 
 let g:pencil#wrapModeDefault = 'soft'   " default is 'hard'
   augroup pencil
@@ -105,16 +124,18 @@ let g:sneak#label = 1
 " }}}
 
 " Basic setup {{{
-"" cursor
+"" cursor {{{{
 :set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
 au VimLeave * set guicursor=a:block-blinkon0
 set cursorline
 set cursorcolumn
+" }}}}
 
-"" plugin enabled
+"" plugin enabled {{{{
 filetype plugin indent on
+" }}}}
 
-"" Auto commands at save
+"" Auto commands at save {{{{
 set omnifunc=syntaxcomplete#Complete
 set autoread
 augroup autoSaveAndRead
@@ -123,8 +144,9 @@ augroup autoSaveAndRead
   autocmd CursorHold * silent! checktime
 augroup END
 autocmd BufWritePre * :%s/\s\+$//e  " removes training whitespace
+" }}}}
 
-"" setting up right margin highlighting
+"" setting up right margin highlighting {{{{
 augroup BgHighlight
 autocmd!
     autocmd WinEnter * set cul
@@ -132,61 +154,74 @@ autocmd!
 augroup END
 " makes right margin diff color
 execute "set colorcolumn=" . join(range(81,335), ',')
+" }}}}
 
-"" automatically leave insert mode after 'updatetime' milliseconds of inaction
-au CursorHoldI * stopinsert
+"" automatically leave insert mode after 'updatetime' milliseconds of inaction {{{{
+" au CursorHoldI * stopinsert
+" }}}}
 
-"" Encoding
+"" Encoding {{{{
 set encoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8
 set bomb
 set binary
+" }}}}
 
-"" Fix backspace indent
+"" Fix backspace indent {{{{
 set backspace=indent,eol,start
+" }}}}
 
-"" Tabs. May be overriten by autocmd rules
+"" Tabs. May be overriten by autocmd rules {{{{
 set tabstop=2
 set softtabstop=0
 set shiftwidth=2
 set expandtab
+" }}}}
 
-"" Map leader to ,
+"" Map leader to , {{{{
 let mapleader=','
+" }}}}
 
-"" Enable hidden buffers
+"" Enable hidden buffers {{{{
 set hidden
+" }}}}
 
-"" for MacOS
+"" for MacOS {{{{
 if has('macunix')
   vmap <C-x> :!pbcopy<CR>
   vmap <C-c> :w !pbcopy<CR><CR>
 endif
+" }}}}
 
-"" Copy/Paste/Cut
+"" Copy/Paste/Cut {{{{
 if has('unnamedplus')
   set clipboard=unnamed,unnamedplus
 endif
+" }}}}
 
-"" Disable visualbell
+"" Disable visualbell {{{{
 set noerrorbells visualbell t_vb=
 if has('autocmd')
   autocmd GUIEnter * set visualbell t_vb=
 endif
+" }}}}
 
-"" Searching
+"" Searching {{{{
 set hlsearch
 set incsearch
 set ignorecase
 set smartcase
+" }}}}
 
-"" editing
+"" editing {{{{
 set scrolloff=5
+" }}}}
 
-"" Directories for swp files
+"" shells and directories for swp files {{{{
 set nobackup
 set noswapfile
+
 
 set fileformats=unix,dos,mac
 set showcmd
@@ -196,15 +231,27 @@ if exists('$SHELL')
 else
     set shell=/bin/bash
 endif
+" }}}}
 
-" session management
+"" CWD to current buffer's path {{{{
+autocmd BufEnter * lcd %:p:h 
+" }}}}
+
+"" session management {{{{
 let g:session_directory = "~/.config/nvim/session"
 let g:session_autoload = "no"
 let g:session_autosave = "no"
 let g:session_command_aliases = 1
+" }}}}
 " }}}
 
 " Visual Settings {{{
+
+"" Tagbar
+" nmap <silent> <F4> :TagbarToggle<CR>
+nnoremap <leader>tg :TagbarToggle<CR>
+let g:tagbar_autofocus = 1
+nnoremap <leader>tt :NERDTreeToggle<CR>
 
 syntax on
 set ruler
@@ -215,8 +262,9 @@ let no_buffers_menu=1
 set mousemodel=popup
 set t_Co=256
 set guioptions=egmrti
-set gfn=Monospace\ 10
+" set gfn=Monospace\ 10
 
+"" setup gui or not {{{{
 if has("gui_running")
   if has("gui_mac") || has("gui_macvim")
     set guifont=Menlo:h12
@@ -230,21 +278,20 @@ else
   let g:indentLine_char = '┆'
   let g:indentLine_faster = 1
 endif
+" }}}}
 
-"" Disable the blinking cursor.
+"" Disable the blinking cursor. {{{{
 set gcr=a:blinkon0
-set scrolloff=3
+" }}}}
 
-"" Status bar
+"" Status bar {{{{
 set laststatus=2
+" }}}}
 
-"" Use modeline overrides
+"" Use modeline overrides {{{{
 set modeline
 set modelines=10
-
-" set title
-" set titleold="Terminal"
-" set titlestring=%F
+" }}}}
 " }}}
 
 " Abbreviations {{{
@@ -271,23 +318,13 @@ cnoreabbrev Qall qall
 let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
 let g:vimshell_prompt =  '$ '
 
-" terminal emulation
+"" terminal emulation {{{{
 if g:vim_bootstrap_editor == 'nvim'
   nnoremap <silent> <leader>sh :terminal<CR>
 else
   nnoremap <silent> <leader>sh :VimShellCreate<CR>
 endif
-" }}}
-
-" Functions {{{
-
-if !exists('*s:setupWrapping')
-  function s:setupWrapping()
-    set wrap
-    set wm=2
-    set textwidth=79
-  endfunction
-endif
+" }}}}
 " }}}
 
 " Autocmd Rules {{{
@@ -323,19 +360,22 @@ nnoremap N Nzzzv
 nnoremap <space> <C-d>
 
 "" session management
-nnoremap <leader>so :OpenSession<Space>
-nnoremap <leader>ss :SaveSession<Space>
-nnoremap <leader>sd :DeleteSession<CR>
-nnoremap <leader>sc :CloseSession<CR>
+" nnoremap <leader>so :OpenSession<Space>
+" nnoremap <leader>ss :SaveSession<Space>
+" nnoremap <leader>sd :DeleteSession<CR>
+" nnoremap <leader>sc :CloseSession<CR>
 
 "" Set working directory
 " doesn't work
 " nnoremap <leader>. :lcd %:p:h<CR>
 
 nnoremap <leader>w :w <CR>
-nnoremap <leader>d :BD<CR>   " kill buffer leave window
+nnoremap <leader>d :bd<CR>   " kill buffer leave window
 noremap <leader>c :bd<CR>
+noremap <leader>q :q<CR>
+noremap <leader>m :MRU<CR>
 nnoremap <leader>r :ll <CR>  " syntastic next error
+nnoremap <A-a> <C-a>  " increment a number
 
 " to normal mode with jj or jk
 inoremap jj <ESC>
@@ -348,11 +388,12 @@ cnoremap <c-e> <end>
 " Keep the cursor in place while joining lines
 nnoremap J mzJ`z
 
-" spelling hack
+" spelling hackt  
 nnoremap <leader>sp mt[s1z=`t
 
 " Quick edit file lst test.
-nnoremap <Leader>er :source ~/dotfiles/nvim/init.vim<CR>
+nnoremap <Leader>sx :source %<CR>
+nnoremap <Leader>es :source ~/dotfiles/nvim/init.vim<CR>
 nnoremap <Leader>ev :e ~/dotfiles/nvim/init.vim<CR>
 
 "" add a freq-access-file list to draw from
@@ -378,6 +419,16 @@ nnoremap <leader>7 :b7 <CR>
 nnoremap <leader>8 :b8 <CR>
 nnoremap <leader>9 :b9 <CR>
 
+nnoremap <leader>w1 1<c-w><c-w> 
+nnoremap <leader>w2 2<c-w><c-w> 
+nnoremap <leader>w3 3<c-w><c-w> 
+nnoremap <leader>w4 4<c-w><c-w> 
+nnoremap <leader>w5 5<c-w><c-w> 
+nnoremap <leader>w6 6<c-w><c-w> 
+nnoremap <leader>w7 7<c-w><c-w> 
+nnoremap <leader>w8 8<c-w><c-w> 
+nnoremap <leader>w9 9<c-w><c-w> 
+
 " quickies
 " FIXME: what do these do?
 noremap YY "+y<CR>
@@ -390,8 +441,9 @@ nnoremap <silent> <leader><space> :noh<cr>
 "" Switching windows
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
-noremap <C-l> <C-w>l
-noremap <C-h> <C-w>h
+" noremap <C-l> <C-w>l
+" noremap <C-h> <C-w>h
+noremap <silent> <c-l> :nohls<cr>zz<c-l>
 
 "" Vmap for maintain Visual Mode after shifting > and <
 vmap < <gv
@@ -412,16 +464,13 @@ vnoremap K :m '<-2<CR>gv=gv
 " cnoremap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
 " nnoremap <silent> <leader>b :Buffers<CR>
 
-"" Tagbar
-" nmap <silent> <F4> :TagbarToggle<CR>
-nnoremap <leader>tt :TagbarToggle<CR>
-let g:tagbar_autofocus = 1
 
-"" snippets
+" snippets {{{
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<c-b>"
 let g:UltiSnipsEditSplit="vertical"
+" }}}
 
 " syntastic {{{
 let g:loaded_syntastic_r_lintr_checker = 1
@@ -438,16 +487,8 @@ let g:syntastic_python_checkers=['pep8']
 let g:syntastic_r_checkers = ['lintr']
 " }}}
 
-
-
-"" Open current line on GitHub
-" nnoremap <Leader>o :.Gbrowse<CR>
-
-"*****************************************************************************
-"" Custom configs
-"*****************************************************************************
-
-" python
+" languages {{{
+"" python {{{{
 " vim-python
 augroup vimrc-python
   autocmd!
@@ -466,14 +507,17 @@ let g:jedi#rename_command = "<leader>r"
 let g:jedi#show_call_signatures = "0"
 let g:jedi#completions_command = "<C-Space>"
 let g:jedi#smart_auto_mappings = 0
+" }}}}
 
-" syntastic
+"" syntastic {{{{
 let g:syntastic_python_checkers=['python', 'flake8']
+" }}}}
 
-" Syntax highlight
+"" Syntax highlight {{{{
 " Default highlight is better than polyglot
 let g:polyglot_disabled = ['python']
 let python_highlight_all = 1
+" }}}}
 
 set modeline
 set modelines=5
