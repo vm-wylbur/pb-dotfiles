@@ -64,13 +64,13 @@ Plug 'yegappan/mru'
 Plug 'qpkorr/vim-bufkill'
 Plug 'majutsushi/tagbar'
 Plug 'ap/vim-buftabline'
-Plug 'scrooloose/nerdtree'
+" Plug 'scrooloose/nerdtree'
 
 " colors and UI
 Plug 'frankier/neovim-colors-solarized-truecolor-only'
 Plug 'airblade/vim-gitgutter' " put chars in gutter
 Plug 'inside/vim-search-pulse'
-" Plug 'itchyny/lightline.vim'
+Plug 'itchyny/lightline.vim'
 Plug 'luochen1990/rainbow'
 
 " languages
@@ -99,14 +99,11 @@ colorscheme solarized
 
 "" nerdtree {{{{
 " open nerdtree if vim opened wo file
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists(“s:std_in”) | NERDTree | endif
-
-
-
+" autocmd StdinReadPre * let s:std_in=1
+" autocmd VimEnter * if argc() == 0 && !exists(“s:std_in”) | NERDTree | endif
 " }}}}
 
-" source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
+source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
 
 let g:pencil#wrapModeDefault = 'soft'   " default is 'hard'
   augroup pencil
@@ -206,6 +203,7 @@ set noerrorbells visualbell t_vb=
 if has('autocmd')
   autocmd GUIEnter * set visualbell t_vb=
 endif
+set showcmd
 " }}}}
 
 "" Searching {{{{
@@ -235,7 +233,7 @@ endif
 " }}}}
 
 "" CWD to current buffer's path {{{{
-autocmd BufEnter * lcd %:p:h 
+autocmd BufEnter * lcd %:p:h
 " }}}}
 
 "" session management {{{{
@@ -252,7 +250,7 @@ let g:session_command_aliases = 1
 " nmap <silent> <F4> :TagbarToggle<CR>
 nnoremap <leader>tg :TagbarToggle<CR>
 let g:tagbar_autofocus = 1
-nnoremap <leader>tt :NERDTreeToggle<CR>
+" nnoremap <leader>tt :NERDTreeToggle<CR>
 
 syntax on
 set ruler
@@ -389,12 +387,12 @@ cnoremap <c-e> <end>
 " Keep the cursor in place while joining lines
 nnoremap J mzJ`z
 
-" spelling hackt  
+" spelling hackt
 nnoremap <leader>sp mt[s1z=`t
 
 " Quick edit file lst test.
 nnoremap <Leader>sx :source %<CR>
-nnoremap <Leader>es :source ~/dotfiles/nvim/init.vim<CR>
+nnoremap <Leader>ss :source ~/dotfiles/nvim/init.vim<CR>
 nnoremap <Leader>ev :e ~/dotfiles/nvim/init.vim<CR>
 
 "" add a freq-access-file list to draw from
@@ -420,15 +418,25 @@ nnoremap <leader>7 :b7 <CR>
 nnoremap <leader>8 :b8 <CR>
 nnoremap <leader>9 :b9 <CR>
 
-nnoremap <leader>w1 1<c-w><c-w> 
-nnoremap <leader>w2 2<c-w><c-w> 
-nnoremap <leader>w3 3<c-w><c-w> 
-nnoremap <leader>w4 4<c-w><c-w> 
-nnoremap <leader>w5 5<c-w><c-w> 
-nnoremap <leader>w6 6<c-w><c-w> 
-nnoremap <leader>w7 7<c-w><c-w> 
-nnoremap <leader>w8 8<c-w><c-w> 
-nnoremap <leader>w9 9<c-w><c-w> 
+nnoremap <A-1> 1<c-w><c-w>
+nnoremap <A-2> 2<c-w><c-w>
+nnoremap <A-3> 3<c-w><c-w>
+nnoremap <A-4> 4<c-w><c-w>
+nnoremap <A-5> 5<c-w><c-w>
+nnoremap <A-6> 6<c-w><c-w>
+nnoremap <A-7> 7<c-w><c-w>
+nnoremap <A-8> 8<c-w><c-w>
+nnoremap <A-9> 9<c-w><c-w>
+
+nnoremap <leader>w1 1<c-w><c-w>
+nnoremap <leader>w2 2<c-w><c-w>
+nnoremap <leader>w3 3<c-w><c-w>
+nnoremap <leader>w4 4<c-w><c-w>
+nnoremap <leader>w5 5<c-w><c-w>
+nnoremap <leader>w6 6<c-w><c-w>
+nnoremap <leader>w7 7<c-w><c-w>
+nnoremap <leader>w8 8<c-w><c-w>
+nnoremap <leader>w9 9<c-w><c-w>
 
 " quickies
 " FIXME: what do these do?
@@ -442,9 +450,9 @@ nnoremap <silent> <leader><space> :noh<cr>
 "" Switching windows
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
-" noremap <C-l> <C-w>l
-" noremap <C-h> <C-w>h
-noremap <silent> <c-l> :nohls<cr>zz<c-l>
+noremap <C-l> <C-w>l
+noremap <C-h> <C-w>h
+noremap <silent> <c-p> :nohls<cr>zz<c-l>
 
 "" Vmap for maintain Visual Mode after shifting > and <
 vmap < <gv

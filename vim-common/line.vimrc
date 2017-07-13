@@ -8,12 +8,17 @@ let g:lightline = {
         \ 'active': {
         \   'left': [ ['mode', 'paste'],
         \             ['readonly', 'fullpath', 'modified'] ],
-        \   'right': [ [ 'lineinfo' ], ['percent'], ['filetype'] ]
+        \   'right': [ [ 'lineinfo' ], ['percent'], ['filetype'], ['winno'] ]
+        \ },
+        \ 'inactive': {
+		    \   'left': [ [ 'filename' ] ],
+		    \   'right': [ [ 'lineinfo' ], ['percent'], [ 'winno' ] ]
         \ },
         \ 'component': {
         \   'readonly': '%{&filetype=="help"?"":&readonly?"🔒 ":""}',
         \   'modified': '%{&filetype=="help"?"":&modified?"+":&modifiable?"":"-"}',
-        \   'fullpath': '%F'
+        \   'fullpath': '%F',
+        \   'winno':    'win:%{winnr()}'
         \ },
 	\'component_function': {
 	\    'mode' :  'MyMode',

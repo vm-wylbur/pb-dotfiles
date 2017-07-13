@@ -1,33 +1,33 @@
 " header here
 
 set laststatus=2
-" need a status line def'n
-" %{winnr()}  window number
-" statusline
-" cf the default statusline: %<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
-" format markers:
-"   %< truncation point
-"   %n buffer number
-"   %F abs path to file
-"   %m modified flag [+] (modified), [-] (unmodifiable) or nothing
-"   %r readonly flag [RO]
-"   %y filetype [ruby]
-"   %= split point for left and right justification
-"   %-35. width specification
-"   %l current line number
-"   %L number of lines in buffer
-"   %c current column number
-"   %V current virtual column number (-n), if different from %c
-"   %P percentage through buffer
-"   %) end of width specification
-" set statusline=%<\ %n:%F\ %l\:%r\ (%P)%)
-set statusline=[%{winnr()}]
-set statusline+=\ 
-set statusline+=%<                     " truncation point
-set statusline+=%.29F                  " relative path to file, allow 99 chars
-set statusline+=%0*\ %3p%%\[%l:\ %c]\                 " Rownumber/total (%)
+"Some other colours used in statuslines.
+hi User1 term=inverse,bold cterm=inverse,bold ctermfg=darkred ctermbg=yellow
+hi User2 term=inverse,bold cterm=inverse,bold ctermfg=darkred ctermbg=cyan
 
+let g:mode_map = {
+    \ 'n'      : '%1* N %*',
+    \ 'i'      : '%2* I %',
+    \ 'R'      : ' R ',
+    \ 'v'      : ' V ',
+    \ 'V'      : 'V-L',
+    \ 'c'      : ' C ',
+    \ "\<C-v>" : 'V-B',
+    \ 's'      : ' S ',
+    \ 'S'      : 'S-L',
+    \ "\<C-s>" : 'S-B',
+    \ '?'      : '      ' }
 
+set statusline=[%1*%{winnr()}%*]
+set statusline+=\[%{MyMode()}\]
+set statusline+=%<%F\ %h%m%r%=%y\ %7(%l:%c%V%)\ %P|
+
+function! MyMode() abort
+  return get(g:mode_map, mode())
+endfunction
+
+" hi User1 term=bold cterm=inverse,bold ctermfg=red
+" set statusline=%<%f%=\ [%1*%M%*%n%R%H]\ %-19(%3l,%02c%03V%)%O'%02b'
 
 " not sure if this is good, but the cursor is a good key.
 set gcr=a:block
