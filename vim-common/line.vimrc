@@ -8,7 +8,7 @@ let g:lightline = {
         \ 'active': {
         \   'left': [ ['mode', 'paste'],
         \             ['readonly', 'fullpath', 'modified'] ],
-        \   'right': [ [ 'lineinfo' ], ['percent'], ['filetype'], ['winno'] ]
+        \   'right': [ [ 'lineinfo' ], ['percent'], ['filetype'] ]
         \ },
         \ 'inactive': {
 		    \   'left': [ [ 'filename' ] ],

@@ -97,12 +97,6 @@ set rtp+=$HOME/src/solarized/vim-colors-solarized
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 colorscheme solarized
 
-"" nerdtree {{{{
-" open nerdtree if vim opened wo file
-" autocmd StdinReadPre * let s:std_in=1
-" autocmd VimEnter * if argc() == 0 && !exists(“s:std_in”) | NERDTree | endif
-" }}}}
-
 source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
 
 let g:pencil#wrapModeDefault = 'soft'   " default is 'hard'
@@ -125,8 +119,18 @@ let g:sneak#label = 1
 "" cursor {{{{
 :set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
 au VimLeave * set guicursor=a:block-blinkon0
-set cursorline
-set cursorcolumn
+augroup CursorLine
+    au!
+    au VimEnter * setlocal cursorcolumn
+    au WinEnter * setlocal cursorcolumn
+    au BufWinEnter * setlocal cursorcolumn
+    au WinLeave * setlocal nocursorcolumn
+
+    au VimEnter * setlocal cursorline
+    au WinEnter * setlocal cursorline
+    au BufWinEnter * setlocal cursorline
+    au WinLeave * setlocal nocursorline
+  augroup END
 " }}}}
 
 "" plugin enabled {{{{
@@ -254,6 +258,7 @@ let g:tagbar_autofocus = 1
 
 syntax on
 set ruler
+set relativenumber
 set number
 
 let no_buffers_menu=1
@@ -327,12 +332,6 @@ endif
 " }}}
 
 " Autocmd Rules {{{
-
-"" The PC is fast enough, do syntax highlight syncing from start unless 200 lines
-augroup vimrc-sync-fromstart
-  autocmd!
-  autocmd BufEnter * :syntax sync maxlines=200
-augroup END
 
 "" Remember cursor position
 augroup vimrc-remember-cursor-position
@@ -428,26 +427,22 @@ nnoremap <A-7> 7<c-w><c-w>
 nnoremap <A-8> 8<c-w><c-w>
 nnoremap <A-9> 9<c-w><c-w>
 
-nnoremap <leader>w1 1<c-w><c-w>
-nnoremap <leader>w2 2<c-w><c-w>
-nnoremap <leader>w3 3<c-w><c-w>
-nnoremap <leader>w4 4<c-w><c-w>
-nnoremap <leader>w5 5<c-w><c-w>
-nnoremap <leader>w6 6<c-w><c-w>
-nnoremap <leader>w7 7<c-w><c-w>
-nnoremap <leader>w8 8<c-w><c-w>
-nnoremap <leader>w9 9<c-w><c-w>
-
 " quickies
 " FIXME: what do these do?
-noremap YY "+y<CR>
-noremap <leader>p "+gP<CR>
-noremap XX "+x<CR>
+" noremap YY "+y<CR>
+" noremap <leader>p "+gP<CR>
+" noremap XX "+x<CR>
 
 "" Clean search (highlight)
 nnoremap <silent> <leader><space> :noh<cr>
 
 "" Switching windows
+" this is so important that even though
+" these keys have other uses (esp C-l), we need them
+" for window navigation
+" " this is so important that even though
+" these keys have other uses (esp C-l), we need them
+" for window navigation
 noremap <C-j> <C-w>j
 noremap <C-k> <C-w>k
 noremap <C-l> <C-w>l
