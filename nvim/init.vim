@@ -73,10 +73,11 @@ Plug 'airblade/vim-gitgutter' " put chars in gutter
 Plug 'inside/vim-search-pulse'
 Plug 'itchyny/lightline.vim'
 Plug 'luochen1990/rainbow'
+" Plug 'uptech/vim-ping-cursor'
 
 " languages
 Plug 'sheerun/vim-polyglot'
-Plug 'davidhalter/jedi-vim'
+" Plug 'davidhalter/jedi-vim'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'bps/vim-textobj-python'
 Plug 'reedes/vim-pencil'
@@ -134,10 +135,6 @@ augroup CursorLine
     au BufWinEnter * setlocal cursorline
     au WinLeave * setlocal nocursorline
   augroup END
-" }}}}
-
-"" plugin enabled {{{{
-filetype plugin indent on
 " }}}}
 
 "" Auto commands at save {{{{
