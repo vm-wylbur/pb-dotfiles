@@ -1,12 +1,13 @@
+" Authors:     PB
+" Maintainers: PB
+" License: 	   2017, HRDAG, GPL v2 or later
+" ============================================
+set laststatus=2
 
-set statusline+=%{StatuslineTabWarning()}
-
+" http://got-ravings.blogspot.com/2008/10/vim-pr0n-statusline-whitespace-flags.html
 "recalculate the tab warning flag when idle and after writing
 autocmd cursorhold,bufwritepost * unlet! b:statusline_tab_warning
 
-"return '[&et]' if &et is set wrong
-"return '[mixed-indenting]' if spaces and tabs are used to indent
-"return an empty string if everything is fine
 function! StatuslineTabWarning()
     if !exists("b:statusline_tab_warning")
         let tabs = search('^\t', 'nw') != 0
@@ -25,7 +26,6 @@ endfunction
 
 
 " status line {{{
-set laststatus=2
 " todo: shorten mode name
 " this was stolen from someone, can't remember whom
 let g:lightline = {

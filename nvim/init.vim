@@ -54,10 +54,11 @@ Plug 'godlygeek/tabular'      " should align on regex :Tab /char
 Plug 'Yggdroot/indentLine'    " ??
 Plug 'tpope/vim-surround'
 Plug 'ervandew/supertab'
-Plug 'justinmk/vim-sneak'
+" Plug 'justinmk/vim-sneak'
 Plug 'kana/vim-textobj-function'
 Plug 'kana/vim-textobj-user'
 Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-unimpaired'
 
 " files, buffers, and tags
 Plug 'yegappan/mru'
@@ -82,8 +83,8 @@ Plug 'reedes/vim-pencil'
 Plug 'vim-syntastic/syntastic'
 
 "" Vim-Session
-" Plug 'xolox/vim-misc'
-" Plug 'xolox/vim-session'
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-session'
 
 " snippets
 Plug 'SirVer/ultisnips'
@@ -111,6 +112,8 @@ autocmd FileType markdown setlocal wrap
 let g:buftabline_numbers=1
 let g:buftabline_indicators='on' " this is helpful.
 let g:buftabline_separators='on'
+
+let MRU_Exclude_Files = '.*/.git/COMMIT_EDITMSG$'
 
 let g:sneak#label = 1
 " }}}
@@ -357,21 +360,26 @@ nnoremap n nzzzv
 nnoremap N Nzzzv
 nnoremap <space> <C-d>
 
+"" bubbling text with vim-impaired and Drew Neil's mappings
+nmap <C-Up> [e
+nmap <C-Down> ]e
+" Bubble multiple lines
+vmap <C-Up> [egv
+vmap <C-Down> ]egv
+
 "" session management
-" nnoremap <leader>so :OpenSession<Space>
-" nnoremap <leader>ss :SaveSession<Space>
-" nnoremap <leader>sd :DeleteSession<CR>
-" nnoremap <leader>sc :CloseSession<CR>
+nnoremap <leader>so :OpenSession<Space>
+nnoremap <leader>ss :SaveSession<Space>
+nnoremap <leader>sd :DeleteSession<CR>
+nnoremap <leader>sc :CloseSession<CR>
 
 "" Set working directory
 " doesn't work
 " nnoremap <leader>. :lcd %:p:h<CR>
 
 nnoremap <leader>w :w <CR>
-nnoremap <leader>d :bd<CR>   " kill buffer leave window
-noremap <leader>c :bd<CR>
-noremap <leader>q :q<CR>
-noremap <leader>m :MRU<CR>
+nnoremap <leader>W :BD<CR>   " kill buffer leave window
+nnoremap <leader>m :MRU<CR>
 nnoremap <leader>r :ll <CR>  " syntastic next error
 nnoremap <A-a> <C-a>  " increment a number
 
@@ -386,13 +394,16 @@ cnoremap <c-e> <end>
 " Keep the cursor in place while joining lines
 nnoremap J mzJ`z
 
-" spelling hackt
-nnoremap <leader>sp mt[s1z=`t
+" spelling hack
+nnoremap <leader>l mt[s1z=`t
 
-" Quick edit file lst test.
+" Quick filx
 nnoremap <Leader>sx :source %<CR>
-nnoremap <Leader>ss :source ~/dotfiles/nvim/init.vim<CR>
-nnoremap <Leader>ev :e ~/dotfiles/nvim/init.vim<CR>
+nnoremap <Leader>ei :e ~/dotfiles/nvim/init.vim<CR>
+" edit in current buffer's path
+nnoremap <Leader>ew :e <C-R>=expand("%:p:h") . "/"<CR>
+
+
 
 "" add a freq-access-file list to draw from
 " nnoremap <Leader>es :e ~/Documents/notes/vim-todo.md<CR>
