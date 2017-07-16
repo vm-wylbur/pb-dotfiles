@@ -2,6 +2,10 @@
 # 2016-02-07 adapted from git@github.com:mathiasbynens/dotfiles.git
 # 2016-12-15 ported to petunia
 #
+
+# stop unless interactive
+[[ $- == *i* ]] || return
+
 # Add `~/bin` to the `$PATH`
 export PATH="$HOME/bin:$PATH";
 

@@ -373,7 +373,11 @@ command! Cquit
     \|   endfor
     \| endif
 
+autocmd BufWinEnter,WinEnter term://* startinsert
+autocmd BufLeave term://* stopinsert
+au BufEnter * if &buftype == 'terminal' | :startinsert | endif
 " }}}
+
 " Mappings {{{
 
 "" Search mappings:
