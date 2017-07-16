@@ -42,3 +42,8 @@ export LD=gcc-5
 # for unlimited github calls
 export HOMEBREW_GITHUB_API_TOKEN="7105df98ca887eda6aa4125926a86945b5da40bd"
 export PYENV_ROOT=$HOME/.pyenv
+
+# setup nvim server
+export NVIM_LISTEN_ADDRESS=/tmp/nvimsocket
+
+# done

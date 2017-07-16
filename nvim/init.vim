@@ -8,6 +8,8 @@
 " install by symlinking to ~/.vimrc
 " if you keep getting a mess of swap files, use this at the shell:
 "    $ find . -type f -name "\.*sw[klmnop]" -delete
+"
+" adding terminal makes neovim a game-changer!
 " }}}
 
 " todo {{{
@@ -363,6 +365,13 @@ nnoremap <A-h> <C-w>h
 nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
+
+command! Cquit
+    \  if exists('b:nvr')
+    \|   for chanid in b:nvr
+    \|     silent! call rpcnotify(chanid, 'Exit', 1)
+    \|   endfor
+    \| endif
 
 " }}}
 " Mappings {{{
