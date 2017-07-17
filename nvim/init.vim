@@ -84,6 +84,7 @@ Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'bps/vim-textobj-python'
 Plug 'reedes/vim-pencil'
 Plug 'vim-syntastic/syntastic'
+Plug 'tpope/vim-fugitive'
 
 "" Vim-Session
 Plug 'xolox/vim-misc'
@@ -241,6 +242,8 @@ endif
 
 "" CWD to current buffer's path {{{{
 " autocmd BufEnter * lcd %:p:h
+" au BufEnter * if &buftypedufRead,BufNewFile *.ext,*.ext3|<buffer[=N]> 
+
 " }}}}
 
 "" session management {{{{
@@ -394,11 +397,17 @@ nmap <C-Down> ]e
 vmap <C-Up> [egv
 vmap <C-Down> ]egv
 
-"" session management
+"" FIXME: not so great session management
 nnoremap <leader>so :OpenSession<Space>
 nnoremap <leader>ss :SaveSession<Space>
 nnoremap <leader>sd :DeleteSession<CR>
 nnoremap <leader>sc :CloseSession<CR>
+
+" fugitive mappings
+nnoremap <leader>gs :Gstatus<CR>
+nnoremap <leader>gc :Gcommit -a<CR>
+nnoremap <leader>gp :Gpush<CR>
+nnoremap <leader>gl :Gpull<CR>
 
 "" Set working directory
 " doesn't work
@@ -417,7 +426,7 @@ inoremap jk <ESC>
 " Emacs bindings in command line mode
 cnoremap <c-a> <home>
 cnoremap <c-e> <end>
-
+cnoremap <A-bs> <c-w>
 " Keep the cursor in place while joining lines
 nnoremap J mzJ`z
 
