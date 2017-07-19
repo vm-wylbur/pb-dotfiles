@@ -72,7 +72,7 @@ Plug 'ap/vim-buftabline'
 " colors and UI
 Plug 'frankier/neovim-colors-solarized-truecolor-only'
 Plug 'airblade/vim-gitgutter' " put chars in gutter
-Plug 'inside/vim-search-pulse'
+" Plug 'inside/vim-search-pulse'
 Plug 'itchyny/lightline.vim'
 Plug 'luochen1990/rainbow'
 " Plug 'uptech/vim-ping-cursor'
@@ -97,6 +97,45 @@ Plug 'honza/vim-snippets'
 call plug#end()
 " }}}
 
+" Pulse ------------------------------------------------------------------- {{{
+" https://raw.githubusercontent.com/nvie/vimrc/master/vimrc
+function! PulseCursorxLine()
+    let current_window = winnr()
+
+    windo set nocursorline
+    execute current_window . 'wincmd w'
+
+    setlocal cursorline
+
+    redir => old_hi
+        silent execute 'hi CursorLine'
+    redir END
+    let old_hi = split(old_hi, '\n')[0]
+    let old_hi = substitute(old_hi, 'xxx', '', '')
+
+    hi CursorLine guibg=#db0f0f
+    redraw
+    sleep 7m
+
+    hi CursorLine guibg=#4a4a4a
+    redraw
+    sleep 4m
+
+    hi CursorLine guibg=#3a3a3a
+    redraw
+    sleep 4m
+
+    hi CursorLine guibg=#2a2a2a
+    redraw
+    sleep 4m
+
+    execute 'hi ' . old_hi
+
+    windo set cursorline
+    execute current_window . 'wincmd w'
+endfunction
+
+" }}}
 " Plug configs {{{
 set rtp+=$HOME/src/solarized/vim-colors-solarized
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
@@ -124,8 +163,17 @@ let g:sneak#label = 1
 
 " Basic setup {{{
 "" cursor {{{{
-:set guicursor=n-v-c:block-Cursor/lCursor-blinkon0,i-ci:ver25-Cursor/lCursor,r-cr:hor20-Cursor/lCursor
+highlight! nCursor guifg=black guibg=magenta gui=reverse
+
+" set guicursor=n:block-nCursor/lCursor-blinkon0,
+"   \v:block-Cursor/lCursor-blinkon0,
+"   \c:hor40-Cursor/lCursor-blinkon0,
+"   \o:hor40-Cursor/lCursor-blinkon0,
+"   \i-ci:ver25-Cursor/lCursor,
+"   \r-cr:hor20-Cursor/lCursor
+
 au VimLeave * set guicursor=a:block-blinkon0
+
 
 augroup CursorLine
     au!
@@ -242,7 +290,7 @@ endif
 
 "" CWD to current buffer's path {{{{
 " autocmd BufEnter * lcd %:p:h
-" au BufEnter * if &buftypedufRead,BufNewFile *.ext,*.ext3|<buffer[=N]> 
+" au BufEnter * if &buftypedufRead,BufNewFile *.ext,*.ext3|<buffer[=N]>
 
 " }}}}
 
@@ -481,7 +529,7 @@ nnoremap <A-9> 9<c-w><c-w>
 " noremap XX "+x<CR>
 
 "" Clean search (highlight)
-nnoremap <silent> <leader><space> :noh<cr>
+nnoremap <silent> <leader><space> :noh<cr>:call PulseCursorxLine()<cr>
 
 "" Switching windows
 " this is so important that even though

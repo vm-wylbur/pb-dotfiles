@@ -58,6 +58,10 @@ au FileType python set indentkeys-=0#
 autocmd Filetype vim set foldmethod=marker
 autocmd Syntax vim setlocal foldmethod=marker
 autocmd Filetype r set ts=4 sts=4 sw=4 expandtab
+
+:command! -nargs=+ Calc :py print <args>
+:py from math import *
+
 " }}}
 " Auto commands at save {{{
 set omnifunc=syntaxcomplete#Complete
@@ -79,6 +83,7 @@ Plug 'majutsushi/tagbar'
 Plug 'craigemery/vim-autotag'
 Plug 'inside/vim-search-pulse'
 Plug 'ap/vim-buftabline'
+Plug 'mtth/scratch.vim'
 " settings and language enhancements
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-surround'
@@ -125,6 +130,10 @@ let g:rainbow_conf = {
     \        'css': 0,
     \    }
     \}
+let g:scratch_persistence_file = '~/tmp/scratch.md'
+let g:scratch_insert_autohide = 0
+let g:scratch_filetype = 'markdown'
+let g:scratch_autohide = 1
 
 " g:tagbar_type_r = {
 "     \ 'ctagstype' : 'r',
