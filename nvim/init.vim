@@ -12,10 +12,6 @@
 " adding terminal makes neovim a game-changer!
 " }}}
 
-" todo {{{
-"
-" }}}
-
 " boostrap {{{
 if has('vim_starting')
   set nocompatible               " Be iMproved

@@ -1,4 +1,5 @@
 " these are settings to be used in both vim and nvim
+" 2017-07-21T21:33
 " todo:
 "  - add plugin section, w dash.vim to dash search for word under cursor
 "       <leader>d 
