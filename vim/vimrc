@@ -9,6 +9,7 @@
 so $HOME/dotfiles/vim-common/common.vim 
 
 " vim specific config here
+" todo: need to fix colors: visual highlighting 
 " }}}
 
 " closing {{{
