@@ -1,0 +1,11 @@
+[user]
+	email = pball@hrdag.org
+	name = Patrick Ball
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[core]
+	editor = nvr --remote-wait-silent
+	excludesfile = /Users/pball/.global_ignore
