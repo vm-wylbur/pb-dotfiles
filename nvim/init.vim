@@ -65,6 +65,9 @@ Plug 'majutsushi/tagbar'
 Plug 'ap/vim-buftabline'
 " Plug 'scrooloose/nerdtree'
 
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+
 " colors and UI
 Plug 'frankier/neovim-colors-solarized-truecolor-only'
 Plug 'airblade/vim-gitgutter' " put chars in gutter

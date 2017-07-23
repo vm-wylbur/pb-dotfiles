@@ -95,6 +95,8 @@ Plug 'justinmk/vim-sneak'
 Plug 'ervandew/supertab'
 " tools
 Plug 'qpkorr/vim-bufkill'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 " languages and error stuff
 Plug 'vim-syntastic/syntastic'
 Plug 'reedes/vim-pencil'
