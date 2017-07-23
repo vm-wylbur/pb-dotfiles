@@ -1,44 +1,62 @@
-" these are settings to be used in both vim and nvim
-" 2017-07-21T21:33
-" todo:
-"  - add plugin section, w dash.vim to dash search for word under cursor
-"       <leader>d 
+" Preamble {{{
+" Author: [Patrick Ball](mailto://pball@hrdag.org)
+" (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
+" moved to github
+"    git@github.com:vm-wylbur/pb-dotfiles.git
+"
+" this file contains 
+" sourced in the various init files
+"
+" }}}
+
 " setup {{{
-" testing bad spelling one two there
-set nocompatible
+set nocompatible               " Be iMproved
+
 filetype plugin on
-set directory^=$HOME/.backups//
-set shell=/bin/bash\ -l
-set shellcmdflag=-ic
-set incsearch
-set hlsearch
-set spelllang=en_us spell
-set wildmenu
-set wildmode=longest:list,full
+let g:vim_bootstrap_langs = "python"
+let g:vim_bootstrap_editor = "nvim"				" nvim or vim
 
 " }}}
-" General {{{
 
-" Softtabs, 4 spaces
-set tabstop=4
-set shiftwidth=4
-set shiftround
-set expandtab
 
-" Share the clipboard outside of vim
-set clipboard=unnamed
-
-" Reload files if changed outside vim
-set autoread
-
-" don't use swap files
-set noswapfile
-
-" Turn on spell checking
-set spell
+" gui+colors {{{
+set termguicolors
+set background=dark
 " }}}
-" key maps {{{
-inoremap <C-a> <Home>
-inoremap <C-e> <End>
+
+
+" not sure yet {{{
 " }}}
+
+
+" editing {{{
+" }}}
+
+
+" plugins {{{
+" }}}
+
+
+" plugin config {{{
+" }}}
+
+
+" mappings {{{
+" }}}
+
+
+" leader {{{
+" }}}
+
+
+" language {{{
+" }}}
+
+
+" misc {{{
+" }}}
+
+
+setlocal foldmethod=marker
+" vim: set foldmethod=marker foldlevel=0:
