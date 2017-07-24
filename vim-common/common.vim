@@ -7,7 +7,11 @@
 "
 " this file contains
 " sourced in the various init files
-"
+" 
+" todo: 
+" - need to put the augroup cmds together
+" - clean up the autocmd stuff, esp for markdown. see "learning vimscript the hard way"  
+" - should think more about wildmode and tab completion
 " }}}
 
 " setup {{{
@@ -42,13 +46,13 @@ Plug 'ap/vim-buftabline'
 Plug 'mtth/scratch.vim'
 
 " fzf is its own thing
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
+" Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+" Plug 'junegunn/fzf.vim'
 
 " colors and UI
+" todo: maybe a color that's a little sharper? 
 Plug 'frankier/neovim-colors-solarized-truecolor-only'
 Plug 'airblade/vim-gitgutter' " put chars in gutter
-" Plug 'inside/vim-search-pulse'
 Plug 'itchyny/lightline.vim'
 Plug 'luochen1990/rainbow'
 
@@ -91,6 +95,12 @@ let g:buftabline_separators='on'
 
 let MRU_Exclude_Files = '.*/.git/COMMIT_EDITMSG$'
 
+" keep in mind that C-v TAB will insert a literal tab
+let g:SuperTabCompletionContexts = ['s:ContextText', 's:ContextDiscover']
+let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
+let g:SuperTabContextDiscoverDiscovery =
+    \ ["&completefunc:<c-x><c-u>", "&omnifunc:<c-x><c-o>"]
+
 let g:scratch_persistence_file = '~/tmp/scratch.md'
 let g:scratch_insert_autohide = 0
 let g:scratch_filetype = 'markdown'
@@ -131,7 +141,7 @@ augroup CursorLine
     au WinEnter * setlocal cursorline
     au BufWinEnter * setlocal cursorline
     au WinLeave * setlocal nocursorline
-  augroup END
+augroup END
 " }}}}
 
 "" setting up right margin highlighting {{{{
@@ -151,7 +161,7 @@ execute "set colorcolumn=" . join(range(81,335), ',')
 set omnifunc=syntaxcomplete#Complete
 " }}}}
 
-"" Auto commands at save {{{{
+"" Auto commands at save {{{{ 
 set omnifunc=syntaxcomplete#Complete
 set autoread
 augroup autoSaveAndRead
@@ -242,6 +252,11 @@ iab xldate <c-r>=strftime("%a %d %b %Y %H:%M:%S%Z")<CR>
 " }}}
 
 " mappings {{{
+"" the big picture here is:
+"" * remapping std vim keys should be enhancements, not overrides
+"" * leader keys are in groups
+"" * try to stay off remapping C- keys. There's already lots there.
+"" * A-x keys move among windows and do not-vimmy stuff
 
 "" mapleader {{{{
 let mapleader=','
@@ -255,6 +270,8 @@ nmap XX "_dd
 vmap X "_d
 vmap x "_d"
 nnoremap x "_x
+" increment a number; C-a is overloaded everywhere. 
+nnoremap <A-a> <C-a>
 " }}}}
 
 "" tweaks adding functionality to existing keys {{{{
@@ -296,14 +313,6 @@ tnoremap <A-h> <C-\><C-N><C-w>h
 tnoremap <A-j> <C-\><C-N><C-w>j
 tnoremap <A-k> <C-\><C-N><C-w>k
 tnoremap <A-l> <C-\><C-N><C-w>l
-inoremap <A-h> <C-\><C-N><C-w>h
-inoremap <A-j> <C-\><C-N><C-w>j
-inoremap <A-k> <C-\><C-N><C-w>k
-inoremap <A-l> <C-\><C-N><C-w>l
-nnoremap <A-h> <C-w>h
-nnoremap <A-j> <C-w>j
-nnoremap <A-k> <C-w>k
-nnoremap <A-l> <C-w>l
 
 command! Cquit
     \  if exists('b:nvr')
@@ -321,17 +330,43 @@ au BufEnter * if &buftype == 'terminal' | :startinsert | endif
 inoremap jj <ESC>
 inoremap jk <ESC>
 " }}}}
+
+"" window navigation via Meta {{{{
+nnoremap <A-1> 1<c-w><c-w>
+nnoremap <A-2> 2<c-w><c-w>
+nnoremap <A-3> 3<c-w><c-w>
+nnoremap <A-4> 4<c-w><c-w>
+nnoremap <A-5> 5<c-w><c-w>
+nnoremap <A-6> 6<c-w><c-w>
+nnoremap <A-7> 7<c-w><c-w>
+nnoremap <A-8> 8<c-w><c-w>
+nnoremap <A-9> 9<c-w><c-w>
+inoremap <A-h> <C-\><C-N><C-w>h
+inoremap <A-j> <C-\><C-N><C-w>j
+inoremap <A-k> <C-\><C-N><C-w>k
+inoremap <A-l> <C-\><C-N><C-w>l
+nnoremap <A-h> <C-w>h
+nnoremap <A-j> <C-w>j
+nnoremap <A-k> <C-w>k
+nnoremap <A-l> <C-w>l
+"" }}}}
+
 " }}}
 
 " leader {{{
+"" the big picture here is:
+"" * a small number of important keys get single-char leader
+"" * most keys are in groups of 2-char leaders
 
 "" PB specifics {{{{
 nnoremap <leader>x :so %<CR>
 nnoremap <leader>w :w <CR>
-nnoremap <leader>W :BD<CR>      " kill buffer, window stays; think cmd-w
-nnoremap <leader>m :MRU<CR>     " most-freq files are a simple list, no fzf
-nnoremap <A-a> <C-a>            " increment a number
-nnoremap <leader>l mt[s1z=`t    " spelling hack
+" kill buffer, window stays; think cmd-w; also just :BD
+nnoremap <leader>W :BD<CR>
+" most-freq files are a simple list, no fzf
+nnoremap <leader>m :MRU<CR>
+" spelling hack
+nnoremap <leader>l mt[s1z=`t
 " }}}}
 
 "" direct edits {{{{
@@ -341,6 +376,13 @@ nnoremap <Leader>et :e ~/Documents/notes/tech-todo.md<CR>
 nnoremap <Leader>en :e ~/Documents/notes/vim-notes.md<CR>
 " [H]=here
 nnoremap <Leader>eh :e <C-R>=expand("%:p:h") . "/"<CR>
+"" }}}}
+
+"" viewing internal stuff {{{{
+nnoremap <Leader>vr :registers<CR>
+nnoremap <Leader>v" :registers<CR>
+nnoremap <Leader>vm :marks<CR>
+nnoremap <Leader>v' :marks<CR>
 "" }}}}
 
 " fugitive mappings {{{{
@@ -361,15 +403,6 @@ nnoremap <leader>7 :b7 <CR>
 nnoremap <leader>8 :b8 <CR>
 nnoremap <leader>9 :b9 <CR>
 
-nnoremap <A-1> 1<c-w><c-w>
-nnoremap <A-2> 2<c-w><c-w>
-nnoremap <A-3> 3<c-w><c-w>
-nnoremap <A-4> 4<c-w><c-w>
-nnoremap <A-5> 5<c-w><c-w>
-nnoremap <A-6> 6<c-w><c-w>
-nnoremap <A-7> 7<c-w><c-w>
-nnoremap <A-8> 8<c-w><c-w>
-nnoremap <A-9> 9<c-w><c-w>
 "" }}}}
 
 "" getting to the scratch buffer {{{{
@@ -395,6 +428,8 @@ nnoremap <A-9> 9<c-w><c-w>
 " In markdown files, Control + a surrounds highlighted text with square
 " brackets, then dumps system clipboard contents into parenthesis
 autocmd FileType markdown vnoremap <c-a> <Esc>`<i[<Esc>`>la](<Esc>"*]pa)<Esc>
+autocmd FileType markdown setlocal nocursorline
+autocmd FileType markdown setlocal nocursorcolumn
 " }}}}
 
 " snippets {{{{
@@ -456,9 +491,48 @@ augroup END
 
 " }}}
 
-" misc {{{
-" }}}
+" misc functions {{{
 
+"" SEARCH ACROSS BUFFERS {{{{
+" Looks for a pattern in all the open buffers.
+" :Bvimgrep 'pattern' puts results into the quickfix list
+" :Blvimgrep 'pattern' puts results into the location list
+function! BuffersVimgrep(pattern,cl)
+  let str = ''
+  if (a:cl == 'l')
+    let str = 'l'
+  endif
+  let str = str.'vimgrep /'.a:pattern.'/'
+  for i in range(1, bufnr('$'))
+    let str = str.' '.bufname(i)
+  endfor
+  execute str
+  execute a:cl.'w'
+endfunction
+
+command! -nargs=1 Bvimgrep  call BuffersVimgrep(<args>,'c')
+command! -nargs=1 Blvimgrep call BuffersVimgrep(<args>,'l')
+
+" function! BuffersList()
+"   let all = range(0, bufnr('$'))
+"   let res = []
+"   for b in all
+"     if buflisted(b)
+"       call add(res, bufname(b))
+"     endif
+"   endfor
+"   return res
+" endfunction
+
+" function! GrepBuffers (expression)
+"   exec 'vimgrep/'.a:expression.'/ '.join(BuffersList())
+" endfunction
+
+" command! -nargs=+ GrepBufs call GrepBuffers(<q-args>)
+
+
+" }}}}
+" }}}
 
 setlocal foldmethod=marker
 setlocal foldlevel=1
