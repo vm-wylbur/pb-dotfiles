@@ -19,21 +19,6 @@ let g:vim_bootstrap_editor = "nvim"				" nvim or vim
 
 " }}}
 
-" plugins setup and bootstrap {{{
-" if !filereadable(vimplug_exists)
-"   if !executable("curl")
-"     echoerr "You have to install curl or first install vim-plug yourself!"
-"     execute "q!"
-"   endif
-"   echo "Installing Vim-Plug..."
-"   echo ""
-"   silent !\curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-"   let g:not_finish_vimplug = "yes"
-
-"   autocmd VimEnter * PlugInstall
-" endif
-" }}}
-
 " plugins {{{
 call plug#begin(expand('~/.config/nvim/plugged'))
 
@@ -54,6 +39,7 @@ Plug 'yegappan/mru'
 Plug 'qpkorr/vim-bufkill'
 " Plug 'majutsushi/tagbar'
 Plug 'ap/vim-buftabline'
+Plug 'mtth/scratch.vim'
 
 " fzf is its own thing
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -104,6 +90,11 @@ let g:buftabline_indicators='on' " this is helpful.
 let g:buftabline_separators='on'
 
 let MRU_Exclude_Files = '.*/.git/COMMIT_EDITMSG$'
+
+let g:scratch_persistence_file = '~/tmp/scratch.md'
+let g:scratch_insert_autohide = 0
+let g:scratch_filetype = 'markdown'
+let g:scratch_autohide = 1
 " }}}
 
 " cursor+gui+colors {{{
@@ -225,6 +216,7 @@ set smartcase
 
 "" Turn on spell checking {{{{
 set spell
+set spelllang=en_us spell
 "" }}}}
 
 "" shells and directories for swp files {{{{
@@ -255,6 +247,16 @@ iab xldate <c-r>=strftime("%a %d %b %Y %H:%M:%S%Z")<CR>
 let mapleader=','
 "" }}}}
 
+"" PB specific remaps {{{{
+nnoremap <space> <C-d>
+" these keep the x cmds from cluttering the delete register
+nmap X "_d
+nmap XX "_dd
+vmap X "_d
+vmap x "_d"
+nnoremap x "_x
+" }}}}
+
 "" tweaks adding functionality to existing keys {{{{
 nnoremap D Da
 nnoremap U d^i
@@ -263,6 +265,7 @@ nnoremap J mzJ`z
 "" Vmap for maintain Visual Mode after shifting > and <
 vmap < <gv
 vmap > >gv
+nnoremap <C-l> :nohlsearch<CR><C-l>zz
 "" }}}}
 
 "" insert/command mode like emacs {{{{
@@ -335,22 +338,12 @@ nnoremap <leader>l mt[s1z=`t    " spelling hack
 nnoremap <Leader>ei :e ~/dotfiles/nvim/init.vim<CR>
 nnoremap <Leader>ec :e ~/dotfiles/vim-common/common.vim<CR>
 nnoremap <Leader>et :e ~/Documents/notes/tech-todo.md<CR>
- nnoremap <Leader>en :e ~/Documents/notes/vim-notes.md<CR>
-nnoremap <Leader>ew :e <C-R>=expand("%:p:h") . "/"<CR> " ed in cur buf's path
+nnoremap <Leader>en :e ~/Documents/notes/vim-notes.md<CR>
+" [H]=here
+nnoremap <Leader>eh :e <C-R>=expand("%:p:h") . "/"<CR>
 "" }}}}
 
-"" terminal emulation {{{{
-if g:vim_bootstrap_editor == 'nvim'
-  nnoremap <silent> <leader>sh :terminal<CR>
-else
-  nnoremap <silent> <leader>sh :VimShellCreate<CR>
-endif
-
-
-
-" }}}}
-
-"" fugitive mappings {{{{
+" fugitive mappings {{{{
 nnoremap <leader>gs :Gstatus<CR>
 nnoremap <leader>gc :Gcommit -a<CR>
 nnoremap <leader>gp :Gpush<CR>
@@ -378,6 +371,21 @@ nnoremap <A-7> 7<c-w><c-w>
 nnoremap <A-8> 8<c-w><c-w>
 nnoremap <A-9> 9<c-w><c-w>
 "" }}}}
+
+"" getting to the scratch buffer {{{{
+" these should be on <leader>cX
+" :ScratchInsert
+" :ScratchSelection
+" see scratch help on this stuff
+  " let g:scratch_no_mappings = 1
+
+" And set your favorite keys like below: >
+
+  " nmap <leader>gs <plug>(scratch-insert-reuse)
+  " nmap <leader>gS <plug>(scratch-insert-clear)
+  " xmap <leader>gs <plug>(scratch-selection-reuse)
+  " xmap <leader>gS <plug>(scratch-selection-clear)
+" }}}}
 
 " }}}
 
@@ -454,5 +462,5 @@ augroup END
 
 setlocal foldmethod=marker
 setlocal foldlevel=1
-set modlines=5
+set modelines=5
 " vim: set foldmethod=marker foldlevel=1:
