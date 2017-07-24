@@ -7,15 +7,15 @@
 "
 " this file contains
 " sourced in the various init files
-" 
-" todo: 
+"
+" todo:
 " - need to put the augroup cmds together
-" - clean up the autocmd stuff, esp for markdown. see "learning vimscript the hard way"  
+" - clean up the autocmd stuff, esp for markdown. see "learning vimscript the hard way"
 " - should think more about wildmode and tab completion
 " }}}
 
 " setup {{{
-set nocompatible               " Be iMproved
+set nocompatible
 
 filetype plugin on
 let g:vim_bootstrap_langs = "python"
@@ -26,23 +26,24 @@ let g:vim_bootstrap_editor = "nvim"				" nvim or vim
 " plugins {{{
 call plug#begin(expand('~/.config/nvim/plugged'))
 
-" hack for plugins themselves
+"" hack for plugins themselves
 Plug 'tpope/vim-repeat'  " doesn't work? needs config for surround
 
-" editing and formatting
-Plug 'godlygeek/tabular'      " should align on regex :Tab /char
-Plug 'tpope/vim-surround'
+"" editing and formatting
+""" fixme: replace tabular with junegunn/vim-easy-align
+Plug 'godlygeek/tabular'         " should align on regex :Tab /char
+Plug 'tpope/vim-surround'        " adds surround action to create cmts
 Plug 'ervandew/supertab'
-Plug 'kana/vim-textobj-function'
+Plug 'kana/vim-textobj-function' " adds functions to create textobjs
 Plug 'kana/vim-textobj-user'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 
-" files, buffers, and tags
+"" files, buffers, and tags
 Plug 'yegappan/mru'
-Plug 'qpkorr/vim-bufkill'
-" Plug 'majutsushi/tagbar'
-Plug 'ap/vim-buftabline'
+Plug 'qpkorr/vim-bufkill' " adds BufDelete, etc, keeping windows
+                          " Plug 'majutsushi/tagbar'
+Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
 Plug 'mtth/scratch.vim'
 
 " fzf is its own thing
@@ -50,7 +51,7 @@ Plug 'mtth/scratch.vim'
 " Plug 'junegunn/fzf.vim'
 
 " colors and UI
-" todo: maybe a color that's a little sharper? 
+" todo: maybe a color that's a little sharper?
 Plug 'frankier/neovim-colors-solarized-truecolor-only'
 Plug 'airblade/vim-gitgutter' " put chars in gutter
 Plug 'itchyny/lightline.vim'
@@ -161,7 +162,7 @@ execute "set colorcolumn=" . join(range(81,335), ',')
 set omnifunc=syntaxcomplete#Complete
 " }}}}
 
-"" Auto commands at save {{{{ 
+"" Auto commands at save {{{{
 set omnifunc=syntaxcomplete#Complete
 set autoread
 augroup autoSaveAndRead
@@ -270,7 +271,7 @@ nmap XX "_dd
 vmap X "_d
 vmap x "_d"
 nnoremap x "_x
-" increment a number; C-a is overloaded everywhere. 
+" increment a number; C-a is overloaded everywhere.
 nnoremap <A-a> <C-a>
 " }}}}
 
