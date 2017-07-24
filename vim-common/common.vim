@@ -45,6 +45,7 @@ Plug 'qpkorr/vim-bufkill' " adds BufDelete, etc, keeping windows
                           " Plug 'majutsushi/tagbar'
 Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
 Plug 'mtth/scratch.vim'
+Plug 'mileszs/ack.vim'
 
 " fzf is its own thing
 " Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -158,6 +159,10 @@ execute "set colorcolumn=" . join(range(81,335), ',')
 " }}}
 
 " editing {{{
+
+"" switch cwd to buffer's path {{{{
+autocmd BufEnter * lcd %:p:h
+" }}}}
 "" Autocomplete {{{{
 set omnifunc=syntaxcomplete#Complete
 " }}}}
