@@ -32,7 +32,7 @@ let g:vim_bootstrap_editor = "nvim"				" nvim or vim
 
 "   autocmd VimEnter * PlugInstall
 " endif
-" }}} 
+" }}}
 
 " plugins {{{
 call plug#begin(expand('~/.config/nvim/plugged'))
@@ -250,25 +250,41 @@ iab xldate <c-r>=strftime("%a %d %b %Y %H:%M:%S%Z")<CR>
 " }}}
 
 " mappings {{{
-let mapleader=','
 
+"" mapleader {{{{
+let mapleader=','
+"" }}}}
+
+"" tweaks adding functionality to existing keys {{{{
 nnoremap D Da
 nnoremap U d^i
-" this is a better line 
+" Keep the cursor in place while joining lines
+nnoremap J mzJ`z
+"" Vmap for maintain Visual Mode after shifting > and <
+vmap < <gv
+vmap > >gv
+"" }}}}
 
-"" insert mode like emacs {{{{
+"" insert/command mode like emacs {{{{
 inoremap <C-a> <Home>
 inoremap <C-e> <End>
+inoremap <A-bs> <c-w>
+cnoremap <C-a> <Home>
+cnoremap <C-e> <End>
+cnoremap <A-bs> <c-w>
 " }}}}
 
-"" bubbling text with vim-impaired and Drew Neil's mappings {{{{
-" Bubble multiple lines; note that the *noremap's don't work here. 
+"" bubbling text {{{{
+""" Bubble multiple lines; note that the *noremap's don't work here.
+""" with vim-impaired and Drew Neil's mappings
 nmap <C-Up> [e
 nmap <C-Down> ]e
+""" Move visual block
+vnoremap J [egv
+vnoremap K ]egv
 vmap <C-Up> [egv
 vmap <C-Down> ]egv
 " }}}}
-
 
 "" terminal config {{{{
 " only really relevant to neovim, maybe should move there
@@ -298,16 +314,38 @@ autocmd BufLeave term://* stopinsert
 au BufEnter * if &buftype == 'terminal' | :startinsert | endif
 " }}}}
 
+"" to normal mode with jj or jk {{{{
+inoremap jj <ESC>
+inoremap jk <ESC>
+" }}}}
 " }}}
 
 " leader {{{
+
+"" PB specifics {{{{
 nnoremap <leader>x :so %<CR>
+nnoremap <leader>w :w <CR>
+nnoremap <leader>W :BD<CR>      " kill buffer, window stays; think cmd-w
+nnoremap <leader>m :MRU<CR>     " most-freq files are a simple list, no fzf
+nnoremap <A-a> <C-a>            " increment a number
+nnoremap <leader>l mt[s1z=`t    " spelling hack
+" }}}}
+
+"" direct edits {{{{
+nnoremap <Leader>ei :e ~/dotfiles/nvim/init.vim<CR>
+nnoremap <Leader>ec :e ~/dotfiles/vim-common/common.vim<CR>
+nnoremap <Leader>et :e ~/Documents/notes/tech-todo.md<CR>
+ nnoremap <Leader>en :e ~/Documents/notes/vim-notes.md<CR>
+nnoremap <Leader>ew :e <C-R>=expand("%:p:h") . "/"<CR> " ed in cur buf's path
+"" }}}}
+
 "" terminal emulation {{{{
 if g:vim_bootstrap_editor == 'nvim'
   nnoremap <silent> <leader>sh :terminal<CR>
 else
   nnoremap <silent> <leader>sh :VimShellCreate<CR>
 endif
+
 
 
 " }}}}
@@ -319,13 +357,83 @@ nnoremap <leader>gp :Gpush<CR>
 nnoremap <leader>gl :Gpull<CR>
 " }}}}
 
+"" buffer+window navigation {{{{
+nnoremap <leader>1 :b1<CR>
+nnoremap <leader>2 :b2 <CR>
+nnoremap <leader>3 :b3 <CR>
+nnoremap <leader>4 :b4 <CR>
+nnoremap <leader>5 :b5 <CR>
+nnoremap <leader>6 :b6 <CR>
+nnoremap <leader>7 :b7 <CR>
+nnoremap <leader>8 :b8 <CR>
+nnoremap <leader>9 :b9 <CR>
+
+nnoremap <A-1> 1<c-w><c-w>
+nnoremap <A-2> 2<c-w><c-w>
+nnoremap <A-3> 3<c-w><c-w>
+nnoremap <A-4> 4<c-w><c-w>
+nnoremap <A-5> 5<c-w><c-w>
+nnoremap <A-6> 6<c-w><c-w>
+nnoremap <A-7> 7<c-w><c-w>
+nnoremap <A-8> 8<c-w><c-w>
+nnoremap <A-9> 9<c-w><c-w>
+"" }}}}
+
 " }}}
 
 " language {{{
 
+"" markdown {{{{
 " In markdown files, Control + a surrounds highlighted text with square
 " brackets, then dumps system clipboard contents into parenthesis
 autocmd FileType markdown vnoremap <c-a> <Esc>`<i[<Esc>`>la](<Esc>"*]pa)<Esc>
+" }}}}
+
+" snippets {{{{
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<c-b>"
+let g:UltiSnipsEditSplit="vertical"
+" }}}}
+
+"" syntastic {{{{
+let g:loaded_syntastic_r_lintr_checker = 1
+let g:syntastic_aggregate_errors = 1
+let g:syntastic_always_populate_loc_list=1
+let g:syntastic_auto_loc_list=1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_error_symbol='✗'
+let g:syntastic_style_error_symbol = '✗'
+let g:syntastic_style_warning_symbol = '⚠'
+let g:syntastic_warning_symbol='⚠'
+" let g:syntastic_python_checkers=['pep8']
+let g:syntastic_python_checkers=['python', 'flake8']
+let g:syntastic_r_checkers = ['lintr']
+" }}}}
+
+"" python {{{{
+augroup vimrc-python
+  autocmd!
+  autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=8 colorcolumn=79
+      \ formatoptions+=croq softtabstop=4
+      \ cinwords=if,elif,else,for,while,try,except,finally,def,class,with
+augroup END
+
+" jedi-vim
+" let g:jedi#popup_on_dot = 0
+" let g:jedi#goto_assignments_command = "<leader>g"
+" let g:jedi#goto_definitions_command = "<leader>d"
+" let g:jedi#documentation_command = "K"
+" let g:jedi#usages_command = "<leader>n"
+" let g:jedi#rename_command = "<leader>r"
+" let g:jedi#show_call_signatures = "0"
+" let g:jedi#completions_command = "<C-Space>"
+" let g:jedi#smart_auto_mappings = 0
+
+let g:polyglot_disabled = ['python']
+let python_highlight_all = 1
+" }}}}
 
 " }}}
 
@@ -346,4 +454,5 @@ augroup END
 
 setlocal foldmethod=marker
 setlocal foldlevel=1
-" vim: set foldmethod=marker foldlevel=0:
+set modlines=5
+" vim: set foldmethod=marker foldlevel=1:
