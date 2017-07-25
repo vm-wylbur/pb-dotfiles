@@ -45,7 +45,7 @@ Plug 'qpkorr/vim-bufkill' " adds BufDelete, etc, keeping windows
                           " Plug 'majutsushi/tagbar'
 Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
 Plug 'mtth/scratch.vim'
-Plug 'mileszs/ack.vim'
+Plug 'mileszs/ack.vim'    " :Ack to grep cwd; see options
 
 " fzf is its own thing
 " Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
