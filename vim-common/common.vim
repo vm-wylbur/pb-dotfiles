@@ -389,6 +389,9 @@ nnoremap <Leader>vr :registers<CR>
 nnoremap <Leader>v" :registers<CR>
 nnoremap <Leader>vm :marks<CR>
 nnoremap <Leader>v' :marks<CR>
+nnoremap <Leader>vc :changes<CR>
+nnoremap <Leader>vj :jumps<CR>
+nnoremap <Leader>v; :jumps<CR>
 "" }}}}
 
 " fugitive mappings {{{{
@@ -541,6 +544,4 @@ command! -nargs=1 Blvimgrep call BuffersVimgrep(<args>,'l')
 " }}}
 
 setlocal foldmethod=marker
-setlocal foldlevel=1
-set modelines=5
 " vim: set foldmethod=marker foldlevel=1:
