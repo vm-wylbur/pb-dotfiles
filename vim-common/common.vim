@@ -265,7 +265,7 @@ iab xldate <c-r>=strftime("%a %d %b %Y %H:%M:%S%Z")<CR>
 "" * A-x keys move among windows and do not-vimmy stuff
 
 "" mapleader {{{{
-let mapleader=','
+let mapleader='\'
 "" }}}}
 
 "" PB specific remaps {{{{
@@ -289,6 +289,7 @@ nnoremap J mzJ`z
 vmap < <gv
 vmap > >gv
 nnoremap <C-l> :nohlsearch<CR><C-l>zz
+inoremap <C-l> <ESC>:nohlsearch<CR><C-l>zz
 "" }}}}
 
 "" insert/command mode like emacs {{{{
@@ -310,26 +311,6 @@ vnoremap J [egv
 vnoremap K ]egv
 vmap <C-Up> [egv
 vmap <C-Down> ]egv
-" }}}}
-
-"" terminal config {{{{
-" only really relevant to neovim, maybe should move there
-tnoremap <ESC> <C-\><C-n>
-tnoremap <A-h> <C-\><C-N><C-w>h
-tnoremap <A-j> <C-\><C-N><C-w>j
-tnoremap <A-k> <C-\><C-N><C-w>k
-tnoremap <A-l> <C-\><C-N><C-w>l
-
-command! Cquit
-    \  if exists('b:nvr')
-    \|   for chanid in b:nvr
-    \|     silent! call rpcnotify(chanid, 'Exit', 1)
-    \|   endfor
-    \| endif
-
-autocmd BufWinEnter,WinEnter term://* startinsert
-autocmd BufLeave term://* stopinsert
-au BufEnter * if &buftype == 'terminal' | :startinsert | endif
 " }}}}
 
 "" to normal mode with jj or jk {{{{
@@ -373,6 +354,7 @@ nnoremap <leader>W :BD<CR>
 nnoremap <leader>m :MRU<CR>
 " spelling hack
 nnoremap <leader>l mt[s1z=`t
+
 " }}}}
 
 "" direct edits {{{{
