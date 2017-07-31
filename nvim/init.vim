@@ -9,8 +9,7 @@
 so $HOME/dotfiles/vim-common/common.vim
 
 " neovim specific config here {{{
-
-}}}
+" }}}
 
 "" terminal config {{{
 " only really relevant to neovim, maybe should move there

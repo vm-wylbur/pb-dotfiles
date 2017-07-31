@@ -10,7 +10,7 @@
 "
 " todo:
 " - need to put the augroup cmds together
-" - clean up the autocmd stuff, esp for markdown. see "learning vimscript the hard way"
+" - clean up the autocmd stuff, esp for markdown. see _learning vimscript the hard way_
 " - should think more about wildmode and tab completion
 " }}}
 
@@ -39,6 +39,10 @@ Plug 'kana/vim-textobj-user'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 
+" navigation
+" adds markers to the gutter; how to colorize markers for git gutter?
+Plug 'kshenoy/vim-signature'
+
 "" files, buffers, and tags
 Plug 'yegappan/mru'
 Plug 'qpkorr/vim-bufkill' " adds BufDelete, etc, keeping windows
@@ -51,12 +55,16 @@ Plug 'mileszs/ack.vim'    " :Ack to grep cwd; see options
 " Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 " Plug 'junegunn/fzf.vim'
 
+" cheat sheet
+Plug 'lifepillar/vim-cheat40'
+
 " colors and UI
 " todo: maybe a color that's a little sharper?
-Plug 'frankier/neovim-colors-solarized-truecolor-only'
+" Plug 'frankier/neovim-colors-solarized-truecolor-only'
 Plug 'airblade/vim-gitgutter' " put chars in gutter
 Plug 'itchyny/lightline.vim'
 Plug 'luochen1990/rainbow'
+Plug 'icymind/NeoSolarized'
 
 " languages
 Plug 'sheerun/vim-polyglot'
@@ -75,9 +83,14 @@ call plug#end()
 " }}}
 
 " plugin configs {{{
-set rtp+=$HOME/src/solarized/vim-colors-solarized
+" set rtp+=$HOME/src/solarized/vim-colors-solarized
 " let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-colorscheme solarized
+" colorscheme solarized
+colorscheme NeoSolarized
+
+let g:SignatureMarkTextHLDynamic = 1
+let g:SignatureMarkerTextHLDynamic = 1
+let g:SignatureEnabledAtStartup = 1
 
 source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
 set laststatus=2
@@ -161,7 +174,9 @@ execute "set colorcolumn=" . join(range(81,335), ',')
 " editing {{{
 
 "" switch cwd to buffer's path {{{{
-autocmd BufEnter * lcd %:p:h
+" this causes probs with terminal; instead use <leader>ew to edit in cur
+" buff's path
+" autocmd BufEnter * lcd %:p:h
 " }}}}
 "" Autocomplete {{{{
 set omnifunc=syntaxcomplete#Complete
@@ -336,6 +351,7 @@ nnoremap <A-h> <C-w>h
 nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
+
 "" }}}}
 
 " }}}
@@ -354,6 +370,7 @@ nnoremap <leader>W :BD<CR>
 nnoremap <leader>m :MRU<CR>
 " spelling hack
 nnoremap <leader>l mt[s1z=`t
+inoremap <C-s> <ESC>mt[s1z=`ta
 
 " }}}}
 
