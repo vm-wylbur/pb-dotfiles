@@ -1,5 +1,6 @@
 " Preamble {{{
-" Author: [Patrick Ball](mailto://pball@hrdag.org)
+" vim: set sw=2 ts=2 sts=0 et fmr={{,}} fcs=vert\:| fdm=marker fdt=substitute(getline(v\:foldstart),'\\"\\s\\\|\{\{','','g') nospell:
+" " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
 " moved to github
@@ -33,20 +34,20 @@ Plug 'tpope/vim-repeat'  " doesn't work? needs config for surround
 """ fixme: replace tabular with junegunn/vim-easy-align
 Plug 'godlygeek/tabular'         " should align on regex :Tab /char
 Plug 'tpope/vim-surround'        " adds surround action to create cmts
-Plug 'ervandew/supertab'
+" supertab isn't the right super. learn to use the built-ins
+" Plug 'ervandew/supertab'
 Plug 'kana/vim-textobj-function' " adds functions to create textobjs
 Plug 'kana/vim-textobj-user'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 
 " navigation
-" adds markers to the gutter; how to colorize markers for git gutter?
-Plug 'kshenoy/vim-signature'
+" vim-markology doesn't create nvim errors; signature did. 
+Plug 'jeetsukumaran/vim-markology'
 
 "" files, buffers, and tags
 Plug 'yegappan/mru'
 Plug 'qpkorr/vim-bufkill' " adds BufDelete, etc, keeping windows
-                          " Plug 'majutsushi/tagbar'
 Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
 Plug 'mtth/scratch.vim'
 Plug 'mileszs/ack.vim'    " :Ack to grep cwd; see options
@@ -55,7 +56,7 @@ Plug 'mileszs/ack.vim'    " :Ack to grep cwd; see options
 " Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 " Plug 'junegunn/fzf.vim'
 
-" cheat sheet
+" cheat sheet: <leader>?
 Plug 'lifepillar/vim-cheat40'
 
 " colors and UI
@@ -63,7 +64,8 @@ Plug 'lifepillar/vim-cheat40'
 " Plug 'frankier/neovim-colors-solarized-truecolor-only'
 Plug 'airblade/vim-gitgutter' " put chars in gutter
 Plug 'itchyny/lightline.vim'
-Plug 'luochen1990/rainbow'
+" Plug 'luochen1990/rainbow'
+Plug 'bounceme/poppy.vim'
 Plug 'icymind/NeoSolarized'
 
 " languages
@@ -88,9 +90,12 @@ call plug#end()
 " colorscheme solarized
 colorscheme NeoSolarized
 
-let g:SignatureMarkTextHLDynamic = 1
-let g:SignatureMarkerTextHLDynamic = 1
-let g:SignatureEnabledAtStartup = 1
+au! cursormoved * call PoppyInit()
+let g:poppy_point_enable = 0
+
+" let g:SignatureMarkTextHLDynamic = 1
+" let g:SignatureMarkerTextHLDynamic = 1
+" let g:SignatureEnabledAtStartup = 1
 
 source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
 set laststatus=2
