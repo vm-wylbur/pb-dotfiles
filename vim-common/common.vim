@@ -82,6 +82,11 @@ Plug 'bps/vim-textobj-python'
 Plug 'reedes/vim-pencil'
 Plug 'tpope/vim-fugitive'
 
+" markdown stuff
+Plug 'vim-pandoc/vim-pandoc'
+Plug 'vim-pandoc/vim-pandoc-syntax'
+Plug 'vim-pandoc/vim-rmarkdown'
+
 " linting
 " Plug 'vim-syntastic/syntastic'
 Plug 'w0rp/ale'
