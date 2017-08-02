@@ -1,6 +1,8 @@
-" Preamble {{{
 " vim: set sw=2 ts=2 sts=0 et fmr={{,}} fcs=vert\:| fdm=marker fdt=substitute(getline(v\:foldstart),'\\"\\s\\\|\{\{','','g') nospell:
-" " Author: [Patrick Ball](mailto://pball@hrdag.org)
+"
+" Preamble {{{
+"
+" Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
 " moved to github
@@ -34,15 +36,17 @@ Plug 'tpope/vim-repeat'  " doesn't work? needs config for surround
 """ fixme: replace tabular with junegunn/vim-easy-align
 Plug 'godlygeek/tabular'         " should align on regex :Tab /char
 Plug 'tpope/vim-surround'        " adds surround action to create cmts
-" supertab isn't the right super. learn to use the built-ins
-" Plug 'ervandew/supertab'
 Plug 'kana/vim-textobj-function' " adds functions to create textobjs
 Plug 'kana/vim-textobj-user'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 
+" completion
+" supertab isn't the right super. learn to use the built-ins
+" Plug 'ervandew/supertab'
+
 " navigation
-" vim-markology doesn't create nvim errors; signature did. 
+" vim-markology doesn't create nvim errors; signature did.
 Plug 'jeetsukumaran/vim-markology'
 
 "" files, buffers, and tags
@@ -60,12 +64,14 @@ Plug 'mileszs/ack.vim'    " :Ack to grep cwd; see options
 Plug 'lifepillar/vim-cheat40'
 
 " colors and UI
-" todo: maybe a color that's a little sharper?
-" Plug 'frankier/neovim-colors-solarized-truecolor-only'
 Plug 'airblade/vim-gitgutter' " put chars in gutter
+" Plug 'mhinz/vim-signify'
+" after much thought, at 2017-08-01T23:17PDT this really is the right line. 
 Plug 'itchyny/lightline.vim'
-" Plug 'luochen1990/rainbow'
-Plug 'bounceme/poppy.vim'
+" Plug 'kien/rainbow_parentheses.vim'
+" Plug 'junegunn/rainbow_parentheses.vim'
+Plug 'luochen1990/rainbow'
+" Plug 'bounceme/poppy.vim'
 Plug 'icymind/NeoSolarized'
 
 " languages
@@ -85,17 +91,17 @@ call plug#end()
 " }}}
 
 " plugin configs {{{
-" set rtp+=$HOME/src/solarized/vim-colors-solarized
-" let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-" colorscheme solarized
+" other solarized have bad colors in terminal
 colorscheme NeoSolarized
 
-au! cursormoved * call PoppyInit()
-let g:poppy_point_enable = 0
-
-" let g:SignatureMarkTextHLDynamic = 1
-" let g:SignatureMarkerTextHLDynamic = 1
-" let g:SignatureEnabledAtStartup = 1
+" slightly better rainbow parens
+" au! cursormoved * call PoppyInit()
+" let g:poppy_point_enable = 0
+" au VimEnter * RainbowParenthesesToggle
+" au Syntax * RainbowParenthesesLoadRound
+" au Syntax * RainbowParenthesesLoadSquare
+" au Syntax * RainbowParenthesesLoadBraces
+let g:rainbow_active = 1
 
 source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
 set laststatus=2
@@ -178,13 +184,18 @@ execute "set colorcolumn=" . join(range(81,335), ',')
 
 " editing {{{
 
-"" switch cwd to buffer's path {{{{
-" this causes probs with terminal; instead use <leader>ew to edit in cur
-" buff's path
-" autocmd BufEnter * lcd %:p:h
-" }}}}
 "" Autocomplete {{{{
 set omnifunc=syntaxcomplete#Complete
+set complete+=i
+set complete+=kspell
+set completeopt+=menuone,noselect
+set completeopt+=preview
+" }}}}
+
+" Wildmenu {{{{
+set wildignore+=.DS_Store,Icon\?,*.dmg,*.git,*.pyc,*.o,*.obj,*.so,*.swp,*.zip
+set wildmenu " Show possible matches when autocompleting
+set wildignorecase " Ignore case when completing file names and directories
 " }}}}
 
 "" Auto commands at save {{{{
@@ -215,6 +226,7 @@ set tabstop=2
 set softtabstop=0
 set shiftwidth=2
 set expandtab
+set smarttab
 " }}}}
 
 "" Enable hidden buffers {{{{
@@ -248,6 +260,8 @@ set hlsearch
 set incsearch
 set ignorecase
 set smartcase
+set showmatch
+set gdefault
 " }}}}
 
 "" Turn on spell checking {{{{
