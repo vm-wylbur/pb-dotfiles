@@ -145,8 +145,8 @@ set number
 " }}}}
 
 " cursor stuff {{{{
-highlight! nCursor guifg=black guibg=magenta gui=reverse
-
+" none of the colors seem to work. 
+" highlight! nCursor guifg=black guibg=magenta gui=reverse
 " set guicursor=n:block-nCursor/lCursor-blinkon0,
 "   \v:block-Cursor/lCursor-blinkon0,
 "   \c:hor40-Cursor/lCursor-blinkon0,
