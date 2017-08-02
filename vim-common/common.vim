@@ -66,7 +66,7 @@ Plug 'lifepillar/vim-cheat40'
 " colors and UI
 Plug 'airblade/vim-gitgutter' " put chars in gutter
 " Plug 'mhinz/vim-signify'
-" after much thought, at 2017-08-01T23:17PDT this really is the right line. 
+" after much thought, at 2017-08-01T23:17PDT this really is the right line.
 Plug 'itchyny/lightline.vim'
 " Plug 'kien/rainbow_parentheses.vim'
 " Plug 'junegunn/rainbow_parentheses.vim'
@@ -80,8 +80,11 @@ Plug 'sheerun/vim-polyglot'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'bps/vim-textobj-python'
 Plug 'reedes/vim-pencil'
-Plug 'vim-syntastic/syntastic'
 Plug 'tpope/vim-fugitive'
+
+" linting
+" Plug 'vim-syntastic/syntastic'
+Plug 'w0rp/ale'
 
 " snippets
 Plug 'SirVer/ultisnips'
@@ -122,10 +125,11 @@ let g:buftabline_separators='on'
 let MRU_Exclude_Files = '.*/.git/COMMIT_EDITMSG$'
 
 " keep in mind that C-v TAB will insert a literal tab
-let g:SuperTabCompletionContexts = ['s:ContextText', 's:ContextDiscover']
-let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
-let g:SuperTabContextDiscoverDiscovery =
-    \ ["&completefunc:<c-x><c-u>", "&omnifunc:<c-x><c-o>"]
+" currently commented out bc I don't understand it. 
+" let g:SuperTabCompletionContexts = ['s:ContextText', 's:ContextDiscover']
+" let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
+" let g:SuperTabContextDiscoverDiscovery =
+"     \ ["&completefunc:<c-x><c-u>", "&omnifunc:<c-x><c-o>"]
 
 let g:scratch_persistence_file = '~/tmp/scratch.md'
 let g:scratch_insert_autohide = 0
@@ -145,7 +149,7 @@ set number
 " }}}}
 
 " cursor stuff {{{{
-" none of the colors seem to work. 
+" none of the colors seem to work.
 " highlight! nCursor guifg=black guibg=magenta gui=reverse
 " set guicursor=n:block-nCursor/lCursor-blinkon0,
 "   \v:block-Cursor/lCursor-blinkon0,
@@ -299,7 +303,7 @@ iab xldate <c-r>=strftime("%a %d %b %Y %H:%M:%S%Z")<CR>
 "" * A-x keys move among windows and do not-vimmy stuff
 
 "" mapleader {{{{
-let mapleader='\'
+let g:mapleader='\'
 "" }}}}
 
 "" PB specific remaps {{{{
@@ -458,12 +462,13 @@ autocmd FileType markdown vnoremap <c-a> <Esc>`<i[<Esc>`>la](<Esc>"*]pa)<Esc>
 autocmd FileType markdown setlocal nocursorline
 autocmd FileType markdown setlocal nocursorcolumn
 " }}}}
+"
 
 " snippets {{{{
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<c-b>"
-let g:UltiSnipsEditSplit="vertical"
+let g:UltiSnipsExpandTrigger='<tab>'
+let g:UltiSnipsJumpForwardTrigger='<tab>'
+let g:UltiSnipsJumpBackwardTrigger='<c-b>'
+let g:UltiSnipsEditSplit='vertical'
 " }}}}
 
 "" syntastic {{{{
@@ -480,6 +485,29 @@ let g:syntastic_warning_symbol='⚠'
 " let g:syntastic_python_checkers=['pep8']
 let g:syntastic_python_checkers=['python', 'flake8']
 let g:syntastic_r_checkers = ['lintr']
+" }}}}
+
+" w0rp/ale {{{{
+let g:ale_linters = {
+\   'python': ['flake8'],
+\   'r': ['lintr'],
+\   'sh': ['shell'],
+\   'yaml': ['yamllint'],
+\   'vim': ['vint'],
+\}
+let g:ale_sign_warning = '▲'
+let g:ale_sign_error = '✗'
+highlight link ALEWarningSign String
+highlight link ALEErrorSign Title
+let g:ale_sign_column_always = 1
+let g:ale_change_sign_column_color = 1
+let g:ale_enabled = 1
+let g:ale_lint_on_insert_leave = 1
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
+let g:ale_vim_vint_show_style_issues = 1
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
 " }}}}
 
 "" python {{{{
@@ -502,7 +530,7 @@ augroup END
 " let g:jedi#smart_auto_mappings = 0
 
 let g:polyglot_disabled = ['python']
-let python_highlight_all = 1
+let g:python_highlight_all = 1
 " }}}}
 
 " }}}
