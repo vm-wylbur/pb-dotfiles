@@ -105,8 +105,8 @@ call plug#end()
 " other solarized have bad colors in terminal
 colorscheme NeoSolarized
 
-" au WinEnter cheat40 :MarkologyDisable
-" au WinLeave cheat40 :MarkologyEnable
+" cheat40.vim needs a hack to open the window at 42 chars
+" this is a workaround for Markology but it doesn't look bad.
 let g:cheat40_use_default = 0
 
 " slightly better rainbow parens
@@ -193,7 +193,7 @@ autocmd!
     autocmd WinLeave * set nocul
 augroup END
 " makes right margin diff color
-execute "set colorcolumn=" . join(range(81,335), ',')
+execute 'set colorcolumn=' . join(range(81,335), ',')
 " }}}}
 
 " }}}
