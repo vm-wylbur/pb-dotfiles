@@ -18,11 +18,12 @@
 " }}}
 
 " setup {{{
-set nocompatible
+" set nocompatible
 
 filetype plugin on
-let g:vim_bootstrap_langs = "python"
-let g:vim_bootstrap_editor = "nvim"				" nvim or vim
+let g:vim_bootstrap_langs = 'python'
+let g:vim_bootstrap_editor = 'nvim'				" nvim or vim
+set runtimepath+=$HOME/dotfiles/vim-common
 
 " }}}
 
@@ -48,6 +49,8 @@ Plug 'tpope/vim-unimpaired'
 " navigation
 " vim-markology doesn't create nvim errors; signature did.
 Plug 'jeetsukumaran/vim-markology'
+" vim-showmarks is more subtle but needs constant updating 
+" Plug 'jacquesbh/vim-showmarks'
 
 "" files, buffers, and tags
 Plug 'yegappan/mru'
@@ -102,6 +105,10 @@ call plug#end()
 " other solarized have bad colors in terminal
 colorscheme NeoSolarized
 
+" au WinEnter cheat40 :MarkologyDisable
+" au WinLeave cheat40 :MarkologyEnable
+let g:cheat40_use_default = 0
+
 " slightly better rainbow parens
 " au! cursormoved * call PoppyInit()
 " let g:poppy_point_enable = 0
@@ -130,7 +137,7 @@ let g:buftabline_separators='on'
 let MRU_Exclude_Files = '.*/.git/COMMIT_EDITMSG$'
 
 " keep in mind that C-v TAB will insert a literal tab
-" currently commented out bc I don't understand it. 
+" currently commented out bc I don't understand it.
 " let g:SuperTabCompletionContexts = ['s:ContextText', 's:ContextDiscover']
 " let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
 " let g:SuperTabContextDiscoverDiscovery =
