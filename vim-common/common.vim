@@ -49,8 +49,7 @@ Plug 'tpope/vim-unimpaired'
 " navigation
 " vim-markology doesn't create nvim errors; signature did.
 Plug 'jeetsukumaran/vim-markology'
-" vim-showmarks is more subtle but needs constant updating 
-" Plug 'jacquesbh/vim-showmarks'
+Plug 'justinmk/vim-sneak'
 
 "" files, buffers, and tags
 Plug 'yegappan/mru'
@@ -104,6 +103,9 @@ call plug#end()
 " plugin configs {{{
 " other solarized have bad colors in terminal
 colorscheme NeoSolarized
+let g:sneak#label = 1
+nmap s <Plug>SneakLabel_s
+nmap S <Plug>SneakLabel_S
 
 " cheat40.vim needs a hack to open the window at 42 chars
 " this is a workaround for Markology but it doesn't look bad.
