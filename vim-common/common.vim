@@ -15,6 +15,8 @@
 " - need to put the augroup cmds together
 " - clean up the autocmd stuff, esp for markdown. see _learning vimscript the hard way_
 " - should think more about wildmode and tab completion
+" - still need to test against vim and remove common elements.
+"   where to put plugins?
 " }}}
 
 " setup {{{
@@ -94,8 +96,8 @@ Plug 'vim-pandoc/vim-rmarkdown'
 Plug 'w0rp/ale'
 
 " snippets
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
+" Plug 'SirVer/ultisnips'
+" Plug 'honza/vim-snippets'
 
 call plug#end()
 " }}}
@@ -479,10 +481,10 @@ autocmd FileType markdown setlocal nocursorcolumn
 "
 
 " snippets {{{{
-let g:UltiSnipsExpandTrigger='<tab>'
-let g:UltiSnipsJumpForwardTrigger='<tab>'
-let g:UltiSnipsJumpBackwardTrigger='<c-b>'
-let g:UltiSnipsEditSplit='vertical'
+" let g:UltiSnipsExpandTrigger='<tab>'
+" let g:UltiSnipsJumpForwardTrigger='<tab>'
+" let g:UltiSnipsJumpBackwardTrigger='<c-b>'
+" let g:UltiSnipsEditSplit='vertical'
 " }}}}
 
 "" syntastic {{{{
