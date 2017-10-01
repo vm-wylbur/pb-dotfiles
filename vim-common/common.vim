@@ -81,6 +81,7 @@ Plug 'icymind/NeoSolarized'
 " languages
 Plug 'sheerun/vim-polyglot'
 " Plug 'davidhalter/jedi-vim'
+Plug 'lervag/vimtex'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'bps/vim-textobj-python'
 Plug 'reedes/vim-pencil'
@@ -134,11 +135,14 @@ let g:pencil#wrapModeDefault = 'soft'   " default is 'hard'
 autocmd FileType markdown,mkd setlocal spell
 autocmd FileType markdown setlocal wrap
 
+autocmd FileType tex setlocal spell
+autocmd FileType tex setlocal wrap
+
 let g:buftabline_numbers=1
 let g:buftabline_indicators='on' " this is helpful.
 let g:buftabline_separators='on'
 
-let MRU_Exclude_Files = '.*/.git/COMMIT_EDITMSG$'
+let g:MRU_Exclude_Files = '.*/.git/COMMIT_EDITMSG$'
 
 " keep in mind that C-v TAB will insert a literal tab
 " currently commented out bc I don't understand it.
@@ -509,6 +513,7 @@ let g:ale_linters = {
 \   'r': ['lintr'],
 \   'sh': ['shell'],
 \   'yaml': ['yamllint'],
+\   'tex': ['chktex'],
 \   'vim': ['vint'],
 \}
 let g:ale_sign_warning = '▲'
