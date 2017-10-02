@@ -45,8 +45,9 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 
 " completion
-" supertab isn't the right super. learn to use the built-ins
-" Plug 'ervandew/supertab'
+" Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" Plug 'zchee/deoplete-jedi'
 
 " navigation
 " vim-markology doesn't create nvim errors; signature did.
@@ -109,6 +110,12 @@ colorscheme NeoSolarized
 let g:sneak#label = 1
 nmap s <Plug>SneakLabel_s
 nmap S <Plug>SneakLabel_S
+
+" deoplete
+" call deoplete#enable()
+" autocmd FileType python nnoremap <leader>y :0,$!yapf<CR>
+" autocmd CompleteDone * pclose " To close preview window of deoplete automagically
+let g:ycm_python_binary_path = 'python3'
 
 " cheat40.vim needs a hack to open the window at 42 chars
 " this is a workaround for Markology but it doesn't look bad.
