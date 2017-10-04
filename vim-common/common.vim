@@ -146,9 +146,10 @@ let g:pencil#wrapModeDefault = 'soft'   " default is 'hard'
     autocmd!
     autocmd FileType markdown,mkd  call pencil#init()
     autocmd FileType text          call pencil#init()
+    autocmd FileType tex           call pencil#init()
   augroup END
-autocmd FileType markdown,mkd setlocal spell
-autocmd FileType markdown setlocal wrap
+autocmd FileType markdown,mkd,tex setlocal spell
+autocmd FileType markdown,mkd,tex setlocal wrap
 
 autocmd FileType tex setlocal spell
 autocmd FileType tex setlocal wrap
