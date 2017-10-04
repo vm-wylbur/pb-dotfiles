@@ -26,7 +26,6 @@ filetype plugin on
 let g:vim_bootstrap_langs = 'python'
 let g:vim_bootstrap_editor = 'nvim'				" nvim or vim
 set runtimepath+=$HOME/dotfiles/vim-common
-
 " }}}
 
 " plugins {{{
@@ -70,19 +69,16 @@ Plug 'lifepillar/vim-cheat40'
 
 " colors and UI
 Plug 'airblade/vim-gitgutter' " put chars in gutter
-" Plug 'mhinz/vim-signify'
-" after much thought, at 2017-08-01T23:17PDT this really is the right line.
 Plug 'itchyny/lightline.vim'
-" Plug 'kien/rainbow_parentheses.vim'
-" Plug 'junegunn/rainbow_parentheses.vim'
 Plug 'luochen1990/rainbow'
-" Plug 'bounceme/poppy.vim'
 Plug 'icymind/NeoSolarized'
 
 " languages
 Plug 'sheerun/vim-polyglot'
 " Plug 'davidhalter/jedi-vim'
 Plug 'lervag/vimtex'
+" Plug 'donRaphaco/neotex', { 'for': 'tex' }
+Plug 'xuhdev/vim-latex-live-preview'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'bps/vim-textobj-python'
 Plug 'reedes/vim-pencil'
@@ -111,11 +107,23 @@ let g:sneak#label = 1
 nmap s <Plug>SneakLabel_s
 nmap S <Plug>SneakLabel_S
 
+let g:livepreview_previewer = 'open -a Preview'
+
 " deoplete
 " call deoplete#enable()
-" autocmd FileType python nnoremap <leader>y :0,$!yapf<CR>
-" autocmd CompleteDone * pclose " To close preview window of deoplete automagically
-let g:ycm_python_binary_path = 'python3'
+autocmd FileType python nnoremap <leader>y :0,$!yapf<CR>
+autocmd CompleteDone * pclose " To close preview window of deoplete automagically
+
+" let g:deoplete#enable_at_startup = 1
+" let g:deoplete#auto_complete_start_length = 1
+" let g:deoplete#disable_auto_complete = 0
+" let g:deoplete#sources#jedi#statement_length = 30
+" let g:deoplete#sources#jedi#show_docstring = 1
+" let g:deoplete#sources#jedi#short_types = 1
+" deoplete tab-complete
+" inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+
+" let g:ycm_python_binary_path = 'python3'
 
 " cheat40.vim needs a hack to open the window at 42 chars
 " this is a workaround for Markology but it doesn't look bad.
@@ -617,5 +625,7 @@ command! -nargs=1 Blvimgrep call BuffersVimgrep(<args>,'l')
 " }}}}
 " }}}
 
+set modeline
+set modelines=5
 setlocal foldmethod=marker
 " vim: set foldmethod=marker foldlevel=1:
