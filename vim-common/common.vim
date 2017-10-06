@@ -35,15 +35,16 @@ call plug#begin(expand('~/.config/nvim/plugged'))
 Plug 'tpope/vim-repeat'  " doesn't work? needs config for surround
 
 "" editing and formatting
-""" fixme: replace tabular with junegunn/vim-easy-align
-Plug 'godlygeek/tabular'         " should align on regex :Tab /char
+Plug 'kbarrette/mediummode'
+" Plug 'godlygeek/tabular'         " should align on regex :Tab /char
 Plug 'tpope/vim-surround'        " adds surround action to create cmts
 Plug 'kana/vim-textobj-function' " adds functions to create textobjs
 Plug 'kana/vim-textobj-user'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 
-" completion
+" completion and help
+Plug 'rizzatti/dash.vim'
 " Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 " Plug 'zchee/deoplete-jedi'
@@ -55,10 +56,10 @@ Plug 'justinmk/vim-sneak'
 
 "" files, buffers, and tags
 Plug 'yegappan/mru'
-Plug 'qpkorr/vim-bufkill' " adds BufDelete, etc, keeping windows
+" Plug 'qpkorr/vim-bufkill' " adds BufDelete, etc, keeping windows
 Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
-Plug 'mtth/scratch.vim'
-Plug 'mileszs/ack.vim'    " :Ack to grep cwd; see options
+" Plug 'mtth/scratch.vim'
+" Plug 'mileszs/ack.vim'    " :Ack to grep cwd; see options
 
 " fzf is its own thing
 " Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -78,7 +79,7 @@ Plug 'sheerun/vim-polyglot'
 " Plug 'davidhalter/jedi-vim'
 Plug 'lervag/vimtex'
 " Plug 'donRaphaco/neotex', { 'for': 'tex' }
-Plug 'xuhdev/vim-latex-live-preview'
+" Plug 'xuhdev/vim-latex-live-preview'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'bps/vim-textobj-python'
 Plug 'reedes/vim-pencil'
@@ -111,8 +112,8 @@ let g:livepreview_previewer = 'open -a Preview'
 
 " deoplete
 " call deoplete#enable()
-autocmd FileType python nnoremap <leader>y :0,$!yapf<CR>
-autocmd CompleteDone * pclose " To close preview window of deoplete automagically
+" autocmd FileType python nnoremap <leader>y :0,$!yapf<CR>
+" autocmd CompleteDone * pclose " To close preview window of deoplete automagically
 
 " let g:deoplete#enable_at_startup = 1
 " let g:deoplete#auto_complete_start_length = 1
@@ -427,6 +428,10 @@ nnoremap <leader>w :w <CR>
 nnoremap <leader>W :BD<CR>
 " most-freq files are a simple list, no fzf
 nnoremap <leader>m :MRU<CR>
+
+
+" Dash for word under point
+:nmap <silent> <leader>d <Plug>DashSearch
 " spelling hack
 nnoremap <leader>l mt[s1z=`t
 inoremap <C-s> <ESC>mt[s1z=`ta
@@ -508,20 +513,20 @@ autocmd FileType markdown setlocal nocursorcolumn
 " }}}}
 
 "" syntastic {{{{
-let g:loaded_syntastic_r_lintr_checker = 1
-let g:syntastic_aggregate_errors = 1
-let g:syntastic_always_populate_loc_list=1
-let g:syntastic_auto_loc_list=1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_error_symbol='✗'
-let g:syntastic_style_error_symbol = '✗'
-let g:syntastic_style_warning_symbol = '⚠'
-let g:syntastic_warning_symbol='⚠'
-" let g:syntastic_python_checkers=['pep8']
-let g:syntastic_python_checkers=['python', 'flake8']
-let g:syntastic_r_checkers = ['lintr']
-" }}}}
+" let g:loaded_syntastic_r_lintr_checker = 1
+" let g:syntastic_aggregate_errors = 1
+" let g:syntastic_always_populate_loc_list=1
+" let g:syntastic_auto_loc_list=1
+" let g:syntastic_check_on_open = 1
+" let g:syntastic_check_on_wq = 0
+" let g:syntastic_error_symbol='✗'
+" let g:syntastic_style_error_symbol = '✗'
+" let g:syntastic_style_warning_symbol = '⚠'
+" let g:syntastic_warning_symbol='⚠'
+" " let g:syntastic_python_checkers=['pep8']
+" let g:syntastic_python_checkers=['python', 'flake8']
+" let g:syntastic_r_checkers = ['lintr']
+" " }}}}
 
 " w0rp/ale {{{{
 let g:ale_linters = {
@@ -556,15 +561,15 @@ augroup vimrc-python
 augroup END
 
 " jedi-vim
-" let g:jedi#popup_on_dot = 0
-" let g:jedi#goto_assignments_command = "<leader>g"
-" let g:jedi#goto_definitions_command = "<leader>d"
-" let g:jedi#documentation_command = "K"
-" let g:jedi#usages_command = "<leader>n"
-" let g:jedi#rename_command = "<leader>r"
-" let g:jedi#show_call_signatures = "0"
-" let g:jedi#completions_command = "<C-Space>"
-" let g:jedi#smart_auto_mappings = 0
+let g:jedi#popup_on_dot = 0
+let g:jedi#goto_assignments_command = '<leader>g'
+let g:jedi#goto_definitions_command = '<leader>d'
+let g:jedi#documentation_command = 'K'
+let g:jedi#usages_command = '<leader>n'
+let g:jedi#rename_command = '<leader>r'
+let g:jedi#show_call_signatures = '0'
+let g:jedi#completions_command = '<C-Space>'
+let g:jedi#smart_auto_mappings = 0
 
 let g:polyglot_disabled = ['python']
 let g:python_highlight_all = 1
@@ -585,45 +590,6 @@ augroup END
 
 " misc functions {{{
 
-"" SEARCH ACROSS BUFFERS {{{{
-" Looks for a pattern in all the open buffers.
-" :Bvimgrep 'pattern' puts results into the quickfix list
-" :Blvimgrep 'pattern' puts results into the location list
-function! BuffersVimgrep(pattern,cl)
-  let str = ''
-  if (a:cl == 'l')
-    let str = 'l'
-  endif
-  let str = str.'vimgrep /'.a:pattern.'/'
-  for i in range(1, bufnr('$'))
-    let str = str.' '.bufname(i)
-  endfor
-  execute str
-  execute a:cl.'w'
-endfunction
-
-command! -nargs=1 Bvimgrep  call BuffersVimgrep(<args>,'c')
-command! -nargs=1 Blvimgrep call BuffersVimgrep(<args>,'l')
-
-" function! BuffersList()
-"   let all = range(0, bufnr('$'))
-"   let res = []
-"   for b in all
-"     if buflisted(b)
-"       call add(res, bufname(b))
-"     endif
-"   endfor
-"   return res
-" endfunction
-
-" function! GrepBuffers (expression)
-"   exec 'vimgrep/'.a:expression.'/ '.join(BuffersList())
-" endfunction
-
-" command! -nargs=+ GrepBufs call GrepBuffers(<q-args>)
-
-
-" }}}}
 " }}}
 
 set modeline
