@@ -46,8 +46,8 @@ Plug 'tpope/vim-unimpaired'
 " completion and help
 Plug 'rizzatti/dash.vim'
 " Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
-" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-" Plug 'zchee/deoplete-jedi'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'zchee/deoplete-jedi'
 
 " navigation
 " vim-markology doesn't create nvim errors; signature did.
@@ -112,23 +112,21 @@ let g:livepreview_previewer = 'open -a Preview'
 " deoplete
 " call deoplete#enable()
 " autocmd FileType python nnoremap <leader>y :0,$!yapf<CR>
-" autocmd CompleteDone * pclose " To close preview window of deoplete automagically
+autocmd CompleteDone * pclose " To close preview window of deoplete automagically
 " YCM
-" let g:ycm_server_python_interpreter = systemlist("which python2.7")[0]
+" let g:ycm_server_python_interpreter = '/usr/local/bin/python2.7'
 " let g:ycm_autoclose_preview_window_after_insertion = 1
 " let g:ycm_server_keep_logfiles = 1
 " let g:ycm_server_log_level = 'debug'
 
-" let g:deoplete#enable_at_startup = 1
-" let g:deoplete#auto_complete_start_length = 1
-" let g:deoplete#disable_auto_complete = 0
-" let g:deoplete#sources#jedi#statement_length = 30
-" let g:deoplete#sources#jedi#show_docstring = 1
-" let g:deoplete#sources#jedi#short_types = 1
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#auto_complete_start_length = 1
+let g:deoplete#disable_auto_complete = 0
+let g:deoplete#sources#jedi#statement_length = 30
+let g:deoplete#sources#jedi#show_docstring = 1
+let g:deoplete#sources#jedi#short_types = 1
 " deoplete tab-complete
 " inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
-
-" let g:ycm_python_binary_path = 'python3'
 
 " cheat40.vim needs a hack to open the window at 42 chars
 " this is a workaround for Markology but it doesn't look bad.
@@ -446,21 +444,22 @@ nnoremap <Leader>eh :e <C-R>=expand("%:p:h") . "/"<CR>
 "" }}}}
 
 "" viewing internal stuff {{{{
-nnoremap <Leader>vr :registers<CR>
-nnoremap <Leader>v" :registers<CR>
-nnoremap <Leader>vm :marks<CR>
-nnoremap <Leader>v' :marks<CR>
-nnoremap <Leader>vc :changes<CR>
-nnoremap <Leader>vj :jumps<CR>
-nnoremap <Leader>v; :jumps<CR>
+" also unnecessary bc I should use the :commands 
+" nnoremap <Leader>vr :registers<CR>
+" nnoremap <Leader>v" :registers<CR>
+" nnoremap <Leader>vm :marks<CR>
+" nnoremap <Leader>v' :marks<CR>
+" nnoremap <Leader>vc :changes<CR>
+" nnoremap <Leader>vj :jumps<CR>
+" nnoremap <Leader>v; :jumps<CR>
 "" }}}}
 
 " fugitive mappings {{{{
 " these are unnecessary bc I can type them.
-nnoremap <leader>gs :Gstatus<CR>
-nnoremap <leader>gc :Gcommit -a<CR>
-nnoremap <leader>gp :Gpush<CR>
-nnoremap <leader>gl :Gpull<CR>
+" nnoremap <leader>gs :Gstatus<CR>
+" nnoremap <leader>gc :Gcommit -a<CR>
+" nnoremap <leader>gp :Gpush<CR>
+" nnoremap <leader>gl :Gpull<CR>
 " }}}}
 
 "" buffer+window navigation {{{{
