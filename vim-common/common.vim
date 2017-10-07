@@ -35,7 +35,7 @@ call plug#begin(expand('~/.config/nvim/plugged'))
 Plug 'tpope/vim-repeat'  " doesn't work? needs config for surround
 
 "" editing and formatting
-Plug 'kbarrette/mediummode'
+" Plug 'kbarrette/mediummode'
 " Plug 'godlygeek/tabular'         " should align on regex :Tab /char
 Plug 'tpope/vim-surround'        " adds surround action to create cmts
 Plug 'kana/vim-textobj-function' " adds functions to create textobjs
@@ -97,7 +97,6 @@ Plug 'w0rp/ale'
 " snippets
 " Plug 'SirVer/ultisnips'
 " Plug 'honza/vim-snippets'
-
 call plug#end()
 " }}}
 
@@ -114,6 +113,11 @@ let g:livepreview_previewer = 'open -a Preview'
 " call deoplete#enable()
 " autocmd FileType python nnoremap <leader>y :0,$!yapf<CR>
 " autocmd CompleteDone * pclose " To close preview window of deoplete automagically
+" YCM
+" let g:ycm_server_python_interpreter = systemlist("which python2.7")[0]
+" let g:ycm_autoclose_preview_window_after_insertion = 1
+" let g:ycm_server_keep_logfiles = 1
+" let g:ycm_server_log_level = 'debug'
 
 " let g:deoplete#enable_at_startup = 1
 " let g:deoplete#auto_complete_start_length = 1
@@ -130,13 +134,6 @@ let g:livepreview_previewer = 'open -a Preview'
 " this is a workaround for Markology but it doesn't look bad.
 let g:cheat40_use_default = 0
 
-" slightly better rainbow parens
-" au! cursormoved * call PoppyInit()
-" let g:poppy_point_enable = 0
-" au VimEnter * RainbowParenthesesToggle
-" au Syntax * RainbowParenthesesLoadRound
-" au Syntax * RainbowParenthesesLoadSquare
-" au Syntax * RainbowParenthesesLoadBraces
 let g:rainbow_active = 1
 
 source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
@@ -431,7 +428,8 @@ nnoremap <leader>m :MRU<CR>
 
 
 " Dash for word under point
-:nmap <silent> <leader>d <Plug>DashSearch
+nmap <silent> <leader>d <Plug>DashSearch
+
 " spelling hack
 nnoremap <leader>l mt[s1z=`t
 inoremap <C-s> <ESC>mt[s1z=`ta
@@ -458,6 +456,7 @@ nnoremap <Leader>v; :jumps<CR>
 "" }}}}
 
 " fugitive mappings {{{{
+" these are unnecessary bc I can type them.
 nnoremap <leader>gs :Gstatus<CR>
 nnoremap <leader>gc :Gcommit -a<CR>
 nnoremap <leader>gp :Gpush<CR>
