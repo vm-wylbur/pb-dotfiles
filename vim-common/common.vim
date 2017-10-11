@@ -52,6 +52,7 @@ Plug 'zchee/deoplete-jedi'
 " navigation
 " vim-markology doesn't create nvim errors; signature did.
 Plug 'jeetsukumaran/vim-markology'
+" Plug 'kshenoy/vim-signature'
 Plug 'justinmk/vim-sneak'
 
 "" files, buffers, and tags
@@ -63,7 +64,7 @@ Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
 
 " fzf is its own thing
 " Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-" Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf.vim'
 
 " cheat sheet: <leader>?
 Plug 'lifepillar/vim-cheat40'
@@ -104,6 +105,7 @@ call plug#end()
 " other solarized have bad colors in terminal
 colorscheme NeoSolarized
 let g:sneak#label = 1
+let g:sneak#streak = 1
 nmap s <Plug>SneakLabel_s
 nmap S <Plug>SneakLabel_S
 
@@ -444,7 +446,7 @@ nnoremap <Leader>eh :e <C-R>=expand("%:p:h") . "/"<CR>
 "" }}}}
 
 "" viewing internal stuff {{{{
-" also unnecessary bc I should use the :commands 
+" also unnecessary bc I should use the :commands
 " nnoremap <Leader>vr :registers<CR>
 " nnoremap <Leader>v" :registers<CR>
 " nnoremap <Leader>vm :marks<CR>
