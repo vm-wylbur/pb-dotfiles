@@ -264,7 +264,7 @@ set tabstop=2
 set softtabstop=0
 set shiftwidth=2
 set expandtab
-set smarttab
+set smarttab autoindent
 " }}}}
 
 "" Enable hidden buffers {{{{
@@ -294,7 +294,7 @@ set showcmd
 " }}}}
 
 "" Searching {{{{
-set hlsearch
+" set hlsearch
 set incsearch
 set ignorecase
 set smartcase
@@ -325,8 +325,9 @@ endif
 " Abbreviations {{{
 
 "" abbreviations for quick datestamping in Insert mode
-iab xsdate <c-r>=strftime("%Y-%m-%dT%H:%M%Z")<CR>
-iab xldate <c-r>=strftime("%a %d %b %Y %H:%M:%S%Z")<CR>
+" unclear why, but this doesn't work
+" iab xsdate <c-r>=strftime("%Y-%m-%dT%H:%M%Z")<CR>
+" iab xldate <c-r>=strftime("%a %d %b %Y %H:%M:%S%Z")<CR>
 " }}}
 
 " mappings {{{
