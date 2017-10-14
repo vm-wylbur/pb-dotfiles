@@ -59,11 +59,13 @@ Plug 'justinmk/vim-sneak'
 Plug 'yegappan/mru'
 " Plug 'qpkorr/vim-bufkill' " adds BufDelete, etc, keeping windows
 Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
-" Plug 'mtth/scratch.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'tpope/vim-vinegar'    " just hit - for the current path
+" Plug 'mtth/scratch.vim'  " this should be more useful than it is.
 " Plug 'mileszs/ack.vim'    " :Ack to grep cwd; see options
 
-" fzf is its own thing
-" Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+" fzf is its own thing; this install works.
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
 " cheat sheet: <leader>?
