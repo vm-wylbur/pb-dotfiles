@@ -45,34 +45,33 @@ Plug 'tpope/vim-unimpaired'
 
 " completion and help
 Plug 'rizzatti/dash.vim'
-" Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'zchee/deoplete-jedi'
+" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" Plug 'zchee/deoplete-jedi'
 
 " navigation
-" vim-markology doesn't create nvim errors; signature did.
-Plug 'jeetsukumaran/vim-markology'
-" Plug 'kshenoy/vim-signature'
 Plug 'justinmk/vim-sneak'
 
 "" files, buffers, and tags
 Plug 'yegappan/mru'
 " Plug 'qpkorr/vim-bufkill' " adds BufDelete, etc, keeping windows
 Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
-Plug 'scrooloose/nerdtree'
 Plug 'tpope/vim-vinegar'    " just hit - for the current path
+Plug 'scrooloose/nerdtree'   " makes vinegar a little nicer 
 " Plug 'mtth/scratch.vim'  " this should be more useful than it is.
 " Plug 'mileszs/ack.vim'    " :Ack to grep cwd; see options
 
 " fzf is its own thing; this install works.
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+imap <c-x><c_l> <plug>(fzf-complete-line)
 
+Plug 'icymind/NeoSolarized'
 " cheat sheet: <leader>?
 Plug 'lifepillar/vim-cheat40'
 
 " colors and UI
 Plug 'airblade/vim-gitgutter' " put chars in gutter
+Plug 'jeetsukumaran/vim-markology'
 Plug 'itchyny/lightline.vim'
 Plug 'luochen1990/rainbow'
 Plug 'icymind/NeoSolarized'
@@ -275,8 +274,8 @@ set hidden
 
 "" for MacOS {{{{
 if has('macunix')
-  vmap <C-x> :!pbcopy<CR>
-  vmap <C-c> :w !pbcopy<CR><CR>
+  vmap <S-x> :!pbcopy<CR>
+  vmap <S-c> :w !pbcopy<CR><CR>
 endif
 " }}}}
 
