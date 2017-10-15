@@ -1,4 +1,3 @@
-" vim: set sw=2 ts=2 sts=0 et fmr={{,}} fcs=vert\:| fdm=marker fdt=substitute(getline(v\:foldstart),'\\"\\s\\\|\{\{','','g') nospell:
 "
 " Preamble {{{
 "
@@ -56,14 +55,18 @@ Plug 'yegappan/mru'
 " Plug 'qpkorr/vim-bufkill' " adds BufDelete, etc, keeping windows
 Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
 Plug 'tpope/vim-vinegar'    " just hit - for the current path
-Plug 'scrooloose/nerdtree'   " makes vinegar a little nicer 
+Plug 'scrooloose/nerdtree'   " makes vinegar a little nicer
 " Plug 'mtth/scratch.vim'  " this should be more useful than it is.
 " Plug 'mileszs/ack.vim'    " :Ack to grep cwd; see options
+"
+" CtrlSpace is for people who use a lot more files than I do.
+" Lesson being learned: 
+" Plug 'vim-ctrlspace/vim-ctrlspace'
+" let g:CtrlSpaceDefaultMappingKey = "<C-space> "
 
 " fzf is its own thing; this install works.
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-imap <c-x><c_l> <plug>(fzf-complete-line)
 
 Plug 'icymind/NeoSolarized'
 " cheat sheet: <leader>?
@@ -115,12 +118,7 @@ let g:livepreview_previewer = 'open -a Preview'
 " deoplete
 " call deoplete#enable()
 " autocmd FileType python nnoremap <leader>y :0,$!yapf<CR>
-autocmd CompleteDone * pclose " To close preview window of deoplete automagically
-" YCM
-" let g:ycm_server_python_interpreter = '/usr/local/bin/python2.7'
-" let g:ycm_autoclose_preview_window_after_insertion = 1
-" let g:ycm_server_keep_logfiles = 1
-" let g:ycm_server_log_level = 'debug'
+" autocmd CompleteDone * pclose " To close preview window of deoplete automagically
 
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#auto_complete_start_length = 1
@@ -130,6 +128,12 @@ let g:deoplete#sources#jedi#show_docstring = 1
 let g:deoplete#sources#jedi#short_types = 1
 " deoplete tab-complete
 " inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+
+" Insert mode completion
+" imap <c-x><c-k> <plug>(fzf-complete-word)
+" imap <c-x><c-f> <plug>(fzf-complete-path)
+" imap <c-x><c-j> <plug>(fzf-complete-file-ag)
+imap <c-x><c-l> <plug>(fzf-complete-line)
 
 " cheat40.vim needs a hack to open the window at 42 chars
 " this is a workaround for Markology but it doesn't look bad.
@@ -422,12 +426,14 @@ nnoremap <A-l> <C-w>l
 
 "" PB specifics {{{{
 nnoremap <leader>x :so %<CR>
-nnoremap <leader>w :w <CR>
-" kill buffer, window stays; think cmd-w; also just :BD
-nnoremap <leader>W :BD<CR>
-" most-freq files are a simple list, no fzf
 nnoremap <leader>m :MRU<CR>
-
+nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>\ :BLines<space><CR>
+nnoremap <leader>g :Lines<space>
+nnoremap <leader>f :Files<space>
+nnoremap <leader>a :Ag<space>
+nnoremap <leader>` :Marks<CR>
+inoremap <c-x><c-l> <plug>(fzf-complete-line)
 
 " Dash for word under point
 nmap <silent> <leader>d <Plug>DashSearch
@@ -436,34 +442,6 @@ nmap <silent> <leader>d <Plug>DashSearch
 nnoremap <leader>l mt[s1z=`t
 inoremap <C-s> <ESC>mt[s1z=`ta
 
-" }}}}
-
-"" direct edits {{{{
-nnoremap <Leader>ei :e ~/dotfiles/nvim/init.vim<CR>
-nnoremap <Leader>ec :e ~/dotfiles/vim-common/common.vim<CR>
-nnoremap <Leader>et :e ~/Documents/notes/tech-todo.md<CR>
-nnoremap <Leader>en :e ~/Documents/notes/vim-notes.md<CR>
-" [H]=here
-nnoremap <Leader>eh :e <C-R>=expand("%:p:h") . "/"<CR>
-"" }}}}
-
-"" viewing internal stuff {{{{
-" also unnecessary bc I should use the :commands
-" nnoremap <Leader>vr :registers<CR>
-" nnoremap <Leader>v" :registers<CR>
-" nnoremap <Leader>vm :marks<CR>
-" nnoremap <Leader>v' :marks<CR>
-" nnoremap <Leader>vc :changes<CR>
-" nnoremap <Leader>vj :jumps<CR>
-" nnoremap <Leader>v; :jumps<CR>
-"" }}}}
-
-" fugitive mappings {{{{
-" these are unnecessary bc I can type them.
-" nnoremap <leader>gs :Gstatus<CR>
-" nnoremap <leader>gc :Gcommit -a<CR>
-" nnoremap <leader>gp :Gpush<CR>
-" nnoremap <leader>gl :Gpull<CR>
 " }}}}
 
 "" buffer+window navigation {{{{
@@ -476,6 +454,7 @@ nnoremap <leader>6 :b6 <CR>
 nnoremap <leader>7 :b7 <CR>
 nnoremap <leader>8 :b8 <CR>
 nnoremap <leader>9 :b9 <CR>
+nnoremap <leader>0 :b10 <CR>
 
 "" }}}}
 
@@ -550,8 +529,8 @@ let g:ale_lint_on_insert_leave = 1
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
 let g:ale_vim_vint_show_style_issues = 1
-nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-nmap <silent> <C-j> <Plug>(ale_next_wrap)
+" nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+" nmap <silent> <C-j> <Plug>(ale_next_wrap)
 " }}}}
 
 "" python {{{{
