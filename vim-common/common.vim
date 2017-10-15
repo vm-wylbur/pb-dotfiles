@@ -1,6 +1,6 @@
-"
 " Preamble {{{
-"
+" 
+" Last Modified:<Sun 15 Oct 2017 12:42:08 PM CDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -14,8 +14,7 @@
 " - need to put the augroup cmds together
 " - clean up the autocmd stuff, esp for markdown. see _learning vimscript the hard way_
 " - should think more about wildmode and tab completion
-" - still need to test against vim and remove common elements.
-"   where to put plugins?
+"
 " }}}
 
 " setup {{{
@@ -33,6 +32,9 @@ call plug#begin(expand('~/.config/nvim/plugged'))
 "" hack for plugins themselves
 Plug 'tpope/vim-repeat'  " doesn't work? needs config for surround
 
+" startup screen
+Plug 'mhinz/vim-startify'
+
 "" editing and formatting
 " Plug 'kbarrette/mediummode'
 " Plug 'godlygeek/tabular'         " should align on regex :Tab /char
@@ -42,10 +44,14 @@ Plug 'kana/vim-textobj-user'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 
-" completion and help
+" completion
+Plug 'zchee/deoplete-jedi'
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+
+" help
 Plug 'rizzatti/dash.vim'
-" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-" Plug 'zchee/deoplete-jedi'
+" cheat sheet: <leader>?
+Plug 'lifepillar/vim-cheat40'
 
 " navigation
 Plug 'justinmk/vim-sneak'
@@ -58,19 +64,17 @@ Plug 'tpope/vim-vinegar'    " just hit - for the current path
 Plug 'scrooloose/nerdtree'   " makes vinegar a little nicer
 " Plug 'mtth/scratch.vim'  " this should be more useful than it is.
 " Plug 'mileszs/ack.vim'    " :Ack to grep cwd; see options
-"
-" CtrlSpace is for people who use a lot more files than I do.
-" Lesson being learned: 
-" Plug 'vim-ctrlspace/vim-ctrlspace'
-" let g:CtrlSpaceDefaultMappingKey = "<C-space> "
-
 " fzf is its own thing; this install works.
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
+" CtrlSpace is for people who use a lot more files than I do.
+" Lesson being learned:
+" Plug 'vim-ctrlspace/vim-ctrlspace'
+" let g:CtrlSpaceDefaultMappingKey = "<C-space> "
+
+" colors
 Plug 'icymind/NeoSolarized'
-" cheat sheet: <leader>?
-Plug 'lifepillar/vim-cheat40'
 
 " colors and UI
 Plug 'airblade/vim-gitgutter' " put chars in gutter
@@ -81,13 +85,14 @@ Plug 'icymind/NeoSolarized'
 
 " languages
 Plug 'sheerun/vim-polyglot'
-" Plug 'davidhalter/jedi-vim'
+Plug 'davidhalter/jedi-vim'
 Plug 'lervag/vimtex'
 " Plug 'donRaphaco/neotex', { 'for': 'tex' }
 " Plug 'xuhdev/vim-latex-live-preview'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'bps/vim-textobj-python'
 Plug 'reedes/vim-pencil'
+" Plug 'vim-scripts/timestamp.vim'
 Plug 'tpope/vim-fugitive'
 
 " markdown stuff
@@ -96,7 +101,6 @@ Plug 'vim-pandoc/vim-pandoc-syntax'
 Plug 'vim-pandoc/vim-rmarkdown'
 
 " linting
-" Plug 'vim-syntastic/syntastic'
 Plug 'w0rp/ale'
 
 " snippets
@@ -114,7 +118,7 @@ nmap s <Plug>SneakLabel_s
 nmap S <Plug>SneakLabel_S
 
 let g:livepreview_previewer = 'open -a Preview'
-
+let g:timestamp_modelines = 10
 " deoplete
 " call deoplete#enable()
 " autocmd FileType python nnoremap <leader>y :0,$!yapf<CR>
@@ -428,8 +432,12 @@ nnoremap <A-l> <C-w>l
 nnoremap <leader>x :so %<CR>
 nnoremap <leader>m :MRU<CR>
 nnoremap <leader>b :Buffers<CR>
+" nnoremap <leader>b :buffers<CR>
+" nnoremap <Leader>b :ls<CR>:b<Space>
+
 nnoremap <leader>\ :BLines<space><CR>
-nnoremap <leader>g :Lines<space>
+" needs better mapping; note jedi has some leader keys.
+nnoremap <leader>G :Lines<space>
 nnoremap <leader>f :Files<space>
 nnoremap <leader>a :Ag<space>
 nnoremap <leader>` :Marks<CR>
@@ -493,22 +501,6 @@ autocmd FileType markdown setlocal nocursorcolumn
 " let g:UltiSnipsEditSplit='vertical'
 " }}}}
 
-"" syntastic {{{{
-" let g:loaded_syntastic_r_lintr_checker = 1
-" let g:syntastic_aggregate_errors = 1
-" let g:syntastic_always_populate_loc_list=1
-" let g:syntastic_auto_loc_list=1
-" let g:syntastic_check_on_open = 1
-" let g:syntastic_check_on_wq = 0
-" let g:syntastic_error_symbol='✗'
-" let g:syntastic_style_error_symbol = '✗'
-" let g:syntastic_style_warning_symbol = '⚠'
-" let g:syntastic_warning_symbol='⚠'
-" " let g:syntastic_python_checkers=['pep8']
-" let g:syntastic_python_checkers=['python', 'flake8']
-" let g:syntastic_r_checkers = ['lintr']
-" " }}}}
-
 " w0rp/ale {{{{
 let g:ale_linters = {
 \   'python': ['flake8'],
@@ -556,6 +548,35 @@ let g:polyglot_disabled = ['python']
 let g:python_highlight_all = 1
 " }}}}
 
+" }}}
+" timestamp {{{
+" https://gist.github.com/jelera/783801
+" auto-update the timestamp right before saving a file
+
+autocmd! BufWritePre * :call s:timestamp()
+" to update timestamp when saving if its in the first 20 lines of a file
+function! s:timestamp()
+    let pat = '\(\(Last\)\?\s*\([Cc]hanged\?\|[Mm]odified\|[Uu]pdated\?\)\s*:\s*\).*'
+    let rep = '\1' . ' <' . strftime("%a %d %b %Y %I:%M:%S %p %Z") . '>'
+    call s:subst(1, 20, pat, rep)
+endfunction
+" subst taken from timestamp.vim
+" {{{ subst( start, end, pat, rep): substitute on range start - end.
+function! s:subst(start, end, pat, rep)
+    let lineno = a:start
+    while lineno <= a:end
+	let curline = getline(lineno)
+	if match(curline, a:pat) != -1
+	    let newline = substitute( curline, a:pat, a:rep, '' )
+	    if( newline != curline )
+		" Only substitute if we made a change
+		"silent! undojoin
+		keepjumps call setline(lineno, newline)
+	    endif
+	endif
+	let lineno = lineno + 1
+    endwhile
+endfunction
 " }}}
 
 " Autocmd Rules {{{
