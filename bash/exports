@@ -44,14 +44,13 @@ export LD=gcc-5
 export HOMEBREW_GITHUB_API_TOKEN="7105df98ca887eda6aa4125926a86945b5da40bd"
 export PYENV_ROOT=$HOME/.pyenv
 
-# https://medium.com/@crashybang/supercharge-vim-with-fzf-and-ripgrep-d4661fc853d2
-# --files: List files that would be searched but do not search
-# --no-ignore: Do not respect .gitignore, etc...
-# --hidden: Search hidden files and folders
-# --follow: Follow symlinks
-# --glob: Additional conditions for search (in this case ignore everything in the .git/ folder)
-# export FZF_DEFAULT_COMMAND='rg --files --no-ignore --hidden --follow --glob "!.git/*"'
-
+# CUDA stuff: not working for BLAS yet nor gpu calcs
+# export LD_LIBRARY_PATH="/usr/local/cuda/lib:$LD_LIBRARY_PATH"
+# export CUDA_ROOT="/usr/local/cuda/bin"
+# export CUDA_HOME="/usr/local/cuda"
+# export NVBLAS_CONFIG_FILE="/Users/pball/nvblas.conf"
+# DYLD_FORCE_FLAT_NAMESPACE=y 
+# DYLD_INSERT_LIBRARIES=/Developer/NVIDIA/CUDA-9.0/lib/libnvblas.9.0.dylib 
 
 # setup nvim server
 export NVIM_LISTEN_ADDRESS=/tmp/nvimsocket

@@ -1,6 +1,6 @@
 " Preamble {{{
-" 
-" Last Modified:<Sun 15 Oct 2017 12:42:08 PM CDT>
+"  
+" Last Modified: <Sun 15 Oct 2017 08:30:43 PM CDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
