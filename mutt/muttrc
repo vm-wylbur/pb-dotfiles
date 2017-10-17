@@ -1,0 +1,55 @@
+# Last Modified:      <Tue 17 Oct 2017 02:06:35 AM MDT>
+#
+# todo:
+#  - add local imap? if so, it should organize both fastmail & 
+#    gmail & me.com into one queue. 
+#
+#  - need a way to think about 
+#
+#
+# client settings
+set sidebar_visible 
+set sidebar_format = "%B%?F? [%F]?%* %?N?%N/?%S"
+set mail_check_stats
+
+# from setup_settings
+set my_server = "mail.messagingengine.com"
+set my_smtp_server = "mail.messagingengine.com"
+set my_user = "pball@fastmail.fm"
+set my_pass = ""
+
+# this is me
+set from=pball@fastmail.fm 
+set hostname="fastmail.fm" 
+set realname="Patrick Ball"
+
+# imap
+set mbox_type       = Maildir         # mailbox type
+set edit_headers    = yes
+set editor          = "nvim"
+set imap_user       = $my_user
+set imap_pass       = $my_pass
+set folder          = "imaps://$my_server"
+set spoolfile       = "=INBOX"
+set my_archive="INBOX.Archive"
+set my_sent="INBOX.Sent<quote-char> Items"
+set postponed       = "=INBOX.Drafts"
+
+set mailboxes "=INBOX $my_archive" # add folders here like "=INBOX.label"
+
+# going through fastmail, setting this will save the email twice
+unset record
+macro pager y "<exit><save-message>+INBOX.Archive<enter>"
+
+source ~/.mutt/mutt-colors-solarized/mutt-colors-solarized-dark-256.muttrc
+
+# smtp
+set smtp_pass = $my_pass
+set smtp_url = smtp://$my_user@$my_smtp_server:587/
+set ssl_starttls = yes
+set ssl_force_tls = yes
+
+# for all accounts
+set include=yes
+set fast_reply
+# done
