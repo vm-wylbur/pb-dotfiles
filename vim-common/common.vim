@@ -1,6 +1,6 @@
 " Preamble {{{
 "  
-" Last Modified:    <Tue 17 Oct 2017 08:05:26 PM PDT>
+" Last Modified:      <Tue 17 Oct 2017 10:37:57 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -406,6 +406,13 @@ inoremap jk <ESC>
 " }}}}
 
 "" window navigation via Meta {{{{
+tnoremap <a-1> <c-\><c-n>1<c-w><c-w>
+tnoremap <a-2> <c-\><c-n>2<c-w><c-w>
+tnoremap <a-3> <c-\><c-n>3<c-w><c-w>
+tnoremap <a-4> <c-\><c-n>4<c-w><c-w>
+tnoremap <a-5> <c-\><c-n>5<c-w><c-w>
+nnoremap <A-1> 1<c-w><c-w>
+nnoremap <A-2> 2<c-w><c-w>
 nnoremap <A-1> 1<c-w><c-w>
 nnoremap <A-2> 2<c-w><c-w>
 nnoremap <A-3> 3<c-w><c-w>
@@ -423,6 +430,26 @@ nnoremap <A-h> <C-w>h
 nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
+
+let g:dwm_map_keys = 0
+nnoremap <leader>J <C-W>w
+nnoremap <leader>K <C-W>W
+if !hasmapto('<Plug>DWMRotateCounterclockwise')
+    nmap <leader>, <Plug>DWMRotateCounterclockwise
+endif
+if !hasmapto('<Plug>DWMRotateClockwise')
+    nmap <leader>. <Plug>DWMRotateClockwise
+endif
+if !hasmapto('<Plug>DWMNew')
+    nmap <leader>N <Plug>DWMNew
+endif
+if !hasmapto('<Plug>DWMClose')
+    nmap <leader>C <Plug>DWMClose
+endif
+if !hasmapto('<Plug>DWMFocus')
+    nmap <C-Space> <Plug>DWMFocus
+endif
+
 
 "" }}}}
 
