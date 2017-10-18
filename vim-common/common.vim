@@ -1,6 +1,6 @@
 " Preamble {{{
 "  
-" Last Modified:  <Mon 16 Oct 2017 01:41:07 PM CDT>
+" Last Modified:    <Tue 17 Oct 2017 08:05:26 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -34,6 +34,7 @@ Plug 'tpope/vim-repeat'  " doesn't work? needs config for surround
 
 " startup screen
 Plug 'mhinz/vim-startify'
+Plug 'spolu/dwm.vim'
 
 "" editing and formatting
 " Plug 'kbarrette/mediummode'
@@ -57,7 +58,7 @@ Plug 'lifepillar/vim-cheat40'
 Plug 'justinmk/vim-sneak'
 
 "" files, buffers, and tags
-Plug 'yegappan/mru'
+" Plug 'yegappan/mru'
 " Plug 'qpkorr/vim-bufkill' " adds BufDelete, etc, keeping windows
 Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
 Plug 'tpope/vim-vinegar'    " just hit - for the current path
@@ -78,6 +79,7 @@ Plug 'icymind/NeoSolarized'
 
 " colors and UI
 Plug 'airblade/vim-gitgutter' " put chars in gutter
+Plug 'yuttie/comfortable-motion.vim'
 Plug 'jeetsukumaran/vim-markology'
 Plug 'itchyny/lightline.vim'
 Plug 'luochen1990/rainbow'
@@ -116,6 +118,9 @@ let g:sneak#label = 1
 let g:sneak#streak = 1
 nmap s <Plug>SneakLabel_s
 nmap S <Plug>SneakLabel_S
+
+let g:comfortable_motion_scroll_down_key = "j"
+let g:comfortable_motion_scroll_up_key = "k"
 
 let g:livepreview_previewer = 'open -a Preview'
 let g:timestamp_modelines = 10
@@ -165,7 +170,7 @@ let g:buftabline_numbers=1
 let g:buftabline_indicators='on' " this is helpful.
 let g:buftabline_separators='on'
 
-let g:MRU_Exclude_Files = '.*/.git/COMMIT_EDITMSG$'
+" let g:MRU_Exclude_Files = '.*/.git/COMMIT_EDITMSG$'
 
 " keep in mind that C-v TAB will insert a literal tab
 " currently commented out bc I don't understand it.
@@ -430,7 +435,7 @@ nnoremap <A-l> <C-w>l
 
 "" PB specifics {{{{
 nnoremap <leader>x :so %<CR>
-nnoremap <leader>m :MRU<CR>
+nnoremap <leader>m :History<CR>
 nnoremap <leader>b :Buffers<CR>
 " nnoremap <leader>b :buffers<CR>
 " nnoremap <Leader>b :ls<CR>:b<Space>
