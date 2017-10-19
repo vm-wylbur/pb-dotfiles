@@ -1,6 +1,6 @@
 " Preamble {{{
 "  
-" Last Modified:      <Tue 17 Oct 2017 10:37:57 PM PDT>
+" Last Modified:       <Thu 19 Oct 2017 12:16:57 AM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -44,7 +44,7 @@ Plug 'kana/vim-textobj-function' " adds functions to create textobjs
 Plug 'kana/vim-textobj-user'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
-
+Plug 'ntpeters/vim-better-whitespace'
 " completion
 Plug 'zchee/deoplete-jedi'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -58,6 +58,7 @@ Plug 'lifepillar/vim-cheat40'
 Plug 'justinmk/vim-sneak'
 
 "" files, buffers, and tags
+Plug 'jlanzarotta/bufexplorer'
 " Plug 'yegappan/mru'
 " Plug 'qpkorr/vim-bufkill' " adds BufDelete, etc, keeping windows
 Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
@@ -135,8 +136,9 @@ let g:deoplete#disable_auto_complete = 0
 let g:deoplete#sources#jedi#statement_length = 30
 let g:deoplete#sources#jedi#show_docstring = 1
 let g:deoplete#sources#jedi#short_types = 1
-" deoplete tab-complete
-" inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+
+" whitespace
+autocmd BufEnter * EnableStripWhitespaceOnSave
 
 " Insert mode completion
 " imap <c-x><c-k> <plug>(fzf-complete-word)
@@ -251,14 +253,20 @@ set wildignorecase " Ignore case when completing file names and directories
 " }}}}
 
 "" Auto commands at save {{{{
-set omnifunc=syntaxcomplete#Complete
+" function! <SID>StripTrailingWhitespaces()
+"     let l = line(".")
+"     let c = col(".")
+"     %s/\s\+$//e
+"     call cursor(l, c)
+"   endfun
 set autoread
 augroup autoSaveAndRead
   autocmd!
   autocmd TextChanged,InsertLeave,FocusLost * silent! wall
   autocmd CursorHold * silent! checktime
 augroup END
-autocmd BufWritePre * :%s/\s\+$//e  " removes training whitespace
+" autocmd BufWritePre * :%s/\s\+$//e  " removes training whitespace
+" autocmd BufWritePre python,sh,r,makefile :call <SID>StripTrailingWhitespaces()
 " }}}}
 
 "" Encoding {{{{
@@ -437,9 +445,11 @@ nnoremap <leader>K <C-W>W
 if !hasmapto('<Plug>DWMRotateCounterclockwise')
     nmap <leader>, <Plug>DWMRotateCounterclockwise
 endif
+nnoremap <c-,> <Plug>DWMRotateCounterClockwise
 if !hasmapto('<Plug>DWMRotateClockwise')
     nmap <leader>. <Plug>DWMRotateClockwise
 endif
+nnoremap <c-.> <Plug>DWMRotateClockwise
 if !hasmapto('<Plug>DWMNew')
     nmap <leader>N <Plug>DWMNew
 endif
@@ -463,9 +473,8 @@ endif
 "" PB specifics {{{{
 nnoremap <leader>x :so %<CR>
 nnoremap <leader>m :History<CR>
-nnoremap <leader>b :Buffers<CR>
-" nnoremap <leader>b :buffers<CR>
-" nnoremap <Leader>b :ls<CR>:b<Space>
+" BufExplorer is pretty much emacs
+nnoremap <leader>b :BufExplorer<CR>
 
 nnoremap <leader>\ :BLines<space><CR>
 " needs better mapping; note jedi has some leader keys.
