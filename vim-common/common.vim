@@ -1,6 +1,6 @@
 " Preamble {{{
-"  
-" Last Modified:       <Thu 19 Oct 2017 12:16:57 AM PDT>
+"
+" Last Modified:          <Thu 19 Oct 2017 06:25:50 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -35,6 +35,7 @@ Plug 'tpope/vim-repeat'  " doesn't work? needs config for surround
 " startup screen
 Plug 'mhinz/vim-startify'
 Plug 'spolu/dwm.vim'
+" Plug 'zhaocai/GoldenView.Vim'
 
 "" editing and formatting
 " Plug 'kbarrette/mediummode'
