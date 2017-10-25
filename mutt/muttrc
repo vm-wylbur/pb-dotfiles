@@ -1,14 +1,14 @@
-# Last Modified:      <Tue 17 Oct 2017 02:06:35 AM MDT>
+# Last Modified:       <Thu 19 Oct 2017 06:56:00 PM PDT>
 #
 # todo:
-#  - add local imap? if so, it should organize both fastmail & 
-#    gmail & me.com into one queue. 
+#  - add local imap? if so, it should organize both fastmail &
+#    gmail & me.com into one queue.
 #
-#  - need a way to think about 
+#  - need a way to think about
 #
 #
 # client settings
-set sidebar_visible 
+set sidebar_visible
 set sidebar_format = "%B%?F? [%F]?%* %?N?%N/?%S"
 set mail_check_stats
 
@@ -16,11 +16,11 @@ set mail_check_stats
 set my_server = "mail.messagingengine.com"
 set my_smtp_server = "mail.messagingengine.com"
 set my_user = "pball@fastmail.fm"
-set my_pass = ""
+set my_pass = "rjg6k3mgvj4pc8yu"
 
 # this is me
-set from=pball@fastmail.fm 
-set hostname="fastmail.fm" 
+set from=pball@fastmail.fm
+set hostname="fastmail.fm"
 set realname="Patrick Ball"
 
 # imap

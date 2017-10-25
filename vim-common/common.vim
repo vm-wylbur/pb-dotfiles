@@ -168,6 +168,8 @@ autocmd FileType markdown,mkd,tex setlocal wrap
 
 autocmd FileType tex setlocal spell
 autocmd FileType tex setlocal wrap
+autocmd FileType terminal setlocal nospell
+
 
 let g:buftabline_numbers=1
 let g:buftabline_indicators='on' " this is helpful.
