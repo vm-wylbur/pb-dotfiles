@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified:                <Wed 25 Oct 2017 04:10:37 PM PDT>
+" Last Modified:                   <Wed 25 Oct 2017 11:17:23 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -418,6 +418,7 @@ tnoremap <a-2> <c-\><c-n>2<c-w><c-w>
 tnoremap <a-3> <c-\><c-n>3<c-w><c-w>
 tnoremap <a-4> <c-\><c-n>4<c-w><c-w>
 tnoremap <a-5> <c-\><c-n>5<c-w><c-w>
+tnoremap <a-6> <c-\><c-n>6<c-w><c-w>
 nnoremap <A-1> 1<c-w><c-w>
 nnoremap <A-2> 2<c-w><c-w>
 nnoremap <A-1> 1<c-w><c-w>
@@ -441,8 +442,7 @@ nnoremap <A-l> <C-w>l
 let g:dwm_map_keys = 0
 nnoremap <c-k> <c-w>W
 nnoremap <c-j> <c-w><c-p>
-tnoremap <c-j> <c-w><c-p>
-au BufEnter * if &buftype == 'terminal' | :normal! | endif
+tnoremap <c-j> <c-\><c-n><c-w><c-p>
 
 tnoremap jj <c-\><c-n>
 " nnoremap <c-k> <c-w>k<c-w>
