@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified:          <Thu 19 Oct 2017 06:25:50 PM PDT>
+" Last Modified:                <Wed 25 Oct 2017 04:10:37 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -32,10 +32,9 @@ call plug#begin(expand('~/.config/nvim/plugged'))
 "" hack for plugins themselves
 Plug 'tpope/vim-repeat'  " doesn't work? needs config for surround
 
-" startup screen
+" screen and window management
 Plug 'mhinz/vim-startify'
-Plug 'spolu/dwm.vim'
-" Plug 'zhaocai/GoldenView.Vim'
+" Plug 'spolu/dwm.vim'
 
 "" editing and formatting
 " Plug 'kbarrette/mediummode'
@@ -46,28 +45,25 @@ Plug 'kana/vim-textobj-user'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 Plug 'ntpeters/vim-better-whitespace'
+
 " completion
 Plug 'zchee/deoplete-jedi'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
 " help
 Plug 'rizzatti/dash.vim'
-" cheat sheet: <leader>?
-Plug 'lifepillar/vim-cheat40'
+Plug 'lifepillar/vim-cheat40'  " cheat sheet: <leader>?
 
 " navigation
 Plug 'justinmk/vim-sneak'
 
 "" files, buffers, and tags
 Plug 'jlanzarotta/bufexplorer'
-" Plug 'yegappan/mru'
-" Plug 'qpkorr/vim-bufkill' " adds BufDelete, etc, keeping windows
 Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
 Plug 'tpope/vim-vinegar'    " just hit - for the current path
 Plug 'scrooloose/nerdtree'   " makes vinegar a little nicer
 " Plug 'mtth/scratch.vim'  " this should be more useful than it is.
 " Plug 'mileszs/ack.vim'    " :Ack to grep cwd; see options
-" fzf is its own thing; this install works.
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
@@ -81,7 +77,7 @@ Plug 'icymind/NeoSolarized'
 
 " colors and UI
 Plug 'airblade/vim-gitgutter' " put chars in gutter
-Plug 'yuttie/comfortable-motion.vim'
+Plug 'yuttie/comfortable-motion.vim'  " smooths scrolling
 Plug 'jeetsukumaran/vim-markology'
 Plug 'itchyny/lightline.vim'
 Plug 'luochen1990/rainbow'
@@ -443,8 +439,15 @@ nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
 
 let g:dwm_map_keys = 0
-nnoremap <leader>J <C-W>w
-nnoremap <leader>K <C-W>W
+nnoremap <c-k> <c-w>W
+nnoremap <c-j> <c-w><c-p>
+tnoremap <c-j> <c-w><c-p>
+au BufEnter * if &buftype == 'terminal' | :normal! | endif
+
+tnoremap jj <c-\><c-n>
+" nnoremap <c-k> <c-w>k<c-w>
+nnoremap <leader>j <c-w>w
+nnoremap <leader>k <c-w>w
 if !hasmapto('<Plug>DWMRotateCounterclockwise')
     nmap <leader>, <Plug>DWMRotateCounterclockwise
 endif
@@ -462,9 +465,7 @@ endif
 if !hasmapto('<Plug>DWMFocus')
     nmap <C-Space> <Plug>DWMFocus
 endif
-
-
-"" }}}}
+" }}}}
 
 " }}}
 
@@ -565,8 +566,6 @@ let g:ale_lint_on_insert_leave = 1
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
 let g:ale_vim_vint_show_style_issues = 1
-" nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-" nmap <silent> <C-j> <Plug>(ale_next_wrap)
 " }}}}
 
 "" python {{{{
