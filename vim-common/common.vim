@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified:                   <Wed 25 Oct 2017 11:17:23 PM PDT>
+" Last Modified:                    <Fri 27 Oct 2017 01:27:17 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -164,6 +164,8 @@ autocmd FileType markdown,mkd,tex setlocal wrap
 
 autocmd FileType tex setlocal spell
 autocmd FileType tex setlocal wrap
+
+" stop spellcheck in terminal
 autocmd FileType terminal setlocal nospell
 
 
@@ -587,7 +589,7 @@ let g:jedi#show_call_signatures = '0'
 let g:jedi#completions_command = '<C-Space>'
 let g:jedi#smart_auto_mappings = 0
 
-let g:polyglot_disabled = ['python']
+let g:polyglot_disabled = ['python', 'tex']
 let g:python_highlight_all = 1
 " }}}}
 
