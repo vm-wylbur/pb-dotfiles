@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified:                    <Fri 27 Oct 2017 01:27:17 PM PDT>
+" Last Modified:                         <Fri 27 Oct 2017 02:29:48 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -67,18 +67,10 @@ Plug 'scrooloose/nerdtree'   " makes vinegar a little nicer
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
-" CtrlSpace is for people who use a lot more files than I do.
-" Lesson being learned:
-" Plug 'vim-ctrlspace/vim-ctrlspace'
-" let g:CtrlSpaceDefaultMappingKey = "<C-space> "
-
-" colors
-Plug 'icymind/NeoSolarized'
-
 " colors and UI
 Plug 'airblade/vim-gitgutter' " put chars in gutter
 Plug 'yuttie/comfortable-motion.vim'  " smooths scrolling
-Plug 'jeetsukumaran/vim-markology'
+Plug 'jeetsukumaran/vim-markology'    " look at all the marks!
 Plug 'itchyny/lightline.vim'
 Plug 'luochen1990/rainbow'
 Plug 'icymind/NeoSolarized'
