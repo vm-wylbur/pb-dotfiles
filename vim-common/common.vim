@@ -80,7 +80,6 @@ Plug 'sheerun/vim-polyglot'
 Plug 'davidhalter/jedi-vim'
 Plug 'lervag/vimtex'
 " Plug 'donRaphaco/neotex', { 'for': 'tex' }
-" Plug 'xuhdev/vim-latex-live-preview'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'bps/vim-textobj-python'
 Plug 'reedes/vim-pencil'
