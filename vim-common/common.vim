@@ -45,6 +45,7 @@ Plug 'kana/vim-textobj-user'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'
 Plug 'ntpeters/vim-better-whitespace'
+Plug 'terryma/vim-expand-region'
 
 " completion
 Plug 'zchee/deoplete-jedi'
@@ -432,32 +433,32 @@ nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
 
-let g:dwm_map_keys = 0
+" let g:dwm_map_keys = 0
 nnoremap <c-k> <c-w>W
 nnoremap <c-j> <c-w><c-p>
 tnoremap <c-j> <c-\><c-n><c-w><c-p>
 
 tnoremap jj <c-\><c-n>
 " nnoremap <c-k> <c-w>k<c-w>
-nnoremap <leader>j <c-w>w
-nnoremap <leader>k <c-w>w
-if !hasmapto('<Plug>DWMRotateCounterclockwise')
-    nmap <leader>, <Plug>DWMRotateCounterclockwise
-endif
-nnoremap <c-,> <Plug>DWMRotateCounterClockwise
-if !hasmapto('<Plug>DWMRotateClockwise')
-    nmap <leader>. <Plug>DWMRotateClockwise
-endif
-nnoremap <c-.> <Plug>DWMRotateClockwise
-if !hasmapto('<Plug>DWMNew')
-    nmap <leader>N <Plug>DWMNew
-endif
-if !hasmapto('<Plug>DWMClose')
-    nmap <leader>C <Plug>DWMClose
-endif
-if !hasmapto('<Plug>DWMFocus')
-    nmap <C-Space> <Plug>DWMFocus
-endif
+" nnoremap <leader>j <c-w>w
+" nnoremap <leader>k <c-w>w
+" if !hasmapto('<Plug>DWMRotateCounterclockwise')
+"     nmap <leader>, <Plug>DWMRotateCounterclockwise
+" endif
+" nnoremap <c-,> <Plug>DWMRotateCounterClockwise
+" if !hasmapto('<Plug>DWMRotateClockwise')
+"     nmap <leader>. <Plug>DWMRotateClockwise
+" endif
+" nnoremap <c-.> <Plug>DWMRotateClockwise
+" if !hasmapto('<Plug>DWMNew')
+"     nmap <leader>N <Plug>DWMNew
+" endif
+" if !hasmapto('<Plug>DWMClose')
+"     nmap <leader>C <Plug>DWMClose
+" endif
+" if !hasmapto('<Plug>DWMFocus')
+"     nmap <C-Space> <Plug>DWMFocus
+" endif
 " }}}}
 
 " }}}
