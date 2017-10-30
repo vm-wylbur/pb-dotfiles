@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified:                           <Sun 29 Oct 2017 10:37:22 PM PDT>
+" Last Modified:                              <Mon 30 Oct 2017 01:21:56 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -62,6 +62,7 @@ Plug 'justinmk/vim-sneak'
 Plug 'jlanzarotta/bufexplorer'
 Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
 Plug 'tpope/vim-vinegar'    " just hit - for the current path
+Plug 'tpope/vim-eunuch'    " u-nick(s), get it? for *nix bits: Find, Rename
 Plug 'scrooloose/nerdtree'   " makes vinegar a little nicer
 " Plug 'mtth/scratch.vim'  " this should be more useful than it is.
 " Plug 'mileszs/ack.vim'    " :Ack to grep cwd; see options
@@ -74,7 +75,9 @@ Plug 'yuttie/comfortable-motion.vim'  " smooths scrolling
 Plug 'jeetsukumaran/vim-markology'    " look at all the marks!
 Plug 'itchyny/lightline.vim'
 Plug 'luochen1990/rainbow'
-Plug 'icymind/NeoSolarized'
+
+Plug 'chriskempson/base16-vim'
+" Plug 'icymind/NeoSolarized'
 Plug 'blueyed/vim-diminactive'  " dims in the inactive window
 
 " languages
@@ -104,7 +107,11 @@ call plug#end()
 
 " plugin configs {{{
 " other solarized have bad colors in terminal
-colorscheme NeoSolarized
+" colorscheme NeoSolarized
+" colorscheme base16-tomorrow-night
+colorscheme base16-twilight
+highlight Comment cterm=italic
+
 let g:sneak#label = 1
 let g:sneak#streak = 1
 nmap s <Plug>SneakLabel_s
