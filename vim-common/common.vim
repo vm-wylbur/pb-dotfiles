@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified:                          <Sun 29 Oct 2017 11:44:48 AM PDT>
+" Last Modified:                           <Sun 29 Oct 2017 10:37:22 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -75,6 +75,7 @@ Plug 'jeetsukumaran/vim-markology'    " look at all the marks!
 Plug 'itchyny/lightline.vim'
 Plug 'luochen1990/rainbow'
 Plug 'icymind/NeoSolarized'
+Plug 'blueyed/vim-diminactive'  " dims in the inactive window
 
 " languages
 Plug 'sheerun/vim-polyglot'
