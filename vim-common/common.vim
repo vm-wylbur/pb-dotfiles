@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified:                              <Mon 30 Oct 2017 01:21:56 PM PDT>
+" Last Modified:                                <Mon 30 Oct 2017 10:30:46 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -52,7 +52,7 @@ Plug 'zchee/deoplete-jedi'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
 " help
-Plug 'rizzatti/dash.vim'
+Plug 'rizzatti/dash.vim'   " c-d to lookup at point
 Plug 'lifepillar/vim-cheat40'  " cheat sheet: <leader>?
 
 " navigation
@@ -64,8 +64,6 @@ Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
 Plug 'tpope/vim-vinegar'    " just hit - for the current path
 Plug 'tpope/vim-eunuch'    " u-nick(s), get it? for *nix bits: Find, Rename
 Plug 'scrooloose/nerdtree'   " makes vinegar a little nicer
-" Plug 'mtth/scratch.vim'  " this should be more useful than it is.
-" Plug 'mileszs/ack.vim'    " :Ack to grep cwd; see options
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
@@ -78,7 +76,7 @@ Plug 'luochen1990/rainbow'
 
 Plug 'chriskempson/base16-vim'
 " Plug 'icymind/NeoSolarized'
-Plug 'blueyed/vim-diminactive'  " dims in the inactive window
+Plug 'blueyed/vim-diminactive'  " dims in the inactive window: buggy
 
 " languages
 Plug 'sheerun/vim-polyglot'
@@ -366,12 +364,6 @@ let g:mapleader='\'
 
 "" PB specific remaps {{{{
 nnoremap <space> <C-d>
-" these keep the x cmds from cluttering the delete register
-nmap X "_d
-nmap XX "_dd
-vmap X "_d
-vmap x "_d"
-nnoremap x "_x
 " increment a number; C-a is overloaded everywhere.
 nnoremap <A-a> <C-a>
 " }}}}
