@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified:                                <Mon 30 Oct 2017 10:30:46 PM PDT>
+" Last Modified:                                   <Wed 01 Nov 2017 08:02:42 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -70,10 +70,10 @@ Plug 'junegunn/fzf.vim'
 " colors and UI
 Plug 'airblade/vim-gitgutter' " put chars in gutter
 Plug 'yuttie/comfortable-motion.vim'  " smooths scrolling
+Plug 'junegunn/limelight.vim'
 Plug 'jeetsukumaran/vim-markology'    " look at all the marks!
 Plug 'itchyny/lightline.vim'
 Plug 'luochen1990/rainbow'
-
 Plug 'chriskempson/base16-vim'
 " Plug 'icymind/NeoSolarized'
 Plug 'blueyed/vim-diminactive'  " dims in the inactive window: buggy
@@ -82,11 +82,9 @@ Plug 'blueyed/vim-diminactive'  " dims in the inactive window: buggy
 Plug 'sheerun/vim-polyglot'
 Plug 'davidhalter/jedi-vim'
 Plug 'lervag/vimtex'
-" Plug 'donRaphaco/neotex', { 'for': 'tex' }
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'bps/vim-textobj-python'
 Plug 'reedes/vim-pencil'
-" Plug 'vim-scripts/timestamp.vim'
 Plug 'tpope/vim-fugitive'
 
 " markdown stuff
@@ -97,9 +95,6 @@ Plug 'vim-pandoc/vim-rmarkdown'
 " linting
 Plug 'w0rp/ale'
 
-" snippets
-" Plug 'SirVer/ultisnips'
-" Plug 'honza/vim-snippets'
 call plug#end()
 " }}}
 
@@ -114,6 +109,8 @@ let g:sneak#label = 1
 let g:sneak#streak = 1
 nmap s <Plug>SneakLabel_s
 nmap S <Plug>SneakLabel_S
+
+let g:limelight_paragraph_span = 2
 
 let g:comfortable_motion_scroll_down_key = "j"
 let g:comfortable_motion_scroll_up_key = "k"
