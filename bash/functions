@@ -1,3 +1,8 @@
+# from https://github.com/junegunn/fzf/wiki/examples#changing-directory
+cf() {
+  DIR=$(find * -maxdepth 10 -type d -print 2> /dev/null | fzf) && cd "$DIR"
+}
+
 # Determine size of a file or total size of a directory
 function fs() {
 	if du -b /dev/null > /dev/null 2>&1; then
