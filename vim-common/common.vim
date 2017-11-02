@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Wed 01 Nov 2017 08:28:16 PM PDT>
+" Last Modified: <Thu 02 Nov 2017 08:56:03 AM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -228,20 +228,12 @@ set wildignorecase " Ignore case when completing file names and directories
 " }}}}
 
 "" Auto commands at save {{{{
-" function! <SID>StripTrailingWhitespaces()
-"     let l = line(".")
-"     let c = col(".")
-"     %s/\s\+$//e
-"     call cursor(l, c)
-"   endfun
 set autoread
 augroup autoSaveAndRead
   autocmd!
   autocmd TextChanged,InsertLeave,FocusLost * silent! wall
   autocmd CursorHold * silent! checktime
 augroup END
-" autocmd BufWritePre * :%s/\s\+$//e  " removes training whitespace
-" autocmd BufWritePre python,sh,r,makefile :call <SID>StripTrailingWhitespaces()
 " }}}}
 
 "" Encoding {{{{
@@ -317,14 +309,6 @@ else
     set shell=/bin/bash
 endif
 " }}}}
-" }}}
-
-" Abbreviations {{{
-
-"" abbreviations for quick datestamping in Insert mode
-" unclear why, but this doesn't work
-" iab xsdate <c-r>=strftime("%Y-%m-%dT%H:%M%Z")<CR>
-" iab xldate <c-r>=strftime("%a %d %b %Y %H:%M:%S%Z")<CR>
 " }}}
 
 " mappings {{{
@@ -413,28 +397,7 @@ nnoremap <A-l> <C-w>l
 nnoremap <c-k> <c-w>W
 nnoremap <c-j> <c-w><c-p>
 tnoremap <c-j> <c-\><c-n><c-w><c-p>
-
 tnoremap jj <c-\><c-n>
-" nnoremap <c-k> <c-w>k<c-w>
-" nnoremap <leader>j <c-w>w
-" nnoremap <leader>k <c-w>w
-" if !hasmapto('<Plug>DWMRotateCounterclockwise')
-"     nmap <leader>, <Plug>DWMRotateCounterclockwise
-" endif
-" nnoremap <c-,> <Plug>DWMRotateCounterClockwise
-" if !hasmapto('<Plug>DWMRotateClockwise')
-"     nmap <leader>. <Plug>DWMRotateClockwise
-" endif
-" nnoremap <c-.> <Plug>DWMRotateClockwise
-" if !hasmapto('<Plug>DWMNew')
-"     nmap <leader>N <Plug>DWMNew
-" endif
-" if !hasmapto('<Plug>DWMClose')
-"     nmap <leader>C <Plug>DWMClose
-" endif
-" if !hasmapto('<Plug>DWMFocus')
-"     nmap <C-Space> <Plug>DWMFocus
-" endif
 " }}}}
 
 " }}}
@@ -452,6 +415,7 @@ nnoremap <leader>b :BufExplorer<CR>
 
 nnoremap <leader>\ :BLines<space><CR>
 " needs better mapping; note jedi has some leader keys.
+" these are from fzf
 nnoremap <leader>G :Lines<space>
 nnoremap <leader>f :Files<space>
 nnoremap <leader>a :Ag<space>
