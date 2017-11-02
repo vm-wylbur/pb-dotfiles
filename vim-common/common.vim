@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified:                                   <Wed 01 Nov 2017 08:02:42 PM PDT>
+" Last Modified: <Wed 01 Nov 2017 08:28:16 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -37,15 +37,15 @@ Plug 'mhinz/vim-startify'
 " Plug 'spolu/dwm.vim'
 
 "" editing and formatting
-" Plug 'kbarrette/mediummode'
-" Plug 'godlygeek/tabular'         " should align on regex :Tab /char
-Plug 'tpope/vim-surround'        " adds surround action to create cmts
-Plug 'kana/vim-textobj-function' " adds functions to create textobjs
+Plug 'godlygeek/tabular'              " should align on regex :Tab /char
+Plug 'tpope/vim-surround'             " adds surround action to create cmts
+Plug 'kana/vim-textobj-function'      " adds functions to create textobjs
 Plug 'kana/vim-textobj-user'
 Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-unimpaired'
-Plug 'ntpeters/vim-better-whitespace'
+Plug 'tpope/vim-unimpaired'           " many additional movements with [ and ]
+Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
 Plug 'terryma/vim-expand-region'
+Plug 'tommcdo/vim-exchange'           " cx{motion} to exhange text objs
 
 " completion
 Plug 'zchee/deoplete-jedi'
@@ -70,7 +70,6 @@ Plug 'junegunn/fzf.vim'
 " colors and UI
 Plug 'airblade/vim-gitgutter' " put chars in gutter
 Plug 'yuttie/comfortable-motion.vim'  " smooths scrolling
-Plug 'junegunn/limelight.vim'
 Plug 'jeetsukumaran/vim-markology'    " look at all the marks!
 Plug 'itchyny/lightline.vim'
 Plug 'luochen1990/rainbow'
@@ -110,12 +109,9 @@ let g:sneak#streak = 1
 nmap s <Plug>SneakLabel_s
 nmap S <Plug>SneakLabel_S
 
-let g:limelight_paragraph_span = 2
-
 let g:comfortable_motion_scroll_down_key = "j"
 let g:comfortable_motion_scroll_up_key = "k"
 
-let g:livepreview_previewer = 'open -a Preview'
 let g:timestamp_modelines = 10
 " deoplete
 " call deoplete#enable()
@@ -167,15 +163,7 @@ autocmd FileType terminal setlocal nospell
 let g:buftabline_numbers=1
 let g:buftabline_indicators='on' " this is helpful.
 let g:buftabline_separators='on'
-
 " let g:MRU_Exclude_Files = '.*/.git/COMMIT_EDITMSG$'
-
-" keep in mind that C-v TAB will insert a literal tab
-" currently commented out bc I don't understand it.
-" let g:SuperTabCompletionContexts = ['s:ContextText', 's:ContextDiscover']
-" let g:SuperTabContextTextOmniPrecedence = ['&omnifunc', '&completefunc']
-" let g:SuperTabContextDiscoverDiscovery =
-"     \ ["&completefunc:<c-x><c-u>", "&omnifunc:<c-x><c-o>"]
 
 let g:scratch_persistence_file = '~/tmp/scratch.md'
 let g:scratch_insert_autohide = 0
@@ -195,15 +183,6 @@ set number
 " }}}}
 
 " cursor stuff {{{{
-" none of the colors seem to work.
-" highlight! nCursor guifg=black guibg=magenta gui=reverse
-" set guicursor=n:block-nCursor/lCursor-blinkon0,
-"   \v:block-Cursor/lCursor-blinkon0,
-"   \c:hor40-Cursor/lCursor-blinkon0,
-"   \o:hor40-Cursor/lCursor-blinkon0,
-"   \i-ci:ver25-Cursor/lCursor,
-"   \r-cr:hor20-Cursor/lCursor
-
 au VimLeave * set guicursor=a:block-blinkon0
 
 augroup CursorLine
@@ -591,7 +570,7 @@ autocmd! BufWritePre * :call s:timestamp()
 " to update timestamp when saving if its in the first 20 lines of a file
 function! s:timestamp()
     let pat = '\(\(Last\)\?\s*\([Cc]hanged\?\|[Mm]odified\|[Uu]pdated\?\)\s*:\s*\).*'
-    let rep = '\1' . ' <' . strftime("%a %d %b %Y %I:%M:%S %p %Z") . '>'
+    let rep = '\1' . '<' . strftime("%a %d %b %Y %I:%M:%S %p %Z") . '>'
     call s:subst(1, 20, pat, rep)
 endfunction
 " subst taken from timestamp.vim
