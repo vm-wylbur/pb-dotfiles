@@ -323,7 +323,11 @@ let g:mapleader='\'
 "" }}}}
 
 "" PB specific remaps {{{{
+" because scrolling is *the* main thing we do
 nnoremap <space> <C-d>
+nnoremap <C-space> <C-u>
+" repeat the last macro. 
+nnoremap <return> @@
 " increment a number; C-a is overloaded everywhere.
 nnoremap <A-a> <C-a>
 " }}}}
