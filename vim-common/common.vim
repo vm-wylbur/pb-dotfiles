@@ -1,10 +1,10 @@
 " Preamble {{{
 "
-" Last Modified: <Sat 04 Nov 2017 11:40:49 PM PDT>
+" Last Modified: <Sun 05 Nov 2017 09:44:04 AM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
-" moved to github
+" on github at
 "    git@github.com:vm-wylbur/pb-dotfiles.git
 "
 " this file contains
@@ -34,7 +34,6 @@ Plug 'tpope/vim-repeat'  " doesn't work? needs config for surround
 
 " screen and window management
 Plug 'mhinz/vim-startify'
-" Plug 'spolu/dwm.vim'
 
 "" editing and formatting
 Plug 'godlygeek/tabular'              " should align on regex :Tab /char
@@ -219,6 +218,7 @@ set complete+=i
 set complete+=kspell
 set completeopt+=menuone,noselect
 set completeopt+=preview
+set digraph  " important for ch<BS>ch composition, doesn't work? 
 " }}}}
 
 " Wildmenu {{{{
@@ -330,6 +330,9 @@ nnoremap <C-space> <C-u>
 nnoremap <return> @@
 " increment a number; C-a is overloaded everywhere.
 nnoremap <A-a> <C-a>
+
+" some notes here:
+
 " }}}}
 
 "" tweaks adding functionality to existing keys {{{{
@@ -365,9 +368,6 @@ vmap <C-Up> [egv
 vmap <C-Down> ]egv
 " }}}}
 
-"" to normal mode with jj or jk {{{{
-inoremap jj <ESC>
-inoremap jk <ESC>
 " }}}}
 
 "" window navigation via Meta {{{{
@@ -377,30 +377,33 @@ tnoremap <a-3> <c-\><c-n>3<c-w><c-w>
 tnoremap <a-4> <c-\><c-n>4<c-w><c-w>
 tnoremap <a-5> <c-\><c-n>5<c-w><c-w>
 tnoremap <a-6> <c-\><c-n>6<c-w><c-w>
-nnoremap <A-1> 1<c-w><c-w>
-nnoremap <A-2> 2<c-w><c-w>
-nnoremap <A-1> 1<c-w><c-w>
-nnoremap <A-2> 2<c-w><c-w>
-nnoremap <A-3> 3<c-w><c-w>
-nnoremap <A-4> 4<c-w><c-w>
-nnoremap <A-5> 5<c-w><c-w>
-nnoremap <A-6> 6<c-w><c-w>
-nnoremap <A-7> 7<c-w><c-w>
-nnoremap <A-8> 8<c-w><c-w>
-nnoremap <A-9> 9<c-w><c-w>
-inoremap <A-h> <C-\><C-N><C-w>h
-inoremap <A-j> <C-\><C-N><C-w>j
-inoremap <A-k> <C-\><C-N><C-w>k
-inoremap <A-l> <C-\><C-N><C-w>l
-nnoremap <A-h> <C-w>h
-nnoremap <A-j> <C-w>j
-nnoremap <A-k> <C-w>k
-nnoremap <A-l> <C-w>l
+nnoremap <a-1> 1<c-w><c-w>
+nnoremap <a-2> 2<c-w><c-w>
+nnoremap <a-1> 1<c-w><c-w>
+nnoremap <a-2> 2<c-w><c-w>
+nnoremap <a-3> 3<c-w><c-w>
+nnoremap <a-4> 4<c-w><c-w>
+nnoremap <a-5> 5<c-w><c-w>
+nnoremap <a-6> 6<c-w><c-w>
+nnoremap <a-7> 7<c-w><c-w>
+nnoremap <a-8> 8<c-w><c-w>
+nnoremap <a-9> 9<c-w><c-w>
+inoremap <a-h> <C-\><C-N><C-w>h
+inoremap <a-j> <C-\><C-N><C-w>j
+inoremap <a-k> <C-\><C-N><C-w>k
+inoremap <a-l> <C-\><C-N><C-w>l
+nnoremap <a-h> <C-w>h
+nnoremap <a-j> <C-w>j
+nnoremap <a-k> <C-w>k
+nnoremap <a-l> <C-w>l
 
 " let g:dwm_map_keys = 0
 nnoremap <c-k> <c-w>W
 nnoremap <c-j> <c-w><c-p>
 tnoremap <c-j> <c-\><c-n><c-w><c-p>
+"" to normal mode with jj or jk {{{{
+inoremap jj <ESC>
+inoremap jk <ESC>
 tnoremap jj <c-\><c-n>
 " this is esp good for getting out of fzf searches
 tnoremap jk <c-\><c-n>:q<cr>
@@ -419,20 +422,27 @@ nnoremap <leader>m :History<CR>
 " BufExplorer is pretty much emacs
 nnoremap <leader>b :BufExplorer<CR>
 
-nnoremap <leader>\ :BLines<space><CR>
 " needs better mapping; note jedi has some leader keys.
 " these are from fzf
+" should BLines be <leader>g? to be parallel to Line?
+nnoremap <leader>\ :BLines<space><CR>
+nnoremap <leader>g :BLines<space><CR>
 nnoremap <leader>G :Lines<space>
-nnoremap <leader>f :Files<space>
 nnoremap <leader>a :Ag<space>
+nnoremap <leader>f :Files<space>
 nnoremap <leader>` :Marks<CR>
 inoremap <c-x><c-l> <plug>(fzf-complete-line)
+
+" shadowing : commands
+nnoremap <leader>w :w!<cr>
 
 " Dash for word under point
 nmap <silent> <leader>d <Plug>DashSearch
 
-" spelling hack
+" spelling hack. NB the cursor moves bc the mark is relative to the byte
+" position in the line. how to make the cursor stick?
 nnoremap <leader>l mt[s1z=`t
+nnoremap <c-s> mt[s1z=`t
 inoremap <C-s> <ESC>mt[s1z=`ta
 
 " }}}}
