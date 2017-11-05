@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Thu 02 Nov 2017 08:56:03 AM PDT>
+" Last Modified: <Sat 04 Nov 2017 04:12:38 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -73,8 +73,8 @@ Plug 'yuttie/comfortable-motion.vim'  " smooths scrolling
 Plug 'jeetsukumaran/vim-markology'    " look at all the marks!
 Plug 'itchyny/lightline.vim'
 Plug 'luochen1990/rainbow'
-Plug 'chriskempson/base16-vim'
-" Plug 'icymind/NeoSolarized'
+" Plug 'chriskempson/base16-vim'
+Plug 'icymind/NeoSolarized'
 Plug 'blueyed/vim-diminactive'  " dims in the inactive window: buggy
 
 " languages
@@ -99,9 +99,9 @@ call plug#end()
 
 " plugin configs {{{
 " other solarized have bad colors in terminal
-" colorscheme NeoSolarized
+colorscheme NeoSolarized
 " colorscheme base16-tomorrow-night
-colorscheme base16-twilight
+" colorscheme base16-twilight
 highlight Comment cterm=italic
 
 let g:sneak#label = 1
@@ -326,7 +326,7 @@ let g:mapleader='\'
 " because scrolling is *the* main thing we do
 nnoremap <space> <C-d>
 nnoremap <C-space> <C-u>
-" repeat the last macro. 
+" repeat the last macro.
 nnoremap <return> @@
 " increment a number; C-a is overloaded everywhere.
 nnoremap <A-a> <C-a>
@@ -448,21 +448,6 @@ nnoremap <leader>9 :b9 <CR>
 nnoremap <leader>0 :b10 <CR>
 
 "" }}}}
-
-"" getting to the scratch buffer {{{{
-" these should be on <leader>cX
-" :ScratchInsert
-" :ScratchSelection
-" see scratch help on this stuff
-  " let g:scratch_no_mappings = 1
-
-" And set your favorite keys like below: >
-
-  " nmap <leader>gs <plug>(scratch-insert-reuse)
-  " nmap <leader>gS <plug>(scratch-insert-clear)
-  " xmap <leader>gs <plug>(scratch-selection-reuse)
-  " xmap <leader>gS <plug>(scratch-selection-clear)
-" }}}}
 
 " }}}
 

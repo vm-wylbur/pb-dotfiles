@@ -25,7 +25,7 @@ function! StatuslineTabWarning()
 endfunction
 
 
-" the ale stuff: https://github.com/statico/dotfiles/blob/master/.vim/vimrc#L413 
+" the ale stuff: https://github.com/statico/dotfiles/blob/master/.vim/vimrc#L413
 function! LightlineLinterWarnings() abort
   let l:counts = ale#statusline#Count(bufnr(''))
   let l:all_errors = l:counts.error + l:counts.style_error
