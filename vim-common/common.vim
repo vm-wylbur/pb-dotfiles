@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Sat 04 Nov 2017 04:12:38 PM PDT>
+" Last Modified: <Sat 04 Nov 2017 11:40:49 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -402,6 +402,8 @@ nnoremap <c-k> <c-w>W
 nnoremap <c-j> <c-w><c-p>
 tnoremap <c-j> <c-\><c-n><c-w><c-p>
 tnoremap jj <c-\><c-n>
+" this is esp good for getting out of fzf searches
+tnoremap jk <c-\><c-n>:q<cr>
 " }}}}
 
 " }}}
