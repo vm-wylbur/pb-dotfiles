@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Sun 05 Nov 2017 10:42:23 PM EST>
+" Last Modified: <Mon 06 Nov 2017 02:19:48 AM EST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -18,10 +18,14 @@
 " }}}
 
 " setup {{{
-" set nocompatible
+set nocompatible
 
-filetype plugin on
-let g:vim_bootstrap_langs = 'python'
+" I think both of these are unnecessary. filetype loads 2x without this line.
+" filetype plugin on
+" let g:vim_bootstrap_langs = 'python'
+let g:python_host_skip_check = 1
+let g:python3_host_skip_check = 1
+
 let g:vim_bootstrap_editor = 'nvim'				" nvim or vim
 set runtimepath+=$HOME/dotfiles/vim-common
 " }}}
@@ -45,6 +49,7 @@ Plug 'tpope/vim-unimpaired'           " many additional movements with [ and ]
 Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
 Plug 'terryma/vim-expand-region'      " + to increase visual selection
 Plug 'tommcdo/vim-exchange'           " cx{motion} to exhange text objs
+" Plug 'mbbill/undotree'                " UndotreeToggle to bring it up
 
 " completion
 " note: YCM never worked and nvim-completion-manager need a lot of config
@@ -64,7 +69,7 @@ Plug 'jlanzarotta/bufexplorer'   " helpful but SLOW
 Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
 Plug 'tpope/vim-vinegar'    " just hit - for the current path
 Plug 'tpope/vim-eunuch'    " u-nick(s), get it? for *nix bits: Find, Rename
-Plug 'scrooloose/nerdtree'   " makes vinegar a little nicer
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
@@ -73,17 +78,15 @@ Plug 'airblade/vim-gitgutter' " put chars in gutter
 Plug 'jeetsukumaran/vim-markology'    " look at all the marks!
 Plug 'itchyny/lightline.vim'      " workable. Prob could be done by hand.
 Plug 'luochen1990/rainbow'        " I really like these!
+Plug 'itchyny/vim-cursorword'
 Plug 'icymind/NeoSolarized'
-Plug 'blueyed/vim-diminactive'  " dims in the inactive window: buggy
-" Plug 'yuttie/comfortable-motion.vim'  " smooths scrolling
-" Plug 'chriskempson/base16-vim'
+Plug 't9md/vim-choosewin'    " cool idea: on <leader>w
 
 " languages
 Plug 'sheerun/vim-polyglot'
 Plug 'davidhalter/jedi-vim'
 Plug 'lervag/vimtex'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
-" Plug 'bps/vim-textobj-python'
 Plug 'reedes/vim-pencil'
 Plug 'tpope/vim-fugitive'
 
@@ -108,6 +111,14 @@ colorscheme NeoSolarized
 
 highlight comment cterm=italic
 
+if has("persistent_undo")
+    set undodir=~/.undodir/
+    set undofile
+endif
+
+nnoremap + <Plug>choosewin
+let g:choosewin_overlay_enable = 1
+
 set signcolumn=yes
 
 let g:sneak#label = 1
@@ -118,7 +129,7 @@ nmap S <Plug>SneakLabel_S
 let g:comfortable_motion_scroll_down_key = "j"
 let g:comfortable_motion_scroll_up_key = "k"
 
-let g:timestamp_modelines = 10
+let g:timestamp_modelines = 1
 
 " deoplete
 call deoplete#enable()
@@ -454,7 +465,9 @@ nnoremap <leader>` :Marks<CR>
 inoremap <c-x><c-l> <plug>(fzf-complete-line)
 
 " shadowing : commands
-nnoremap <leader>w :w!<cr>
+nnoremap <leader>w :ChooseWin<cr>
+nnoremap <leader>wt :ChooseWinSwap<cr>
+nnoremap <leader>ws :ChooseWinSwapStay<cr>
 
 " Dash for word under point
 nmap <silent> <leader>d <Plug>DashSearch
