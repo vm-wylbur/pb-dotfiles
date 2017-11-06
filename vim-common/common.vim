@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Sun 05 Nov 2017 07:23:32 PM EST>
+" Last Modified: <Sun 05 Nov 2017 10:42:23 PM EST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -33,20 +33,22 @@ call plug#begin(expand('~/.config/nvim/plugged'))
 Plug 'tpope/vim-repeat'  " doesn't work? needs config for surround
 
 " screen and window management
-Plug 'mhinz/vim-startify'
+Plug 'mhinz/vim-startify'             " cute!
 
 "" editing and formatting
-Plug 'godlygeek/tabular'              " should align on regex :Tab /char
+" Plug 'godlygeek/tabular'              " should align on regex :Tab /char
 Plug 'tpope/vim-surround'             " adds surround action to create cmts
-Plug 'kana/vim-textobj-function'      " adds functions to create textobjs
-Plug 'kana/vim-textobj-user'
-Plug 'tpope/vim-commentary'
+" Plug 'kana/vim-textobj-function'      " adds functions to create textobjs
+" Plug 'kana/vim-textobj-user'
+Plug 'tpope/vim-commentary'           " wow, all the time.
 Plug 'tpope/vim-unimpaired'           " many additional movements with [ and ]
 Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
-Plug 'terryma/vim-expand-region'
+Plug 'terryma/vim-expand-region'      " + to increase visual selection
 Plug 'tommcdo/vim-exchange'           " cx{motion} to exhange text objs
 
 " completion
+" note: YCM never worked and nvim-completion-manager need a lot of config
+"       so deoplete wins by elimination.
 Plug 'zchee/deoplete-jedi'
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
@@ -58,7 +60,7 @@ Plug 'lifepillar/vim-cheat40'  " cheat sheet: <leader>?
 Plug 'justinmk/vim-sneak'
 
 "" files, buffers, and tags
-Plug 'jlanzarotta/bufexplorer'
+Plug 'jlanzarotta/bufexplorer'   " helpful but SLOW
 Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
 Plug 'tpope/vim-vinegar'    " just hit - for the current path
 Plug 'tpope/vim-eunuch'    " u-nick(s), get it? for *nix bits: Find, Rename
@@ -68,20 +70,20 @@ Plug 'junegunn/fzf.vim'
 
 " colors and UI
 Plug 'airblade/vim-gitgutter' " put chars in gutter
-Plug 'yuttie/comfortable-motion.vim'  " smooths scrolling
 Plug 'jeetsukumaran/vim-markology'    " look at all the marks!
-Plug 'itchyny/lightline.vim'
-Plug 'luochen1990/rainbow'
-" Plug 'chriskempson/base16-vim'
+Plug 'itchyny/lightline.vim'      " workable. Prob could be done by hand.
+Plug 'luochen1990/rainbow'        " I really like these!
 Plug 'icymind/NeoSolarized'
 Plug 'blueyed/vim-diminactive'  " dims in the inactive window: buggy
+" Plug 'yuttie/comfortable-motion.vim'  " smooths scrolling
+" Plug 'chriskempson/base16-vim'
 
 " languages
 Plug 'sheerun/vim-polyglot'
 Plug 'davidhalter/jedi-vim'
 Plug 'lervag/vimtex'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
-Plug 'bps/vim-textobj-python'
+" Plug 'bps/vim-textobj-python'
 Plug 'reedes/vim-pencil'
 Plug 'tpope/vim-fugitive'
 
@@ -98,11 +100,15 @@ call plug#end()
 " }}}
 
 " plugin configs {{{
+
 " other solarized have bad colors in terminal
 colorscheme NeoSolarized
 " colorscheme base16-tomorrow-night
 " colorscheme base16-twilight
-highlight Comment cterm=italic
+
+highlight comment cterm=italic
+
+set signcolumn=yes
 
 let g:sneak#label = 1
 let g:sneak#streak = 1
@@ -113,10 +119,11 @@ let g:comfortable_motion_scroll_down_key = "j"
 let g:comfortable_motion_scroll_up_key = "k"
 
 let g:timestamp_modelines = 10
+
 " deoplete
-" call deoplete#enable()
-" autocmd FileType python nnoremap <leader>y :0,$!yapf<CR>
-" autocmd CompleteDone * pclose " To close preview window of deoplete automagically
+call deoplete#enable()
+autocmd FileType python nnoremap <leader>y :0,$!yapf<CR>
+autocmd CompleteDone * pclose " To close preview window of deoplete automagically
 
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#auto_complete_start_length = 1
@@ -306,18 +313,13 @@ set spelllang=en_us spell
 if exists($SUDO_USER)
   set nobackup
   set nowritebackup
-  set noswapfile
 else
   set backupdir=~/.vim/tmp/backup
   set backupdir+=.
 endif
 
-if exists($SUDO_USER)
-  set noswapfile
-else
-  set directory=~/.vim/tmp/swap//
-  set directory+=.
-endif
+set noswapfile
+
 set fileformats=unix,dos,mac
 set showcmd
 
