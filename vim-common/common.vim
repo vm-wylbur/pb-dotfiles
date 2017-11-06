@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Sun 05 Nov 2017 09:44:04 AM PST>
+" Last Modified: <Sun 05 Nov 2017 07:23:32 PM EST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -89,6 +89,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
 Plug 'vim-pandoc/vim-rmarkdown'
+Plug 'tpope/vim-markdown'
 
 " linting
 Plug 'w0rp/ale'
@@ -127,6 +128,8 @@ let g:deoplete#sources#jedi#short_types = 1
 " whitespace
 autocmd BufEnter * EnableStripWhitespaceOnSave
 
+
+
 " Insert mode completion
 " imap <c-x><c-k> <plug>(fzf-complete-word)
 " imap <c-x><c-f> <plug>(fzf-complete-path)
@@ -151,6 +154,8 @@ let g:pencil#wrapModeDefault = 'soft'   " default is 'hard'
   augroup END
 autocmd FileType markdown,mkd,tex setlocal spell
 autocmd FileType markdown,mkd,tex setlocal wrap
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+autocmd BufRead,BufNew *.md set filetype=markdown
 
 autocmd FileType tex setlocal spell
 autocmd FileType tex setlocal wrap
@@ -218,7 +223,7 @@ set complete+=i
 set complete+=kspell
 set completeopt+=menuone,noselect
 set completeopt+=preview
-set digraph  " important for ch<BS>ch composition, doesn't work? 
+set digraph  " important for ch<BS>ch composition, doesn't work?
 " }}}}
 
 " Wildmenu {{{{
@@ -297,9 +302,22 @@ set spelllang=en_us spell
 "" }}}}
 
 "" shells and directories for swp files {{{{
-set nobackup
-set noswapfile
+" set nobackup
+if exists($SUDO_USER)
+  set nobackup
+  set nowritebackup
+  set noswapfile
+else
+  set backupdir=~/.vim/tmp/backup
+  set backupdir+=.
+endif
 
+if exists($SUDO_USER)
+  set noswapfile
+else
+  set directory=~/.vim/tmp/swap//
+  set directory+=.
+endif
 set fileformats=unix,dos,mac
 set showcmd
 
@@ -522,7 +540,7 @@ let g:jedi#show_call_signatures = '0'
 let g:jedi#completions_command = '<C-Space>'
 let g:jedi#smart_auto_mappings = 0
 
-let g:polyglot_disabled = ['python', 'tex']
+let g:polyglot_disabled = ['python', 'tex', 'markdown']
 let g:python_highlight_all = 1
 " }}}}
 
@@ -575,4 +593,5 @@ augroup END
 set modeline
 set modelines=5
 setlocal foldmethod=marker
+set nofoldenable
 " vim: set foldmethod=marker foldlevel=1:
