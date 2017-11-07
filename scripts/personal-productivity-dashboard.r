@@ -1,6 +1,6 @@
 #
 # author: Patrick Ball
-# last modified: <Mon 06 Nov 2017 11:12:38 PM EST>
+# last modified: <Mon 06 Nov 2017 11:17:28 PM EST>
 
 # todo:
 #  - create complete image with words, git commits, hours
@@ -20,6 +20,7 @@ library(lubridate)
 library(dplyr)
 library(tidyr)
 library(magrittr)
+library(ggplot2)
 
 end_date <- today()
 start_date <- max(as.Date("2017-04-01 UTC"), end_date - 365)
@@ -35,5 +36,7 @@ p1 <- ggplot_calendar_heatmap(log, 'date', 'work.hours') +
     scale_fill_gradient(low="white", high="red")
 p2 <- ggplot_calendar_heatmap(log, 'date', 'word.count') +
     scale_fill_gradient(low="white", high="green")
+
+ggsave("~/tmp/work_hours.png", plot=p1)
 
 # done.
