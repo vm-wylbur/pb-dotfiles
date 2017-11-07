@@ -1,6 +1,17 @@
-# 
+#
 # author: Patrick Ball
-# last modified: 6 Nov 2017
+# last modified: <Mon 06 Nov 2017 11:12:38 PM EST>
+
+# todo:
+#  - create complete image with words, git commits, hours
+#  - add to desktop
+#  - formatting!
+#  - maybe emails sent?
+#  - automate word count?
+#
+#
+#   rewrite with [this](http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html#Calendar%20Heat%20Map)
+# using facet_grid, geom_tile.
 
 # get the data from the log spreadsheet
 library(readxl)
@@ -16,9 +27,13 @@ start_date <- max(as.Date("2017-04-01 UTC"), end_date - 365)
 # colnames(log) <- make.names(colnames(log))
 
 log <- read_excel("~/Documents/notes/log.xlsx", sheet='log') %>%
-    set_colnames(make.names(colnames(.))) %>% 
-    filter(start_date <= date & date <= end_date) %>% 
+    set_colnames(make.names(colnames(.))) %>%
+    filter(start_date <= date & date <= end_date) %>%
     replace_na(list(work.hours=0))
 
-p1 <- ggplot_calendar_heatmap(log, 'date', 'work.hours') + scale_fill_gradient(low="white", high="red")
-p2 <- ggplot_calendar_heatmap(log, 'date', 'word.count') + scale_fill_gradient(low="white", high="green")
+p1 <- ggplot_calendar_heatmap(log, 'date', 'work.hours') +
+    scale_fill_gradient(low="white", high="red")
+p2 <- ggplot_calendar_heatmap(log, 'date', 'word.count') +
+    scale_fill_gradient(low="white", high="green")
+
+# done.
