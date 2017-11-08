@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Mon 06 Nov 2017 08:57:30 PM EST>
+" Last Modified: <Tue 07 Nov 2017 09:22:52 PM EST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -67,7 +67,8 @@ Plug 'justinmk/vim-sneak'
 "" files, buffers, and tags
 Plug 'jlanzarotta/bufexplorer'   " helpful but SLOW
 Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
-Plug 'tpope/vim-vinegar'    " just hit - for the current path
+" Plug 'tpope/vim-vinegar'    " just hit - for the current path
+Plug 'dhruvasagar/vim-vinegar'  " adds some netrw behaviors
 Plug 'tpope/vim-eunuch'    " u-nick(s), get it? for *nix bits: Find, Rename
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -145,7 +146,7 @@ let g:deoplete#sources#jedi#short_types = 1
 
 " whitespace
 autocmd BufEnter * EnableStripWhitespaceOnSave
-
+autocmd BufEnter * lcd %:p:h
 
 
 " Insert mode completion

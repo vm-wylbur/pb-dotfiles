@@ -1,0 +1,50 @@
+---
+title: "Personal Productivity Analysis"
+output: html_document
+author: Patrick Ball
+last modified: <Mon 06 Nov 2017 11:17:28 PM EST>
+---
+
+## todo:
+  - create complete image with words, git commits, hours
+  - add to desktop
+  - formatting!
+  - maybe emails sent?
+  - automate word count?
+
+
+   rewrite with [this](http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html#Calendar%20Heat%20Map)
+ using `facet_grid`, `geom_tile`.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+# get the data from the log spreadsheet
+library(readxl)
+library(ggTimeSeries)
+library(lubridate)
+library(dplyr)
+library(tidyr)
+library(magrittr)
+library(ggplot2)
+
+end_date <- today()
+start_date <- max(as.Date("2017-04-01 UTC"), end_date - 365)
+
+log <- read_excel("~/Documents/notes/log.xlsx", sheet='log') %>%
+    set_colnames(make.names(colnames(.))) %>%
+    filter(start_date <= date & date <= end_date) %>%
+    replace_na(list(work.hours=0))
+```
+```{r echo=FALSE, message=FALSE}
+p1 <- ggplot_calendar_heatmap(log, 'date', 'work.hours') +
+    scale_fill_gradient(low="white", high="red")
+
+ggsave("~/tmp/work_hours.png", plot=p1)
+p1
+```
+```{r echo=FALSE, message=FALSE}
+p2 <- ggplot_calendar_heatmap(log, 'date', 'word.count') +
+    scale_fill_gradient(low="white", high="green")
+p2
+```
+
+<!-- done. -->
