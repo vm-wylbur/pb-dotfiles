@@ -7,3 +7,5 @@ Session.vim
 /emacs/deprecated/.emacs.desktop
 *.swp
 *.swo
+ppd.html
+figure/*
