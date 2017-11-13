@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Sun 12 Nov 2017 07:30:24 PM PST>
+" Last Modified: <Mon 13 Nov 2017 09:26:28 AM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -54,9 +54,12 @@ Plug 'tommcdo/vim-exchange'           " cx{motion} to exhange text objs
 " completion
 " note: YCM never worked and nvim-completion-manager need a lot of config
 "       so deoplete wins by elimination.
-" Plug 'zchee/deoplete-jedi'
-" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'roxma/nvim-completion-manager'
+if hostname() == 'eleanor'
+  Plug 'roxma/nvim-completion-manager'
+else
+  Plug 'zchee/deoplete-jedi'
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+endif
 
 " help
 Plug 'rizzatti/dash.vim'   " c-d to lookup at point
@@ -68,9 +71,8 @@ Plug 'justinmk/vim-sneak'
 "" files, buffers, and tags
 Plug 'jlanzarotta/bufexplorer'   " helpful but SLOW
 Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
-" Plug 'tpope/vim-vinegar'    " just hit - for the current path
-Plug 'dhruvasagar/vim-vinegar'  " adds some netrw behaviors
-Plug 'tpope/vim-eunuch'    " u-nick(s), get it? for *nix bits: Find, Rename
+Plug 'dhruvasagar/vim-vinegar'  " - for curdir and adds some netrw behaviors
+Plug 'tpope/vim-eunuch'    " u-nick(s), get it? *nix bits: Find, Rename
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -108,10 +110,16 @@ call plug#end()
 
 " other solarized have bad colors in terminal
 colorscheme NeoSolarized
-" colorscheme base16-tomorrow-night
-" colorscheme base16-twilight
+let g:neosolarized_bold = 1
+let g:neosolarized_underline = 1
+let g:neosolarized_italic = 1
+let g:neosolarized_vertSplitBgTrans = 0
+let g:neosolarized_contrast = "high"
 
-highlight comment cterm=italic
+highlight Comment cterm=italic
+highlight Comment gui=italic
+let &t_ZH="\e[3m"
+let &t_ZR="\e[23m"
 
 if has("persistent_undo")
     set undodir=~/.undodir/
@@ -135,24 +143,19 @@ let g:comfortable_motion_scroll_up_key = "k"
 let g:timestamp_modelines = 1
 
 " deoplete
-call deoplete#enable()
+if hostname() != 'eleanor'
+  call deoplete#enable()
+  autocmd CompleteDone * pclose
+  let g:deoplete#enable_at_startup = 1
+  let g:deoplete#auto_complete_start_length = 1
+  let g:deoplete#disable_auto_complete = 0
+  let g:deoplete#sources#jedi#statement_length = 30
+  let g:deoplete#sources#jedi#show_docstring = 1
+  let g:deoplete#sources#jedi#short_types = 1
+endif
 
-" what does this do?
-" autocmd FileType python nnoremap <leader>y :0,$!yapf<CR>
-
-" To close preview window of deoplete automagically
-autocmd CompleteDone * pclose
-
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#auto_complete_start_length = 1
-let g:deoplete#disable_auto_complete = 0
-let g:deoplete#sources#jedi#statement_length = 30
-let g:deoplete#sources#jedi#show_docstring = 1
-let g:deoplete#sources#jedi#short_types = 1
-
-" if $HOSTNAME == 'eleanor'
-  let g:python3_host_prog  = '/opt/anaconda3/bin/python3'
-" endif
+let g:cm_smart_enable = 1
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 
 " whitespace
 autocmd BufEnter * EnableStripWhitespaceOnSave
@@ -475,10 +478,17 @@ nnoremap <leader>f :Files<space>
 nnoremap <leader>` :Marks<CR>
 inoremap <c-x><c-l> <plug>(fzf-complete-line)
 
+" this is a demo, wraps viw in double-q
+" :nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
+
 " shadowing : commands
 nnoremap <leader>w :ChooseWin<cr>
 nnoremap <leader>wt :ChooseWinSwap<cr>
 nnoremap <leader>ws :ChooseWinSwapStay<cr>
+
+" direct editing
+nnoremap <leader>ev :split ~/dotfiles/vim-common/common.vim<cr>
+nnoremap <leader>en :split ~/Documents/notes/vim-notes.md<cr>
 
 " Dash for word under point
 nmap <silent> <leader>d <Plug>DashSearch

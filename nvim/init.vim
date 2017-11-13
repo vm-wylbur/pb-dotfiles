@@ -13,11 +13,11 @@ so $HOME/dotfiles/vim-common/common.vim
 
 "" terminal config {{{
 " only really relevant to neovim, maybe should move there
-tnoremap <ESC> <C-\><C-n>
-tnoremap <A-h> <C-\><C-N><C-w>h
-tnoremap <A-j> <C-\><C-N><C-w>j
-tnoremap <A-k> <C-\><C-N><C-w>k
-tnoremap <A-l> <C-\><C-N><C-w>l
+" tnoremap <ESC> <C-\><C-n>
+" tnoremap <A-h> <C-\><C-N><C-w>h
+" tnoremap <A-j> <C-\><C-N><C-w>j
+" tnoremap <A-k> <C-\><C-N><C-w>k
+" tnoremap <A-l> <C-\><C-N><C-w>l
 
 command! Cquit
     \  if exists('b:nvr')
@@ -26,9 +26,9 @@ command! Cquit
     \|   endfor
     \| endif
 
-autocmd BufWinEnter,WinEnter term://* startinsert
-autocmd BufLeave term://* stopinsert
-au BufEnter * if &buftype == 'terminal' | :startinsert | endif
+" autocmd BufWinEnter,WinEnter term://* startinsert
+" autocmd BufLeave term://* stopinsert
+" au BufEnter * if &buftype == 'terminal' | :startinsert | endif
 " }}}
 
 " closing {{{
