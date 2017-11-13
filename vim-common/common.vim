@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Tue 07 Nov 2017 09:22:52 PM EST>
+" Last Modified: <Sun 12 Nov 2017 07:30:24 PM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -54,8 +54,9 @@ Plug 'tommcdo/vim-exchange'           " cx{motion} to exhange text objs
 " completion
 " note: YCM never worked and nvim-completion-manager need a lot of config
 "       so deoplete wins by elimination.
-Plug 'zchee/deoplete-jedi'
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" Plug 'zchee/deoplete-jedi'
+" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'roxma/nvim-completion-manager'
 
 " help
 Plug 'rizzatti/dash.vim'   " c-d to lookup at point
@@ -117,7 +118,8 @@ if has("persistent_undo")
     set undofile
 endif
 
-nnoremap + <Plug>choosewin
+" FIXME
+" nnoremap <c--> <Plug>choosewin
 let g:choosewin_overlay_enable = 1
 
 set signcolumn=yes
@@ -134,8 +136,12 @@ let g:timestamp_modelines = 1
 
 " deoplete
 call deoplete#enable()
-autocmd FileType python nnoremap <leader>y :0,$!yapf<CR>
-autocmd CompleteDone * pclose " To close preview window of deoplete automagically
+
+" what does this do?
+" autocmd FileType python nnoremap <leader>y :0,$!yapf<CR>
+
+" To close preview window of deoplete automagically
+autocmd CompleteDone * pclose
 
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#auto_complete_start_length = 1
@@ -143,6 +149,10 @@ let g:deoplete#disable_auto_complete = 0
 let g:deoplete#sources#jedi#statement_length = 30
 let g:deoplete#sources#jedi#show_docstring = 1
 let g:deoplete#sources#jedi#short_types = 1
+
+" if $HOSTNAME == 'eleanor'
+  let g:python3_host_prog  = '/opt/anaconda3/bin/python3'
+" endif
 
 " whitespace
 autocmd BufEnter * EnableStripWhitespaceOnSave
