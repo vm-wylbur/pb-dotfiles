@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Wed 15 Nov 2017 08:21:15 PM PST>
+" Last Modified: <Thu 16 Nov 2017 10:38:20 PM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -47,7 +47,7 @@ Plug 'tpope/vim-unimpaired'           " many additional movements with [ and ]
 Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
 Plug 'terryma/vim-expand-region'      " + to increase visual selection
 Plug 'tommcdo/vim-exchange'           " cx{motion} to exhange text objs
-" Plug 'mbbill/undotree'                " UndotreeToggle to bring it up
+Plug 'mbbill/undotree'                " UndotreeToggle to bring it up
 
 " completion
 " note: YCM never worked and nvim-completion-manager need a lot of config
@@ -467,6 +467,7 @@ nnoremap <leader>x :so %<CR>
 nnoremap <leader>m :History<CR>
 " BufExplorer is pretty much emacs
 nnoremap <leader>b :BufExplorer<CR>
+nnoremap <leader>u :UndotreeToggle<cr>
 
 " needs better mapping; note jedi has some leader keys.
 " these are from fzf
