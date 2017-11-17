@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Mon 13 Nov 2017 09:26:28 AM PST>
+" Last Modified: <Wed 15 Nov 2017 08:21:15 PM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -40,10 +40,8 @@ Plug 'tpope/vim-repeat'  " doesn't work? needs config for surround
 Plug 'mhinz/vim-startify'             " cute!
 
 "" editing and formatting
-" Plug 'godlygeek/tabular'              " should align on regex :Tab /char
 Plug 'tpope/vim-surround'             " adds surround action to create cmts
-" Plug 'kana/vim-textobj-function'      " adds functions to create textobjs
-" Plug 'kana/vim-textobj-user'
+Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'           " wow, all the time.
 Plug 'tpope/vim-unimpaired'           " many additional movements with [ and ]
 Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
@@ -79,7 +77,8 @@ Plug 'junegunn/fzf.vim'
 
 " colors and UI
 Plug 'airblade/vim-gitgutter' " put chars in gutter
-Plug 'jeetsukumaran/vim-markology'    " look at all the marks!
+" Plug 'jeetsukumaran/vim-markology'    " kills syntax hilighting on cur line
+Plug 'kshenoy/vim-signature'          " less cluttered, marks more visible
 Plug 'itchyny/lightline.vim'      " workable. Prob could be done by hand.
 Plug 'luochen1990/rainbow'        " I really like these!
 Plug 'itchyny/vim-cursorword'
@@ -93,6 +92,7 @@ Plug 'lervag/vimtex'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'reedes/vim-pencil'
 Plug 'tpope/vim-fugitive'
+Plug 'tmhedberg/SimpylFold'
 
 " markdown stuff
 Plug 'vim-pandoc/vim-pandoc'
@@ -160,6 +160,7 @@ inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 " whitespace
 autocmd BufEnter * EnableStripWhitespaceOnSave
 autocmd BufEnter * lcd %:p:h
+
 
 
 " Insert mode completion
@@ -255,7 +256,7 @@ set complete+=i
 set complete+=kspell
 set completeopt+=menuone,noselect
 set completeopt+=preview
-set digraph  " important for ch<BS>ch composition, doesn't work?
+set nodigraph  " use c-k to start digraph: é
 " }}}}
 
 " Wildmenu {{{{
