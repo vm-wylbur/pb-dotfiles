@@ -454,9 +454,8 @@ tnoremap jj <c-\><c-n>
 " this is esp good for getting out of fzf searches
 tnoremap jk <c-\><c-n>:q<cr>
 " }}}}
-
+"
 " }}}
-
 " leader {{{
 "" the big picture here is:
 "" * a small number of important keys get single-char leader
