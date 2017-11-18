@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Thu 16 Nov 2017 10:38:20 PM PST>
+" Last Modified: <Sat 18 Nov 2017 09:31:30 AM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -118,8 +118,13 @@ let g:neosolarized_contrast = "high"
 
 highlight Comment cterm=italic
 highlight Comment gui=italic
+" change cursor shape with mode
 let &t_ZH="\e[3m"
 let &t_ZR="\e[23m"
+
+let g:gitgutter_eager = 0
+let g:gitgutter_async = 1
+let g:gitgutter_realtime = 1
 
 if has("persistent_undo")
     set undodir=~/.undodir/
@@ -152,6 +157,7 @@ if hostname() != 'eleanor'
   let g:deoplete#sources#jedi#statement_length = 30
   let g:deoplete#sources#jedi#show_docstring = 1
   let g:deoplete#sources#jedi#short_types = 1
+  let g:deoplete#file#enable_buffer_path = 1
 endif
 
 let g:cm_smart_enable = 1
@@ -159,7 +165,7 @@ inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 
 " whitespace
 autocmd BufEnter * EnableStripWhitespaceOnSave
-autocmd BufEnter * lcd %:p:h
+" autocmd BufEnter * lcd %:p:h
 
 
 
@@ -454,12 +460,11 @@ tnoremap jj <c-\><c-n>
 " this is esp good for getting out of fzf searches
 tnoremap jk <c-\><c-n>:q<cr>
 " }}}}
-"
 " }}}
+"
 " leader {{{
 "" the big picture here is:
 "" * a small number of important keys get single-char leader
-"" * most keys are in groups of 2-char leaders
 
 "" PB specifics {{{{
 nnoremap <leader>x :so %<CR>
@@ -488,8 +493,8 @@ nnoremap <leader>wt :ChooseWinSwap<cr>
 nnoremap <leader>ws :ChooseWinSwapStay<cr>
 
 " direct editing
-nnoremap <leader>ev :split ~/dotfiles/vim-common/common.vim<cr>
-nnoremap <leader>en :split ~/Documents/notes/vim-notes.md<cr>
+nnoremap <leader>ev :e ~/dotfiles/vim-common/common.vim<cr>
+nnoremap <leader>en :e ~/Documents/notes/vim-notes.md<cr>
 
 " Dash for word under point
 nmap <silent> <leader>d <Plug>DashSearch
@@ -545,17 +550,21 @@ let g:ale_linters = {
 \   'tex': ['chktex'],
 \   'vim': ['vint'],
 \}
+let g:ale_enabled = 1
 let g:ale_sign_warning = '▲'
 let g:ale_sign_error = '✗'
 highlight link ALEWarningSign String
 highlight link ALEErrorSign Title
 let g:ale_sign_column_always = 1
 let g:ale_change_sign_column_color = 1
-let g:ale_enabled = 1
-let g:ale_lint_on_insert_leave = 1
+let g:ale_vim_vint_show_style_issues = 1
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
-let g:ale_vim_vint_show_style_issues = 1
+let g:ale_virtualenv_dir_names = []
+let b:ale_virtualenv_dir_names = []
+let g:ale_lint_on_insert_leave = 0
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_save = 1
 " }}}}
 
 "" python {{{{
