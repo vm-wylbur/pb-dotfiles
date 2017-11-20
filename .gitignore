@@ -9,3 +9,4 @@ Session.vim
 *.swo
 ppd.html
 figure/*
+.Rhistory

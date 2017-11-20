@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Sat 18 Nov 2017 09:31:30 AM PST>
+" Last Modified: <Sun 19 Nov 2017 07:10:45 PM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -226,6 +226,7 @@ set number
 " }}}}
 
 " cursor stuff {{{{
+set mouse=a
 au VimLeave * set guicursor=a:block-blinkon0
 
 augroup CursorLine
@@ -292,7 +293,7 @@ set binary
 set backspace=indent,eol,start
 " }}}}
 
-"" Tabs. May be overriten by autocmd rules {{{{
+"" Tabs. May be overwritten by autocmd rules {{{{
 set tabstop=2
 set softtabstop=0
 set shiftwidth=2
