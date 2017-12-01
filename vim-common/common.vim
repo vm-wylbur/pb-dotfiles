@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Wed 29 Nov 2017 12:09:27 AM PST>
+" Last Modified: <Thu 30 Nov 2017 07:31:23 PM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -117,6 +117,8 @@ let g:neosolarized_underline = 1
 let g:neosolarized_italic = 1
 let g:neosolarized_vertSplitBgTrans = 0
 let g:neosolarized_contrast = "high"
+
+let g:jedi#force_py_version = 3
 
 highlight Comment cterm=italic
 highlight Comment gui=italic

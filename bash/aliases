@@ -5,9 +5,11 @@ alias cur="cd ~/projects/hrdag/CO/individual/PN"
 alias ..="cd .."
 alias ...="cd ../.."
 alias ....="cd ../../.."
-alias .....="cd ../../../.."
-alias ~="cd ~" # `cd` is probably faster to type though
-alias -- -="cd -"
+alias .4="cd ../../../../"
+alias .5="cd ../../../../../"
+alias dl="cd ~/Downloads"
+alias dt="cd ~/Desktop"
+alias p="cd ~/projects/hrdag"
 
 function _cg() {
 # alias cg="cd ~/projects/hrdag/$1". # FIXME
@@ -17,19 +19,15 @@ function _cg() {
 alias cg="_cg $1"
 
 # Shortcuts
-alias dl="cd ~/Downloads"
-alias dt="cd ~/Desktop"
-alias p="cd ~/projects/hrdag"
 alias g="git"
 alias gs="git status"
 alias gc="git commit -a"
 # alias gl="git log --graph --pretty=oneline --abbrev-commit"
 # alias gl='git log --pretty=format:"%h%x09%an%x09%ad%x09%s"'
 alias gl="$HOME/bin/git-log-compact"
+
 alias h="history"
-alias j="jobs"
 alias mm="make -f src/Makefile"
-alias btd="~/src/testdummy/testdummy $1"
 alias ccat="pygmentize $1"
 
 alias sdate="gdate +'%Y-%m-%dT%H:%M%Z'"
@@ -43,10 +41,8 @@ fi
 
 # List all files colorized in long format
 alias ll="ls -ltrF ${colorflag}"
-
 # List all files colorized in long format, including dot files
 alias la="ls -laF ${colorflag}"
-
 # List only directories
 alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
 
