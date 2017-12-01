@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Sun 19 Nov 2017 07:10:45 PM PST>
+" Last Modified: <Wed 29 Nov 2017 12:09:27 AM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -34,7 +34,7 @@ set runtimepath+=$HOME/dotfiles/vim-common
 call plug#begin(expand('~/.config/nvim/plugged'))
 
 "" hack for plugins themselves
-Plug 'tpope/vim-repeat'  " doesn't work? needs config for surround
+Plug 'tpope/vim-repeat'               " doesn't work? config for surround
 
 " screen and window management
 Plug 'mhinz/vim-startify'             " cute!
@@ -50,8 +50,9 @@ Plug 'tommcdo/vim-exchange'           " cx{motion} to exhange text objs
 Plug 'mbbill/undotree'                " UndotreeToggle to bring it up
 
 " completion
-" note: YCM never worked and nvim-completion-manager need a lot of config
-"       so deoplete wins by elimination.
+" note: YCM never worked
+"       nvim-completion-manager works on eleanor but not petunia
+"       deoplete works on petunia but not eleanor
 if hostname() == 'eleanor'
   Plug 'roxma/nvim-completion-manager'
 else
@@ -60,7 +61,7 @@ else
 endif
 
 " help
-Plug 'rizzatti/dash.vim'   " c-d to lookup at point
+Plug 'rizzatti/dash.vim'       " c-d to lookup at point
 Plug 'lifepillar/vim-cheat40'  " cheat sheet: <leader>?
 
 " navigation
@@ -68,22 +69,22 @@ Plug 'justinmk/vim-sneak'
 
 "" files, buffers, and tags
 Plug 'jlanzarotta/bufexplorer'   " helpful but SLOW
-Plug 'ap/vim-buftabline'  " adds buffer tabs and numbers
-Plug 'dhruvasagar/vim-vinegar'  " - for curdir and adds some netrw behaviors
-Plug 'tpope/vim-eunuch'    " u-nick(s), get it? *nix bits: Find, Rename
+Plug 'ap/vim-buftabline'         " adds buffer tabs and numbers
+Plug 'dhruvasagar/vim-vinegar'   " - for curdir and adds some netrw behaviors
+Plug 'tpope/vim-eunuch'          " u-nick(s), get it? *nix bits: Find, Rename
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
 " colors and UI
-Plug 'airblade/vim-gitgutter' " put chars in gutter
-" Plug 'jeetsukumaran/vim-markology'    " kills syntax hilighting on cur line
-Plug 'kshenoy/vim-signature'          " less cluttered, marks more visible
-Plug 'itchyny/lightline.vim'      " workable. Prob could be done by hand.
-Plug 'luochen1990/rainbow'        " I really like these!
+Plug 'airblade/vim-gitgutter'          " put chars in gutter
+" Plug 'jeetsukumaran/vim-markology'   " kills syntax hilighting on cur line
+Plug 'kshenoy/vim-signature'           " less cluttered, marks more visible
+Plug 'itchyny/lightline.vim'           " workable. Prob could be done by hand.
+Plug 'luochen1990/rainbow'             " I really like these!
 Plug 'itchyny/vim-cursorword'
 Plug 'icymind/NeoSolarized'
-Plug 't9md/vim-choosewin'    " cool idea: on <leader>w
+Plug 't9md/vim-choosewin'              " cool idea: on <leader>w
 
 " languages
 Plug 'sheerun/vim-polyglot'
@@ -496,6 +497,7 @@ nnoremap <leader>ws :ChooseWinSwapStay<cr>
 " direct editing
 nnoremap <leader>ev :e ~/dotfiles/vim-common/common.vim<cr>
 nnoremap <leader>en :e ~/Documents/notes/vim-notes.md<cr>
+nnoremap <leader>em :call EditMacro()<cr> <Plug>em
 
 " Dash for word under point
 nmap <silent> <leader>d <Plug>DashSearch
@@ -595,6 +597,13 @@ let g:python_highlight_all = 1
 " timestamp {{{
 " https://gist.github.com/jelera/783801
 " auto-update the timestamp right before saving a file
+
+function! EditMacro()
+  call inputsave()
+  let g:regToEdit = input('Register to edit: ')
+  call inputrestore()
+  execute "nnoremap <Plug>em :let @" . eval("g:regToEdit") . "='<c-r><c-r>" . eval("g:regToEdit")
+endfunction
 
 autocmd! BufWritePre * :call s:timestamp()
 " to update timestamp when saving if its in the first 20 lines of a file
