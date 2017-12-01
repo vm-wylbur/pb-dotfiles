@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Sun 19 Nov 2017 07:10:45 PM PST>
+" Last Modified: <Wed 22 Nov 2017 11:38:05 PM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -48,6 +48,7 @@ Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
 Plug 'terryma/vim-expand-region'      " + to increase visual selection
 Plug 'tommcdo/vim-exchange'           " cx{motion} to exhange text objs
 Plug 'mbbill/undotree'                " UndotreeToggle to bring it up
+Plug 'machakann/vim-highlightedyank'  " blink
 
 " completion
 " note: YCM never worked and nvim-completion-manager need a lot of config
@@ -271,6 +272,8 @@ set wildignore+=.DS_Store,Icon\?,*.dmg,*.git,*.pyc,*.o,*.obj,*.so,*.swp,*.zip
 set wildmenu " Show possible matches when autocompleting
 set wildignorecase " Ignore case when completing file names and directories
 " }}}}
+
+set inccommand=split
 
 "" Auto commands at save {{{{
 set autoread
