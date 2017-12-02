@@ -6,7 +6,7 @@
 #
 # configurable backup disk names: these are names you give the disk when
 # you format it.
-backup_disk_names="backup-buffer|archives|working-archives|archvies-2018"
+backup_disk_names="backup-buffer|archives|working-archives|archives-2018"
 local_machine_name="petunia"
 
 backup_home="${HOME}"
