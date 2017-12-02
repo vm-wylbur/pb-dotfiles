@@ -3,6 +3,9 @@
 # Garrett Zsh Theme for Prezto
 # Created with modified code by Chauncey Garrett - @chauncey_io
 #
+# crudely hacked by PB
+# Last modified: <Sat 02 Dec 2017 03:35:02 PM PST>
+#
 # http://chauncey.io/projects/zsh-prompt-garrett/
 #
 # A prompt with the information you need the moment you need it.
@@ -202,7 +205,7 @@ function prompt_garrett_preprompt_render() {
 
   # Determine the length needed for prompt_garrett_space.
   # NOTE: Be sure not to include the ${(e)prompt_garrett_space} portion or it won't work.
-  local prompt_line1="${prompt_garrett_upper_left_corner}( ${prompt_garrett_location}:${prompt_garrett_pwd})( ${git_info[remote_status]}${git_info[prompt_info]}${git_info[local_status]} )${prompt_garrett_upper_right_corner}"
+  local prompt_line1="${prompt_garrett_upper_left_corner}( ${prompt_garrett_location}:${prompt_garrett_pwd} )( ${git_info[remote_status]}${git_info[prompt_info]}${git_info[local_status]} )${prompt_garrett_upper_right_corner}"
   local zero='%([BSUbfksu]|([FB]|){*})'
   local prompt_garrett_width_line1=${#${(S%%)prompt_line1//$~zero/}}
 
@@ -215,7 +218,7 @@ function prompt_garrett_preprompt_render() {
   eval prompt_garrett_space="${prompt_garrett_color_prompt}\${(l.${prompt_garrett_space_padding}..${prompt_space_character}.)}"
 
   # Newline + Prompt line 1 (set above PROMPT, below).
-  print -P '\n${prompt_garrett_altchar_enable}${prompt_garrett_color_prompt}${prompt_garrett_upper_left_corner}( ${prompt_garrett_location}:${prompt_garrett_pwd}${prompt_garrett_color_prompt})${prompt_garrett_altchar_enter}${(e)prompt_garrett_space}${prompt_garrett_altchar_leave}( ${git_info[remote_status]}${git_info[prompt_info]}${git_info[local_status]}${prompt_garrett_color_prompt} )${prompt_garrett_upper_right_corner}'
+  print -P '\n${prompt_garrett_altchar_enable}${prompt_garrett_color_prompt}${prompt_garrett_upper_left_corner}( ${prompt_garrett_location}:${prompt_garrett_pwd}${prompt_garrett_color_prompt} )${prompt_garrett_altchar_enter}${(e)prompt_garrett_space}${prompt_garrett_altchar_leave}( ${git_info[remote_status]}${git_info[prompt_info]}${git_info[local_status]}${prompt_garrett_color_prompt} )${prompt_garrett_upper_right_corner}'
 }
 
 # Configure the prompt.
@@ -301,7 +304,8 @@ function prompt_garrett_setup {
     eval prompt_garrett_color_prompt=${1:-'${grey}'}
 
     # Set style.
-    eval prompt_garrett_user=''
+    # eval prompt_garrett_user=''
+    eval prompt_garrett_user='${prompt_garrett_color_user}%n'
     eval prompt_garrett_host='${prompt_garrett_color_host}%m' # hostname up to first . (dot) (use %M for full hostname)
     eval prompt_garrett_location='${prompt_garrett_user}${cyan}@${prompt_garrett_host}' # user@host.name
   fi
@@ -447,7 +451,7 @@ function prompt_garrett_setup {
 
   # Left prompt; nested shell level.
   else
-    export PROMPT='${prompt_garrett_color_prompt}${prompt_garrett_lower_left_corner}( ${cyan}$SHLVL ${prompt_garrett_color_prompt}) ${editor_info[keymap]}'
+    export PROMPT='${prompt_garrett_color_prompt}${prompt_garrett_lower_left_corner}( ${cyan}$SHLVL ${prompt_garrett_color_prompt} ) ${editor_info[keymap]}'
   fi
 
   # Right prompt.
