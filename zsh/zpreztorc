@@ -1,5 +1,5 @@
 #
-# :Last Modified: <Sat 02 Dec 2017 12:32:38 PM PST>
+# :Last Modified: <Sat 02 Dec 2017 01:40:52 PM PST>
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :Customized: PB
 
@@ -35,7 +35,6 @@ zstyle ':prezto:load' pmodule \
   'completion' \
   'git' \
   'fasd' \
-  'prompt' \
   'osx' \
   'syntax-highlighting' \
   'history-substring-search' \
@@ -118,7 +117,7 @@ zstyle ':prezto:module:git:alias' skip 'yes'
 # Set the prompt theme to load.
 # Setting it to 'random' loads a random theme.
 # Auto set to 'off' on dumb terminals.
-zstyle ':prezto:module:prompt' theme 'sorin'
+zstyle ':prezto:module:prompt' theme 'pball'
 
 # Set the working directory prompt display length.
 # By default, it is set to 'short'. Set it to 'long' (without '~' expansion)
