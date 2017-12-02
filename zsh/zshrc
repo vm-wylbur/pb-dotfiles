@@ -1,7 +1,7 @@
 #
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Sat 02 Dec 2017 12:38:59 PM PST>
+# Last modified: <Sat 02 Dec 2017 01:18:37 PM PST>
 #
 # Executes commands at the start of an interactive session.
 
@@ -55,6 +55,10 @@ alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
 
 # ---env vars-----
 export EDITOR='vim'
+export LANG='en_US.UTF-8';
+export LC_ALL='en_US.UTF-8';
+
+export HOMEBREW_GITHUB_API_TOKEN="7105df98ca887eda6aa4125926a86945b5da40bd"
 
 export LOCALGIT="/Users/pball/projects"
 export HRDAGGIT="$LOCALGIT/hrdag"
