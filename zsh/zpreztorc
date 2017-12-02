@@ -1,5 +1,5 @@
 #
-# :Last Modified: <Sat 02 Dec 2017 12:01:05 PM PST>
+# :Last Modified: <Sat 02 Dec 2017 12:32:38 PM PST>
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :Customized: PB
 
@@ -33,6 +33,7 @@ zstyle ':prezto:load' pmodule \
   'spectrum' \
   'utility' \
   'completion' \
+  'git' \
   'fasd' \
   'prompt' \
   'osx' \
@@ -71,9 +72,10 @@ zstyle ':prezto:module:editor' ps-context 'yes'
 #
 # Git
 #
-
 # Ignore submodules when they are 'dirty', 'untracked', 'all', or 'none'.
-# zstyle ':prezto:module:git:status:ignore' submodules 'all'
+zstyle ':prezto:module:git:status:ignore' submodules 'all'
+# disable aliases
+zstyle ':prezto:module:git:alias' skip 'yes'
 
 #
 # GNU Utility

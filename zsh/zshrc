@@ -1,7 +1,7 @@
 #
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Fri 01 Dec 2017 01:53:53 PM PST>
+# Last modified: <Sat 02 Dec 2017 12:38:59 PM PST>
 #
 # Executes commands at the start of an interactive session.
 
@@ -20,6 +20,44 @@ fi
 # PB additions here
 bindkey -v '^?' backward-delete-char
 export TERM=xterm-256color
-set -o emacs
+
+# ---paths-----
+# this starts with the output of /usr/libexec/path_helper
+PATH="/usr/local/sbin:$PATH"
+PATH+=":$HOME/bin"
+PATH+=":$HOME/anaconda3/bin"
+PATH+=":/Applications/RStudio.app/Contents/MacOS/pandoc"
+PATH+=":$HOME/projects/hrdag/snap/bin"
+export PATH
+
+
+# ---aliases-----
+alias gs="git status"
+# alias gl="git log --graph --pretty=oneline --abbrev-commit"
+# alias gl='git log --pretty=format:"%h%x09%an%x09%ad%x09%s"'
+alias gl="$HOME/bin/git-log-compact"
+
+alias mm="make -f src/Makefile"
+alias ccat="pygmentize $1"
+
+# List all files colorized in long format
+# Detect which `ls` flavor is in use
+if ls --color > /dev/null 2>&1; then # GNU `ls`
+	colorflag="--color"
+else # OS X `ls`
+	colorflag="-G"
+fi
+alias ll="ls -ltrF ${colorflag}"
+# List all files colorized in long format, including dot files
+alias la="ls -laF ${colorflag}"
+# List only directories
+alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
+
+# ---env vars-----
+export EDITOR='vim'
+
+export LOCALGIT="/Users/pball/projects"
+export HRDAGGIT="$LOCALGIT/hrdag"
+export PERSONALGIT="$LOCALGIT/personal"
 
 # done.
