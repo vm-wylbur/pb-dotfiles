@@ -1,7 +1,7 @@
 #
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Mon 04 Dec 2017 02:20:48 PM PST>
+# Last modified: <Mon 04 Dec 2017 02:23:22 PM PST>
 #
 # Executes commands at the start of an interactive session.
 
