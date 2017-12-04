@@ -1,7 +1,7 @@
 #
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Sat 02 Dec 2017 01:18:37 PM PST>
+# Last modified: <Sun 03 Dec 2017 04:15:38 PM PST>
 #
 # Executes commands at the start of an interactive session.
 
@@ -37,6 +37,8 @@ alias gs="git status"
 # alias gl="git log --graph --pretty=oneline --abbrev-commit"
 # alias gl='git log --pretty=format:"%h%x09%an%x09%ad%x09%s"'
 alias gl="$HOME/bin/git-log-compact"
+alias gd="git diff"
+alias gdc="git diff --cached"
 
 alias mm="make -f src/Makefile"
 alias ccat="pygmentize $1"
