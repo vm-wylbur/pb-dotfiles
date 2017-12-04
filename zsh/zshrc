@@ -1,7 +1,7 @@
 #
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Mon 04 Dec 2017 02:23:22 PM PST>
+# Last modified: <Mon 04 Dec 2017 02:25:37 PM PST>
 #
 # Executes commands at the start of an interactive session.
 
@@ -67,7 +67,12 @@ alias la="ls -laF ${colorflag}"
 alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
 
 # overriding alias=j in zprezto's fasd module: use fzf, don't print scores
-alias j='xdir=$(fasd -ld | tail -r | fzf) && cd "$xdir"'
+if hash tac 2>/dev/null ; then
+  TAC="tac"
+else
+  TAC="gtac"
+fi
+alias j='xdir=$(fasd -ld | $TAC | fzf) && cd "$xdir"'
 
 # ---env vars-----
 export EDITOR='vim'
