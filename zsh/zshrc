@@ -1,7 +1,7 @@
 #
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Sun 03 Dec 2017 04:15:38 PM PST>
+# Last modified: <Mon 04 Dec 2017 02:20:48 PM PST>
 #
 # Executes commands at the start of an interactive session.
 
@@ -18,7 +18,6 @@ fi
 
 # Customize to your needs...
 # PB additions here
-bindkey -v '^?' backward-delete-char
 export TERM=xterm-256color
 
 # ---paths-----
@@ -31,6 +30,17 @@ PATH+=":$HOME/projects/hrdag/snap/bin"
 PATH+=":$HOME/.cargo/bin"
 export PATH
 
+
+# ---shell options-----
+setopt APPEND_HISTORY
+setopt BANG_HIST
+setopt EXTENDED_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt INC_APPEND_HISTORY
+setopt AUTO_PUSHD
+setopt PUSHD_IGNORE_DUPS
+setopt CHASE_LINKS
+setopt ALWAYS_TO_END
 
 # ---aliases-----
 alias gs="git status"
@@ -56,15 +66,31 @@ alias la="ls -laF ${colorflag}"
 # List only directories
 alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
 
+# overriding alias=j in zprezto's fasd module: use fzf, don't print scores
+alias j='xdir=$(fasd -ld | tail -r | fzf) && cd "$xdir"'
+
 # ---env vars-----
 export EDITOR='vim'
 export LANG='en_US.UTF-8';
 export LC_ALL='en_US.UTF-8';
 
+# ---for zsh-----
+export KEYTIMEOUT=1
+bindkey -v
+bindkey '^?' backward-delete-char
+bindkey '^P' up-history
+bindkey '^N' down-history
+bindkey '^?' backward-delete-char
+bindkey '^h' backward-delete-char
+bindkey '^w' backward-kill-word
+bindkey '^r' history-incremental-search-backward
+
+# ---local-----
 export HOMEBREW_GITHUB_API_TOKEN="7105df98ca887eda6aa4125926a86945b5da40bd"
 
 export LOCALGIT="/Users/pball/projects"
 export HRDAGGIT="$LOCALGIT/hrdag"
 export PERSONALGIT="$LOCALGIT/personal"
 
+prompt pball
 # done.
