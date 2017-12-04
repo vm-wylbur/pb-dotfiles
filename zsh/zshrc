@@ -1,7 +1,7 @@
 #
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Mon 04 Dec 2017 02:25:37 PM PST>
+# Last modified: <Mon 04 Dec 2017 03:33:39 PM PST>
 #
 # Executes commands at the start of an interactive session.
 
@@ -15,6 +15,18 @@ esac
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
+
+# init fasd on eleanor; fasd is part of pretzo on petunia
+case $HOSTNAME in
+  (petunia) SED="gsed" ;;
+  (eleanor)
+    eval "$(fasd --init auto)"
+    SED="sed"
+    ;;
+  (*) eval "$(fasd --init auto)"
+    SED="sed"
+    ;;
+esac
 
 # Customize to your needs...
 # PB additions here
@@ -42,6 +54,9 @@ setopt PUSHD_IGNORE_DUPS
 setopt CHASE_LINKS
 setopt ALWAYS_TO_END
 
+# setting up fzf keybindings
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 # ---aliases-----
 alias gs="git status"
 # alias gl="git log --graph --pretty=oneline --abbrev-commit"
@@ -67,12 +82,10 @@ alias la="ls -laF ${colorflag}"
 alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
 
 # overriding alias=j in zprezto's fasd module: use fzf, don't print scores
-if hash tac 2>/dev/null ; then
-  TAC="tac"
-else
-  TAC="gtac"
-fi
-alias j='xdir=$(fasd -ld | $TAC | fzf) && cd "$xdir"'
+alias j='xdir=$(fasd -ld | fzf --tac) && cd "$xdir"'
+
+# use fzf for history search
+alias h='print -z $(fc -l 1 | fzf +s --tac | $SED -re "s/^\s*[0-9]+\s*//")'
 
 # ---env vars-----
 export EDITOR='vim'
@@ -99,3 +112,4 @@ export PERSONALGIT="$LOCALGIT/personal"
 
 prompt pball
 # done.
+
