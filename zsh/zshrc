@@ -1,7 +1,7 @@
 #
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Sun 03 Dec 2017 04:15:38 PM PST>
+# Last modified: <Sun 03 Dec 2017 07:00:53 PM PST>
 #
 # Executes commands at the start of an interactive session.
 
@@ -67,4 +67,6 @@ export LOCALGIT="/Users/pball/projects"
 export HRDAGGIT="$LOCALGIT/hrdag"
 export PERSONALGIT="$LOCALGIT/personal"
 
+
+prompt pball
 # done.
