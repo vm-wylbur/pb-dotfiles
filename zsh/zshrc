@@ -1,7 +1,7 @@
 #
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Mon 04 Dec 2017 03:33:39 PM PST>
+# Last modified: <Mon 04 Dec 2017 03:39:55 PM PST>
 #
 # Executes commands at the start of an interactive session.
 
@@ -17,7 +17,7 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
 fi
 
 # init fasd on eleanor; fasd is part of pretzo on petunia
-case $HOSTNAME in
+case $HOST in
   (petunia) SED="gsed" ;;
   (eleanor)
     eval "$(fasd --init auto)"
