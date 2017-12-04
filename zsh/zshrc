@@ -28,6 +28,7 @@ PATH+=":$HOME/bin"
 PATH+=":$HOME/anaconda3/bin"
 PATH+=":/Applications/RStudio.app/Contents/MacOS/pandoc"
 PATH+=":$HOME/projects/hrdag/snap/bin"
+PATH+=":$HOME/.cargo/bin"
 export PATH
 
 
