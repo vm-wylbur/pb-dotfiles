@@ -1,5 +1,5 @@
 #
-# :Last Modified: <Sat 02 Dec 2017 03:27:14 PM PST>
+# :Last Modified: <Mon 04 Dec 2017 10:04:31 PM PST>
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :Customized: PB
 
@@ -60,7 +60,7 @@ zstyle ':prezto:load' pmodule \
 #
 
 # Set the key mapping style to 'emacs' or 'vi'.
-zstyle ':prezto:module:editor' key-bindings 'vi'
+zstyle ':prezto:module:editor' key-bindings 'emacs'
 
 # Auto convert .... to ../..
 zstyle ':prezto:module:editor' dot-expansion 'yes'

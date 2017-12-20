@@ -1,7 +1,7 @@
 #
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Mon 04 Dec 2017 03:39:55 PM PST>
+# Last modified: <Tue 19 Dec 2017 04:56:27 PM PST>
 #
 # Executes commands at the start of an interactive session.
 
@@ -35,8 +35,8 @@ export TERM=xterm-256color
 # ---paths-----
 # this starts with the output of /usr/libexec/path_helper
 PATH="/usr/local/sbin:$PATH"
+PATH="$HOME/anaconda3/bin:$PATH"
 PATH+=":$HOME/bin"
-PATH+=":$HOME/anaconda3/bin"
 PATH+=":/Applications/RStudio.app/Contents/MacOS/pandoc"
 PATH+=":$HOME/projects/hrdag/snap/bin"
 PATH+=":$HOME/.cargo/bin"
@@ -94,7 +94,7 @@ export LC_ALL='en_US.UTF-8';
 
 # ---for zsh-----
 export KEYTIMEOUT=1
-bindkey -v
+bindkey -e
 bindkey '^?' backward-delete-char
 bindkey '^P' up-history
 bindkey '^N' down-history
@@ -102,6 +102,9 @@ bindkey '^?' backward-delete-char
 bindkey '^h' backward-delete-char
 bindkey '^w' backward-kill-word
 bindkey '^r' history-incremental-search-backward
+
+autoload -U zmv
+
 
 # ---local-----
 export HOMEBREW_GITHUB_API_TOKEN="7105df98ca887eda6aa4125926a86945b5da40bd"
