@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Thu 30 Nov 2017 07:31:23 PM PST>
+" Last Modified: <Sat 30 Dec 2017 09:36:33 PM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -84,8 +84,10 @@ Plug 'kshenoy/vim-signature'           " less cluttered, marks more visible
 Plug 'itchyny/lightline.vim'           " workable. Prob could be done by hand.
 Plug 'luochen1990/rainbow'             " I really like these!
 Plug 'itchyny/vim-cursorword'
-Plug 'icymind/NeoSolarized'
 Plug 't9md/vim-choosewin'              " cool idea: on <leader>w
+Plug 'icymind/NeoSolarized'
+Plug 'joshdick/onedark.vim'
+Plug 'mhartington/oceanic-next'
 
 " languages
 Plug 'sheerun/vim-polyglot'
@@ -111,20 +113,28 @@ call plug#end()
 " plugin configs {{{
 
 " other solarized have bad colors in terminal
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 colorscheme NeoSolarized
+" colorscheme onedark
+
+let g:oceanic_next_terminal_bold = 1
+let g:oceanic_next_terminal_italic = 1
+" colorscheme OceanicNext
+
 let g:neosolarized_bold = 1
 let g:neosolarized_underline = 1
 let g:neosolarized_italic = 1
 let g:neosolarized_vertSplitBgTrans = 0
 let g:neosolarized_contrast = "high"
+set background=dark
 
 let g:jedi#force_py_version = 3
 
 highlight Comment cterm=italic
 highlight Comment gui=italic
 " change cursor shape with mode
-let &t_ZH="\e[3m"
-let &t_ZR="\e[23m"
+" let &t_ZH="\e[3m"
+" let &t_ZR="\e[23m"
 
 let g:gitgutter_eager = 0
 let g:gitgutter_async = 1
@@ -222,7 +232,7 @@ let g:scratch_autohide = 1
 
 "" basics {{{{
 set termguicolors
-set background=dark
+" set background=dark
 syntax on
 set ruler
 set relativenumber

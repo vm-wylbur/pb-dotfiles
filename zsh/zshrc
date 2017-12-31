@@ -1,7 +1,7 @@
 #
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Tue 19 Dec 2017 04:56:27 PM PST>
+# Last modified: <Sun 31 Dec 2017 11:42:04 AM PST>
 #
 # Executes commands at the start of an interactive session.
 
@@ -16,6 +16,7 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
+# ---PB additions below-----
 # init fasd on eleanor; fasd is part of pretzo on petunia
 case $HOST in
   (petunia) SED="gsed" ;;
@@ -28,9 +29,9 @@ case $HOST in
     ;;
 esac
 
-# Customize to your needs...
-# PB additions here
+# colors
 export TERM=xterm-256color
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=22'
 
 # ---paths-----
 # this starts with the output of /usr/libexec/path_helper
@@ -102,6 +103,7 @@ bindkey '^?' backward-delete-char
 bindkey '^h' backward-delete-char
 bindkey '^w' backward-kill-word
 bindkey '^r' history-incremental-search-backward
+bindkey '^ ' autosuggest-accept
 
 autoload -U zmv
 

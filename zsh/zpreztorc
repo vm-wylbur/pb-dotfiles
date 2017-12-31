@@ -1,5 +1,5 @@
 #
-# :Last Modified: <Mon 04 Dec 2017 10:04:31 PM PST>
+# :Last Modified: <Sat 30 Dec 2017 10:01:10 PM PST>
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :Customized: PB
 
@@ -38,6 +38,7 @@ zstyle ':prezto:load' pmodule \
   'osx' \
   'syntax-highlighting' \
   'history-substring-search' \
+  'autosuggestions' \
   'prompt'
 
 #
@@ -46,11 +47,11 @@ zstyle ':prezto:load' pmodule \
 
 # Set the query found color.
 # zstyle ':prezto:module:autosuggestions:color' found ''
+zstyle ':prezto:module:autosuggestions' color 'yes'
 
 #
 # Completions
 #
-
 # Set the entries to ignore in static */etc/hosts* for host completion.
 # zstyle ':prezto:module:completion:*:hosts' etc-host-ignores \
 #   '0.0.0.0' '127.0.0.1'
