@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Sat 30 Dec 2017 09:36:33 PM PST>
+" Last Modified: <Tue 09 Jan 2018 01:10:16 PM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -66,7 +66,7 @@ Plug 'rizzatti/dash.vim'       " c-d to lookup at point
 Plug 'lifepillar/vim-cheat40'  " cheat sheet: <leader>?
 
 " navigation
-Plug 'justinmk/vim-sneak'
+Plug 'justinmk/vim-sneak'        " I should use this more.
 
 "" files, buffers, and tags
 Plug 'jlanzarotta/bufexplorer'   " helpful but SLOW
@@ -83,8 +83,8 @@ Plug 'airblade/vim-gitgutter'          " put chars in gutter
 Plug 'kshenoy/vim-signature'           " less cluttered, marks more visible
 Plug 'itchyny/lightline.vim'           " workable. Prob could be done by hand.
 Plug 'luochen1990/rainbow'             " I really like these!
-Plug 'itchyny/vim-cursorword'
-Plug 't9md/vim-choosewin'              " cool idea: on <leader>w
+Plug 'itchyny/vim-cursorword'          " this works w * operator
+" Plug 't9md/vim-choosewin'              " cool idea: on <leader>w
 Plug 'icymind/NeoSolarized'
 Plug 'joshdick/onedark.vim'
 Plug 'mhartington/oceanic-next'
@@ -96,7 +96,7 @@ Plug 'lervag/vimtex'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'reedes/vim-pencil'
 Plug 'tpope/vim-fugitive'
-Plug 'tmhedberg/SimpylFold'
+Plug 'tmhedberg/SimpylFold'            " folding for python, za/zc
 
 " markdown stuff
 Plug 'vim-pandoc/vim-pandoc'
