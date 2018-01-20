@@ -1,7 +1,7 @@
 #
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Sun 31 Dec 2017 11:42:04 AM PST>
+# Last modified: <Sat 20 Jan 2018 12:41:47 PM PST>
 #
 # Executes commands at the start of an interactive session.
 
@@ -54,6 +54,7 @@ setopt AUTO_PUSHD
 setopt PUSHD_IGNORE_DUPS
 setopt CHASE_LINKS
 setopt ALWAYS_TO_END
+setopt rm_star_silent
 
 # setting up fzf keybindings
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -68,6 +69,8 @@ alias gdc="git diff --cached"
 
 alias mm="make -f src/Makefile"
 alias ccat="pygmentize $1"
+
+unalias rm
 
 # List all files colorized in long format
 # Detect which `ls` flavor is in use
