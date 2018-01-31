@@ -4,6 +4,7 @@
 *cache
 *cacheable*
 */Maildir/*
+*/projects/hrdag/*
 */.mu/*
 *.DS_Store
 */.Trash/*
