@@ -1,7 +1,7 @@
 #
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Sat 20 Jan 2018 12:41:47 PM PST>
+# Last modified: <Tue 13 Feb 2018 06:30:49 PM PST>
 #
 # Executes commands at the start of an interactive session.
 
@@ -118,6 +118,8 @@ export LOCALGIT="/Users/pball/projects"
 export HRDAGGIT="$LOCALGIT/hrdag"
 export PERSONALGIT="$LOCALGIT/personal"
 
+# this gets lost somehow
+zstyle ':prezto:module:prompt' pwd-length 'long'
 prompt pball
 # done.
 
