@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Tue 09 Jan 2018 01:10:16 PM PST>
+" Last Modified: <Sat 17 Mar 2018 05:56:39 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -286,7 +286,7 @@ set wildmenu " Show possible matches when autocompleting
 set wildignorecase " Ignore case when completing file names and directories
 " }}}}
 
-set inccommand=split
+" set inccommand=split
 
 "" Auto commands at save {{{{
 set autoread
@@ -388,7 +388,7 @@ endif
 "" * A-x keys move among windows and do not-vimmy stuff
 
 "" mapleader {{{{
-let g:mapleader='\'
+let g:mapleader='+'
 "" }}}}
 
 "" PB specific remaps {{{{
@@ -480,11 +480,12 @@ tnoremap jk <c-\><c-n>:q<cr>
 " }}}
 "
 " leader {{{
-"" the big picture here is:
+"" the big picture hire is:
 "" * a small number of important keys get single-char leader
 
 "" PB specifics {{{{
 nnoremap <leader>x :so %<CR>
+nnoremap <leader>w :w<CR>
 nnoremap <leader>m :History<CR>
 " BufExplorer is pretty much emacs
 nnoremap <leader>b :BufExplorer<CR>
@@ -505,9 +506,9 @@ inoremap <c-x><c-l> <plug>(fzf-complete-line)
 " :nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
 
 " shadowing : commands
-nnoremap <leader>w :ChooseWin<cr>
-nnoremap <leader>wt :ChooseWinSwap<cr>
-nnoremap <leader>ws :ChooseWinSwapStay<cr>
+" nnoremap <leader>w :ChooseWin<cr>
+" nnoremap <leader>wt :ChooseWinSwap<cr>
+" nnoremap <leader>ws :ChooseWinSwapStay<cr>
 
 " direct editing
 nnoremap <leader>ev :e ~/dotfiles/vim-common/common.vim<cr>
