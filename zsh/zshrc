@@ -1,7 +1,7 @@
 #
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Tue 13 Feb 2018 06:30:49 PM PST>
+# Last modified: <Tue 27 Mar 2018 05:36:24 PM PDT>
 #
 # Executes commands at the start of an interactive session.
 
@@ -68,6 +68,7 @@ alias gd="git diff"
 alias gdc="git diff --cached"
 
 alias mm="make -f src/Makefile"
+alias nm="nvim src/Makefile"
 alias ccat="pygmentize $1"
 
 unalias rm

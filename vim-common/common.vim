@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Sat 17 Mar 2018 05:56:39 PM PDT>
+" Last Modified: <Tue 20 Mar 2018 08:44:35 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -388,7 +388,7 @@ endif
 "" * A-x keys move among windows and do not-vimmy stuff
 
 "" mapleader {{{{
-let g:mapleader='+'
+let g:mapleader='\'
 "" }}}}
 
 "" PB specific remaps {{{{
