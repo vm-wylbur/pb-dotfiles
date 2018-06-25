@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Tue 20 Mar 2018 08:44:35 PM PDT>
+" Last Modified: <Sun 13 May 2018 03:02:18 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -39,15 +39,15 @@ Plug 'tpope/vim-repeat'               " doesn't work? config for surround
 " screen and window management
 Plug 'mhinz/vim-startify'             " cute!
 
-"" editing and formatting
+" editing and formatting
 Plug 'tpope/vim-surround'             " adds surround action to create cmts
-Plug 'tpope/vim-abolish'
+" Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'           " wow, all the time.
 Plug 'tpope/vim-unimpaired'           " many additional movements with [ and ]
 Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
-Plug 'terryma/vim-expand-region'      " + to increase visual selection
+" Plug 'terryma/vim-expand-region'      " + to increase visual selection
 Plug 'tommcdo/vim-exchange'           " cx{motion} to exhange text objs
-Plug 'mbbill/undotree'                " UndotreeToggle to bring it up
+" Plug 'mbbill/undotree'                " UndotreeToggle to bring it up
 Plug 'machakann/vim-highlightedyank'  " blink
 
 " completion
