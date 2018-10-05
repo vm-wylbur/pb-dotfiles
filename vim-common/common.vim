@@ -1,8 +1,8 @@
 " Preamble {{{
 "
-" Last Modified: <Sun 13 May 2018 03:02:18 PM PDT>
+" Last Modified: <Wed 03 Oct 2018 09:18:07 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
-" (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
+" (c) 2018 [HRDAG](https://hrdag.org), GPL-2 or later
 "
 " on github at
 "    git@github.com:vm-wylbur/pb-dotfiles.git
