@@ -1,11 +1,10 @@
 #!/bin/bash
 
 # based on https://blog.interlinked.org/tutorials/rsync_time_machine.html
-# PB, 2016-03-12T19:01
+# PB, 2018-10-07
 # adapted for petunia
 #
-# configurable backup disk names: these are names you give the disk when
-# you format it.
+# configurable backup disk names
 backup_disk_names="backup-buffer|archives|working-archives|archives-2018"
 local_machine_name="petunia"
 

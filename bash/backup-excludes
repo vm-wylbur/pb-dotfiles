@@ -62,3 +62,28 @@
 *Trash*
 */.snap/*
 */.com.apple*
+*/TexShop/*
+*/Library/Preferences/ByHost
+*/Library/Preferences/com.*
+*/Library/Logs/*
+*/Library/LanguageModeling/*
+*/Library/Group\ Containers/*
+*/Library/Fonts/*
+*/Library/Google/*
+*/Library/Application\ Support/iMazing/*
+*/Library/Application\ Support/Google/*
+*/Library/Application\ Support/Adobe/*
+*/Library/Application\ Support/BlueJeans/*
+*/Library/Application\ Support/CloudDocs/*
+*/Library/Application\ Support/Dropbox/*
+*/Library/Application\ Support/Dropbox/*
+~/.rstudio-desktop/*
+~/.undodir/*
+~/.zoomus/*
+
+
+
+
+
+
+
