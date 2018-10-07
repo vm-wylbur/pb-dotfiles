@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Sun 13 May 2018 03:02:18 PM PDT>
+" Last Modified: <Mon 06 Aug 2018 02:33:46 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2017 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -54,7 +54,7 @@ Plug 'machakann/vim-highlightedyank'  " blink
 " note: YCM never worked
 "       nvim-completion-manager works on eleanor but not petunia
 "       deoplete works on petunia but not eleanor
-if hostname() == 'eleanor'
+if hostname() == 'eleanor' || has('gui_macvim')
   Plug 'roxma/nvim-completion-manager'
 else
   Plug 'zchee/deoplete-jedi'
@@ -501,6 +501,8 @@ nnoremap <leader>a :Ag<space>
 nnoremap <leader>f :Files<space>
 nnoremap <leader>` :Marks<CR>
 inoremap <c-x><c-l> <plug>(fzf-complete-line)
+
+vnoremap <leader>v c[<C-r>"](<Esc>"*pli)<Esc>
 
 " this is a demo, wraps viw in double-q
 " :nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
