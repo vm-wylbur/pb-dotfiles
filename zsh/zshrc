@@ -1,7 +1,7 @@
 #
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Thu 04 Oct 2018 05:31:02 PM PDT>
+# Last modified: <Thu 04 Oct 2018 05:57:43 PM PDT>
 #
 # Executes commands at the start of an interactive session.
 
@@ -74,6 +74,13 @@ alias gs="git status"
 alias gl="$HOME/bin/git-log-compact"
 alias gd="git diff"
 alias gdc="git diff --cached"
+
+alias gcc="gcc-8"
+alias gcov="gcov-8"
+alias g++="g++-8"
+alias cpp="cpp-8"
+alias c++="c++-8"
+
 
 alias mm="make -f src/Makefile"
 alias nm="nvim src/Makefile"
