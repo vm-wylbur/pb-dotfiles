@@ -1,7 +1,7 @@
 #
 # :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Thu 04 Oct 2018 05:57:43 PM PDT>
+# Last modified: <Sun 07 Oct 2018 08:28:16 PM PDT>
 #
 # Executes commands at the start of an interactive session.
 
@@ -40,9 +40,10 @@ PATH="$HOME/anaconda3/bin:$PATH"
 PATH+=":$HOME/bin"
 PATH+=":/Applications/RStudio.app/Contents/MacOS/pandoc"
 PATH+=":$HOME/projects/hrdag/snap/bin"
+PATH+=":$HOME/projects/hrdag/resource-utils/bin"
 PATH+=":$HOME/.cargo/bin"
 export PATH
-fpath=( "$HOME/dotfiles/zsh/zfunctions" $fpath )
+export fpath=( "$HOME/dotfiles/zsh/zfunctions" $fpath )
 
 # ---shell options-----
 setopt AUTO_PUSHD
@@ -151,11 +152,7 @@ prompt_pure_pieces=(
   prompt_pure_render_vcs
   prompt_pure_render_exec_time
 )
-# prompt_pure_pieces=(
-# 	${prompt_pure_pieces:0:2}
-# 	prompt_custom
-# 	${prompt_pure_pieces:2}
-#   )
 
+source ~/.iterm2_shell_integration.zsh
 # done.
 
