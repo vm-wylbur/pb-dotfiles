@@ -1,7 +1,6 @@
 #
-# :Author: Sorin Ionescu <sorin.ionescu@gmail.com>
 # :customized: PB
-# Last modified: <Sun 07 Oct 2018 08:28:16 PM PDT>
+# Last modified: <Mon 08 Oct 2018 07:02:15 PM PDT>
 #
 # Executes commands at the start of an interactive session.
 
@@ -16,10 +15,20 @@ esac
 #  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 # fi
 
+# ---functions -----
+function chpwd() {
+  emulate -L zsh
+  ls -ltrFG --color
+}
+
 # ---PB additions below-----
 # init fasd on eleanor; fasd is part of pretzo on petunia
 case $HOST in
   (petunia) SED="gsed" ;;
+  (henwen)
+    eval "$(fasd --init auto)"
+    SED="sed"
+    ;;
   (eleanor)
     eval "$(fasd --init auto)"
     SED="sed"
@@ -31,17 +40,17 @@ esac
 
 # colors
 export TERM=xterm-256color
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=22'
+export ZSH_THEME="agnoster"
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=black,bold'
 
 # ---paths-----
 # this starts with the output of /usr/libexec/path_helper
-PATH="/usr/local/sbin:$PATH"
+PATH="/usr/local/sbin:$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:$PATH"
 PATH="$HOME/anaconda3/bin:$PATH"
 PATH+=":$HOME/bin"
 PATH+=":/Applications/RStudio.app/Contents/MacOS/pandoc"
 PATH+=":$HOME/projects/hrdag/snap/bin"
 PATH+=":$HOME/projects/hrdag/resource-utils/bin"
-PATH+=":$HOME/.cargo/bin"
 export PATH
 export fpath=( "$HOME/dotfiles/zsh/zfunctions" $fpath )
 
@@ -89,18 +98,10 @@ alias ccat="pygmentize $1"
 
 # unalias rm
 
-# List all files colorized in long format
-# Detect which `ls` flavor is in use
-if ls --color > /dev/null 2>&1; then # GNU `ls`
-	colorflag="--color"
-else # OS X `ls`
-	colorflag="-G"
-fi
-alias ll="ls -ltrF ${colorflag}"
-# List all files colorized in long format, including dot files
-alias la="ls -laF ${colorflag}"
+alias ll="ls -ltrFG --color"
+alias la="ls -laFG  --color"
 # List only directories
-alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
+alias lsd="ls -lF --color | grep --color=never '^d'"
 
 # overriding alias=j in zprezto's fasd module: use fzf, don't print scores
 alias j='xdir=$(fasd -ld | fzf --tac) && cd "$xdir"'
@@ -128,7 +129,6 @@ bindkey '^ ' autosuggest-accept
 autoload -U zmv
 autoload -U promptinit; promptinit
 
-
 # ---local-----
 export HOMEBREW_GITHUB_API_TOKEN="7105df98ca887eda6aa4125926a86945b5da40bd"
 
@@ -153,6 +153,7 @@ prompt_pure_pieces=(
   prompt_pure_render_exec_time
 )
 
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/.iterm2_shell_integration.zsh
 # done.
 
