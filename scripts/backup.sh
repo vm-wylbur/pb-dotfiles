@@ -6,7 +6,7 @@
 #
 # configurable backup disk names
 backup_disk_names="backup-buffer|archives|working-archives|archives-2018"
-local_machine_name="petunia"
+local_machine_name="henwen"
 
 backup_home="${HOME}"
 rsync_opts="--archive --one-file-system --hard-links --delete "
@@ -27,7 +27,7 @@ if [ ! -d "$backup_path" ]; then
 fi
 
 datestr=`date "+%Y-%m-%dT%H_%M_%S"`
-backup_excludes="${backup_home}/dotfiles/bash/backup-excludes"
+backup_excludes="${backup_home}/dotfiles/config/backup-excludes"
 backup_current="${backup_path}/current"
 backup_final="${backup_path}/back-${datestr}"
 dirs_to_backup="${backup_home}"
