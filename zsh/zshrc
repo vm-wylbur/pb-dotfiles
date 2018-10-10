@@ -1,6 +1,6 @@
 #
 # :customized: PB
-# Last modified: <Tue 09 Oct 2018 08:38:54 AM PDT>
+# Last modified: <Tue 09 Oct 2018 01:21:54 PM PDT>
 #
 # Executes commands at the start of an interactive session.
 
@@ -91,7 +91,9 @@ alias g++="g++-8"
 alias cpp="cpp-8"
 alias c++="c++-8"
 
-
+alias '..'='cd ..'
+alias '...'='cd ../..'
+alias '....'='cd ../../..'
 alias mm="make -f src/Makefile"
 alias nm="nvim src/Makefile"
 alias ccat="pygmentize $1"
@@ -128,6 +130,9 @@ bindkey '^ ' autosuggest-accept
 
 autoload -U zmv
 autoload -U promptinit; promptinit
+autoload -U select-word-style
+zle -N select-word-style
+bindkey '\ez' select-word-style
 
 # ---local-----
 export HOMEBREW_GITHUB_API_TOKEN="7105df98ca887eda6aa4125926a86945b5da40bd"

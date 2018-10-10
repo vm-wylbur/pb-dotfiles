@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # based on https://blog.interlinked.org/tutorials/rsync_time_machine.html
-# PB, 2018-10-07
-# adapted for petunia
+# PB, 2018-10-09
+# adapted for petunia, henwen
 #
 # configurable backup disk names
 backup_disk_names="backup-buffer|archives|working-archives|archives-2018"
@@ -10,8 +10,10 @@ local_machine_name="henwen"
 
 backup_home="${HOME}"
 rsync_opts="--archive --one-file-system --hard-links --delete "
-rsync_opts="${rsync_opts} --delete-excluded --safe-links --partial --progress"
-rsync_opts="${rsync_opts} --relative"
+rsync_opts+="--delete-excluded --safe-links --partial --progress "
+rsync_opts+="--relative"
+# rsync_opts="${rsync_opts} --delete-excluded --safe-links --partial --progress"
+# rsync_opts="${rsync_opts} --relative"
 
 # check for specific volume mounted anywhere.
 backup_mntd=$(ls -1 /Volumes/ | egrep "${backup_disk_names}")
@@ -20,13 +22,12 @@ if [ -z "$backup_mntd" ] ; then
     exit 1
 fi
 
-pbhome="/Users/pball/"
 backup_path="/Volumes/${backup_mntd}/${local_machine_name}-backups"
 if [ ! -d "$backup_path" ]; then
     mkdir -p "$backup_path"
 fi
 
-datestr=`date "+%Y-%m-%dT%H_%M_%S"`
+datestr=$(date "+%Y-%m-%dT%H_%M_%S")
 backup_excludes="${backup_home}/dotfiles/config/backup-excludes"
 backup_current="${backup_path}/current"
 backup_final="${backup_path}/back-${datestr}"
@@ -48,7 +49,6 @@ else
 fi
 
 # todo: ignore error 24 bc that's just filesystem churn.
-
 
 echo "Backing up to tmp, will be ${backup_final}"
 rsync $rsync_opts \
