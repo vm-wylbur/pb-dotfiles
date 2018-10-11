@@ -1,89 +1,62 @@
-*cache/*
-*Cache/*
-*Caches/*
-*cache
-*cacheable*
-*/Maildir/*
-*/projects/hrdag/*
-*/.mu/*
-*.DS_Store
-*/.Trash/*
-*/.pyenv/*
-*/anaconda3/*
-*/__pycache__/*
-*/MobileSync/*
-*/.git/*
-*/mse_hashes/*
-*/Messages.noindex/*
-*/Database.noindex/*
-*/Library/Application\ Support/Google/Chrome/Default/Web\ Applications/*
-*/Library/Containers/*
-*/Library/Calendars/*
-*/Library/Cookies/*
-*/Library/IdentityServices/*
-*/Library/Safari/*
-*/Library/SyncedPreferences/*
-*/Library/com.apple.nsurlsessiond/*
-*/Library/Saved*
-*/Pictures/Photos Library.photoslibrary/Thumbnails/*
-*/Mobile Applications/*
-*/Movies/*
-*/TV Shows/*
-*/Box Sync/*
-*/.fseventsd/*
-*/lost+found/*
-*/.Spotlight*/*
-*/.com.apple*/*
-*/Adium.app/*
-*/iLifeAssetManagement.framework/*
-*/iLifeSlideshow.framework/*
-*/FacebookPublisher.publisher/*
-*/Book Themes/*
-*/Icon
-*/Applications/*
-*/gnus/*
-*.svn-base/*
-*.svn/*
+Library/
+Thumbnails/
+Maildir/
+projects/hrdag/
+cache/
+Cache/
+Caches/
+cache/
+cacheable/
+.cache/
+.config/nvim/plugged/
+.mu/
+.Trash/
+.pyenv/
+anaconda3/
+__pycache__/
+MobileSync/
+mse_hashes/
+Messages.noindex/
+Database.noindex/
+Mobile Applications/
+Movies/
+TV Shows/
+Box Sync/
+.fseventsd/
+Adium.app/
+iLifeAssetManagement.framework/
+.git/
+iLifeSlideshow.framework/
+FacebookPublisher.publisher/
+Book Themes/
+Icon/
+Applications/
+gnus/
+.svn-base/
+texlive/
+.RecoverySets/
+Automator/
+.Trashes/
+.snap/
+TexShop/
+.rstudio-desktop/
+.undodir/
+.zoomus/
+.conda/
+.local/
+.iterm2/
+Knowledge/
+private/
+scipy-html-1/
+Photos Library.photoslibrary
+*.svn
 *.pyc
-*.git/*
-*/texlive/*
-*/usr/share/emacs/*
-*/.abw.bz2
-*/.rtf.bz2
-*/private/*
-*/.RecoverySets/*
-*/.file*
-*/Automator/*
-*/.Trashes/*
-*/myZaurus/*
-*/terrier/meanie/*
-*trash*
-*junk*
-*Trash*
-*/.snap/*
-*/.com.apple*
-*/TexShop/*
-*/Library/Preferences/ByHost
-*/Library/Preferences/com.*
-*/Library/Logs/*
-*/Library/LanguageModeling/*
-*/Library/Group\ Containers/*
-*/Library/Fonts/*
-*/Library/Google/*
-*/Library/Application\ Support/iMazing/*
-*/Library/Application\ Support/Google/*
-*/Library/Application\ Support/Adobe/*
-*/Library/Application\ Support/BlueJeans/*
-*/Library/Application\ Support/CloudDocs/*
-*/Library/Application\ Support/Dropbox/*
-*/Library/Application\ Support/Dropbox/*
-~/.rstudio-desktop/*
-~/.undodir/*
-~/.zoomus/*
-
-
-
-
-
-
-
+.Spotlight
+.com.apple
+.DS_Store
+.abw.bz2
+.rtf.bz2
+.file
+trash
+junk
+Trash
