@@ -1,6 +1,9 @@
 #
-# :customized: PB
-# Last modified: <Tue 09 Oct 2018 01:21:54 PM PDT>
+#  Author: PB
+#  Maintainer: PB
+#  License: (c) HRDAG 2018, some rights reserved: GPL v2 or newer
+#
+# Last modified: <Wed 10 Oct 2018 07:49:18 PM PDT>
 #
 # Executes commands at the start of an interactive session.
 
@@ -10,10 +13,6 @@ case $- in
     *) return ;;
 esac
 #
-# Source Prezto.
-# if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-#  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
-# fi
 
 # ---functions -----
 function chpwd() {
@@ -44,10 +43,13 @@ export ZSH_THEME="agnoster"
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=black,bold'
 
 # ---paths-----
-# this starts with the output of /usr/libexec/path_helper
-PATH="/usr/local/sbin:$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:$PATH"
-PATH="$HOME/anaconda3/bin:$PATH"
-PATH+=":$HOME/bin"
+# this starts with the output of /usr/libexec/path_helper in xpath
+# but puts all the std /usr paths after the gnubin stuff.
+xpath="$PATH"
+PATH="$HOME/bin"
+PATH+=":$HOME/anaconda3/bin"
+PATH+=":/usr/local/opt/coreutils/libexec/gnubin"
+PATH+=":$xpath"
 PATH+=":/Applications/RStudio.app/Contents/MacOS/pandoc"
 PATH+=":$HOME/projects/hrdag/snap/bin"
 PATH+=":$HOME/projects/hrdag/resource-utils/bin"
@@ -128,11 +130,10 @@ bindkey '^w' backward-kill-word
 bindkey '^r' history-incremental-search-backward
 bindkey '^ ' autosuggest-accept
 
-autoload -U zmv
+# autoload -U zmv   # zsh-mv but the conventions are a bit opaque
 autoload -U promptinit; promptinit
-autoload -U select-word-style
-zle -N select-word-style
-bindkey '\ez' select-word-style
+autoload -U select-word-style  # makes backward-word-kill stop at non-alpha
+select-word-style bash
 
 # ---local-----
 export HOMEBREW_GITHUB_API_TOKEN="7105df98ca887eda6aa4125926a86945b5da40bd"

@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Wed 03 Oct 2018 09:18:07 PM PDT>
+" Last Modified: <Wed 10 Oct 2018 07:11:35 PM PDT>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2018 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -67,6 +67,8 @@ Plug 'lifepillar/vim-cheat40'  " cheat sheet: <leader>?
 
 " navigation
 Plug 'justinmk/vim-sneak'        " I should use this more.
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 
 "" files, buffers, and tags
 Plug 'jlanzarotta/bufexplorer'   " helpful but SLOW
@@ -84,7 +86,6 @@ Plug 'kshenoy/vim-signature'           " less cluttered, marks more visible
 Plug 'itchyny/lightline.vim'           " workable. Prob could be done by hand.
 Plug 'luochen1990/rainbow'             " I really like these!
 Plug 'itchyny/vim-cursorword'          " this works w * operator
-" Plug 't9md/vim-choosewin'              " cool idea: on <leader>w
 Plug 'icymind/NeoSolarized'
 Plug 'joshdick/onedark.vim'
 Plug 'mhartington/oceanic-next'
@@ -109,6 +110,10 @@ Plug 'w0rp/ale'
 
 call plug#end()
 " }}}
+
+" must follow all Plug calls
+filetype plugin indent on
+
 
 " plugin configs {{{
 
@@ -556,10 +561,12 @@ autocmd FileType markdown setlocal nocursorcolumn
 "
 
 " snippets {{{{
-" let g:UltiSnipsExpandTrigger='<tab>'
-" let g:UltiSnipsJumpForwardTrigger='<tab>'
-" let g:UltiSnipsJumpBackwardTrigger='<c-b>'
-" let g:UltiSnipsEditSplit='vertical'
+let g:UltiSnipsSnippetDirectories = ['~/dotfiles/vim-common/UltiSnips', 'UltiSnips']
+let g:UltiSnipsSnippetsDir = '~/dotfiles/vim-common/UltiSnips'
+let g:UltiSnipsExpandTrigger='<tab>'
+let g:UltiSnipsJumpForwardTrigger='<tab>'
+let g:UltiSnipsJumpBackwardTrigger='<c-b>'
+let g:UltiSnipsEditSplit='vertical'
 " }}}}
 
 " w0rp/ale {{{{
