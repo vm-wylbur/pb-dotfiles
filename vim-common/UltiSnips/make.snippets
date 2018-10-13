@@ -1,19 +1,27 @@
-snippet cba "A #-prefixed comment block for untyped files"
+global !p
+from snippet_helpers.py import *
+endglobal
+
+
+snippet cbm "A #-prefixed comment block for Makefiles" b
 # -*- coding: utf-8 -*-
 #
 # Author: PB
 # Maintainer(s): PB
 # License: (c) HRDAG 20`! date +"%y"`, GPL v2 or newer
 #
-# `! projpath.py`/`!p snip.rv = fn`
+# `!p snip.rn = projpath(path) `
 # -----------------------------------------------------------
 #
-# ${0:add a comment about this script}
-#
-# -----------------------------------------------------------
+.PHONY: all clean
 
+clean:
+	rm output/*
+
+all: $0
 
 
 
 # done.
 endsnippet
+

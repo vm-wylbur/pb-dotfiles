@@ -3,7 +3,7 @@
 #  Maintainer: PB
 #  License: (c) HRDAG 2018, some rights reserved: GPL v2 or newer
 #
-# Last modified: <Wed 10 Oct 2018 07:49:18 PM PDT>
+# Last modified: <Thu 11 Oct 2018 01:01:09 PM PDT>
 #
 # Executes commands at the start of an interactive session.
 
@@ -49,10 +49,12 @@ xpath="$PATH"
 PATH="$HOME/bin"
 PATH+=":$HOME/anaconda3/bin"
 PATH+=":/usr/local/opt/coreutils/libexec/gnubin"
+PATH+=":/usr/local/opt/make/libexec/gnubin"
 PATH+=":$xpath"
 PATH+=":/Applications/RStudio.app/Contents/MacOS/pandoc"
 PATH+=":$HOME/projects/hrdag/snap/bin"
 PATH+=":$HOME/projects/hrdag/resource-utils/bin"
+PATH+=":$HOME/dotfiles/scripts"
 export PATH
 export fpath=( "$HOME/dotfiles/zsh/zfunctions" $fpath )
 

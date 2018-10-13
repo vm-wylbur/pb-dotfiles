@@ -1,0 +1,30 @@
+snippet cbp "A #-prefixed comment block for python"
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+#
+# Author: PB
+# Maintainer(s): PB
+# License: (c) HRDAG 20`! date +"%y"`, GPL v2 or newer
+#
+# filename: `!p
+import git
+fpath = os.path.realpath(path)
+git_repo = git.Repo(fpath, search_parent_directories=True)
+git_root = git_repo.git.rev_parse("--show-toplevel")
+assert not git_root.endswith('/')
+len_local_path = len(os.path.split(git_root)[0]) + 1
+project_path = fpath[len_local_path:]
+snip.rv = project_path`
+#
+# -----------------------------------------------------------
+#
+import pandas as pd
+
+
+if __name__ == '__main__':
+	$0pass
+
+# done.
+endsnippet
+
+
