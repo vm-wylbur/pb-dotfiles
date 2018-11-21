@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Wed 10 Oct 2018 07:11:35 PM PDT>
+" Last Modified: <Tue 20 Nov 2018 10:33:57 PM CST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2018 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -38,32 +38,26 @@ Plug 'tpope/vim-repeat'               " doesn't work? config for surround
 
 " screen and window management
 Plug 'mhinz/vim-startify'             " cute!
+Plug 'qpkorr/vim-bufkill'
 
 " editing and formatting
 Plug 'tpope/vim-surround'             " adds surround action to create cmts
-" Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'           " wow, all the time.
 Plug 'tpope/vim-unimpaired'           " many additional movements with [ and ]
 Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
-" Plug 'terryma/vim-expand-region'      " + to increase visual selection
 Plug 'tommcdo/vim-exchange'           " cx{motion} to exhange text objs
-" Plug 'mbbill/undotree'                " UndotreeToggle to bring it up
 Plug 'machakann/vim-highlightedyank'  " blink
 
 " completion
 " note: YCM never worked
 "       nvim-completion-manager works on eleanor but not petunia
 "       deoplete works on petunia but not eleanor
-if hostname() == 'eleanor' || has('gui_macvim')
-  Plug 'roxma/nvim-completion-manager'
-else
-  Plug 'zchee/deoplete-jedi'
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-endif
-
-" help
-Plug 'rizzatti/dash.vim'       " c-d to lookup at point
-Plug 'lifepillar/vim-cheat40'  " cheat sheet: <leader>?
+" if hostname() == 'eleanor' || has('gui_macvim')
+"   Plug 'roxma/nvim-completion-manager'
+" else
+"   Plug 'zchee/deoplete-jedi'
+"   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" endif
 
 " navigation
 Plug 'justinmk/vim-sneak'        " I should use this more.
@@ -75,13 +69,11 @@ Plug 'jlanzarotta/bufexplorer'   " helpful but SLOW
 Plug 'ap/vim-buftabline'         " adds buffer tabs and numbers
 Plug 'dhruvasagar/vim-vinegar'   " - for curdir and adds some netrw behaviors
 Plug 'tpope/vim-eunuch'          " u-nick(s), get it? *nix bits: Find, Rename
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
 " colors and UI
 Plug 'airblade/vim-gitgutter'          " put chars in gutter
-" Plug 'jeetsukumaran/vim-markology'   " kills syntax hilighting on cur line
 Plug 'kshenoy/vim-signature'           " less cluttered, marks more visible
 Plug 'itchyny/lightline.vim'           " workable. Prob could be done by hand.
 Plug 'luochen1990/rainbow'             " I really like these!
@@ -168,15 +160,15 @@ let g:timestamp_modelines = 1
 
 " deoplete
 if hostname() != 'eleanor'
-  call deoplete#enable()
-  autocmd CompleteDone * pclose
-  let g:deoplete#enable_at_startup = 1
-  let g:deoplete#auto_complete_start_length = 1
-  let g:deoplete#disable_auto_complete = 0
-  let g:deoplete#sources#jedi#statement_length = 30
-  let g:deoplete#sources#jedi#show_docstring = 1
-  let g:deoplete#sources#jedi#short_types = 1
-  let g:deoplete#file#enable_buffer_path = 1
+  " call deoplete#enable()
+  " autocmd CompleteDone * pclose
+  " let g:deoplete#enable_at_startup = 1
+  " let g:deoplete#auto_complete_start_length = 1
+  " let g:deoplete#disable_auto_complete = 0
+  " let g:deoplete#sources#jedi#statement_length = 30
+  " let g:deoplete#sources#jedi#show_docstring = 1
+  " let g:deoplete#sources#jedi#short_types = 1
+  " let g:deoplete#file#enable_buffer_path = 1
 endif
 
 let g:cm_smart_enable = 1
@@ -385,169 +377,172 @@ endif
 " }}}}
 " }}}
 
-" mappings {{{
-"" the big picture here is:
-"" * remapping std vim keys should be enhancements, not overrides
-"" * leader keys are in groups
-"" * try to stay off remapping C- keys. There's already lots there.
-"" * A-x keys move among windows and do not-vimmy stuff
+source $HOME/dotfiles/vim-common/remaps.vim
 
-"" mapleader {{{{
-let g:mapleader='\'
-"" }}}}
 
-"" PB specific remaps {{{{
-" because scrolling is *the* main thing we do
-nnoremap <space> <C-d>
-nnoremap <C-space> <C-u>
-" repeat the last macro.
-nnoremap <return> @@
-" increment a number; C-a is overloaded everywhere.
-nnoremap <A-a> <C-a>
+"" mappings {{{
+""" the big picture here is:
+""" * remapping std vim keys should be enhancements, not overrides
+""" * leader keys are in groups
+""" * try to stay off remapping C- keys. There's already lots there.
+""" * A-x keys move among windows and do not-vimmy stuff
 
-" some notes here:
+""" mapleader {{{{
+"let g:mapleader='\'
+""" }}}}
 
-" }}}}
+""" PB specific remaps {{{{
+"" because scrolling is *the* main thing we do
+"nnoremap <space> <C-d>
+"nnoremap <C-space> <C-u>
+"" repeat the last macro.
+"nnoremap <return> @@
+"" increment a number; C-a is overloaded everywhere.
+"nnoremap <A-a> <C-a>
 
-"" tweaks adding functionality to existing keys {{{{
-nnoremap D Da
-nnoremap U d^i
-" Keep the cursor in place while joining lines
-nnoremap J mzJ`z
-"" Vmap for maintain Visual Mode after shifting > and <
-vmap < <gv
-vmap > >gv
-nnoremap <C-l> :nohlsearch<CR><C-l>zz
-inoremap <C-l> <ESC>:nohlsearch<CR><C-l>zz
-"" }}}}
-
-"" insert/command mode like emacs {{{{
-inoremap <C-a> <Home>
-inoremap <C-e> <End>
-inoremap <A-bs> <c-w>
-cnoremap <C-a> <Home>
-cnoremap <C-e> <End>
-cnoremap <A-bs> <c-w>
-" }}}}
-
-"" bubbling text {{{{
-""" Bubble multiple lines; note that the *noremap's don't work here.
-""" with vim-impaired and Drew Neil's mappings
-nmap <C-Up> [e
-nmap <C-Down> ]e
-""" Move visual block
-vnoremap J [egv
-vnoremap K ]egv
-vmap <C-Up> [egv
-vmap <C-Down> ]egv
-" }}}}
-
-" }}}}
-
-"" window navigation via Meta {{{{
-tnoremap <a-1> <c-\><c-n>1<c-w><c-w>
-tnoremap <a-2> <c-\><c-n>2<c-w><c-w>
-tnoremap <a-3> <c-\><c-n>3<c-w><c-w>
-tnoremap <a-4> <c-\><c-n>4<c-w><c-w>
-tnoremap <a-5> <c-\><c-n>5<c-w><c-w>
-tnoremap <a-6> <c-\><c-n>6<c-w><c-w>
-nnoremap <a-1> 1<c-w><c-w>
-nnoremap <a-2> 2<c-w><c-w>
-nnoremap <a-1> 1<c-w><c-w>
-nnoremap <a-2> 2<c-w><c-w>
-nnoremap <a-3> 3<c-w><c-w>
-nnoremap <a-4> 4<c-w><c-w>
-nnoremap <a-5> 5<c-w><c-w>
-nnoremap <a-6> 6<c-w><c-w>
-nnoremap <a-7> 7<c-w><c-w>
-nnoremap <a-8> 8<c-w><c-w>
-nnoremap <a-9> 9<c-w><c-w>
-inoremap <a-h> <C-\><C-N><C-w>h
-inoremap <a-j> <C-\><C-N><C-w>j
-inoremap <a-k> <C-\><C-N><C-w>k
-inoremap <a-l> <C-\><C-N><C-w>l
-nnoremap <a-h> <C-w>h
-nnoremap <a-j> <C-w>j
-nnoremap <a-k> <C-w>k
-nnoremap <a-l> <C-w>l
-
-" let g:dwm_map_keys = 0
-nnoremap <c-k> <c-w>W
-nnoremap <c-j> <c-w><c-p>
-tnoremap <c-j> <c-\><c-n><c-w><c-p>
-"" to normal mode with jj or jk {{{{
-inoremap jj <ESC>
-inoremap jk <ESC>
-tnoremap jj <c-\><c-n>
-" this is esp good for getting out of fzf searches
-tnoremap jk <c-\><c-n>:q<cr>
-" }}}}
-" }}}
-"
-" leader {{{
-"" the big picture hire is:
-"" * a small number of important keys get single-char leader
-
-"" PB specifics {{{{
-nnoremap <leader>x :so %<CR>
-nnoremap <leader>w :w<CR>
-nnoremap <leader>m :History<CR>
-" BufExplorer is pretty much emacs
-nnoremap <leader>b :BufExplorer<CR>
-nnoremap <leader>u :UndotreeToggle<cr>
-
-" needs better mapping; note jedi has some leader keys.
-" these are from fzf
-" should BLines be <leader>g? to be parallel to Line?
-nnoremap <leader>\ :BLines<space><CR>
-nnoremap <leader>g :BLines<space><CR>
-nnoremap <leader>G :Lines<space>
-nnoremap <leader>a :Ag<space>
-nnoremap <leader>f :Files<space>
-nnoremap <leader>` :Marks<CR>
-inoremap <c-x><c-l> <plug>(fzf-complete-line)
-
-vnoremap <leader>v c[<C-r>"](<Esc>"*pli)<Esc>
-
-" this is a demo, wraps viw in double-q
-" :nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
-
-" shadowing : commands
-" nnoremap <leader>w :ChooseWin<cr>
-" nnoremap <leader>wt :ChooseWinSwap<cr>
-" nnoremap <leader>ws :ChooseWinSwapStay<cr>
-
-" direct editing
-nnoremap <leader>ev :e ~/dotfiles/vim-common/common.vim<cr>
-nnoremap <leader>en :e ~/Documents/notes/vim-notes.md<cr>
-nnoremap <leader>em :call EditMacro()<cr> <Plug>em
-
-" Dash for word under point
-nmap <silent> <leader>d <Plug>DashSearch
-
-" spelling hack. NB the cursor moves bc the mark is relative to the byte
-" position in the line. how to make the cursor stick?
-nnoremap <leader>l mt[s1z=`t
-nnoremap <c-s> mt[s1z=`t
-inoremap <C-s> <ESC>mt[s1z=`ta
-
-" }}}}
-
-"" buffer+window navigation {{{{
-nnoremap <leader>1 :b1<CR>
-nnoremap <leader>2 :b2 <CR>
-nnoremap <leader>3 :b3 <CR>
-nnoremap <leader>4 :b4 <CR>
-nnoremap <leader>5 :b5 <CR>
-nnoremap <leader>6 :b6 <CR>
-nnoremap <leader>7 :b7 <CR>
-nnoremap <leader>8 :b8 <CR>
-nnoremap <leader>9 :b9 <CR>
-nnoremap <leader>0 :b10 <CR>
+"" some notes here:
 
 "" }}}}
 
-" }}}
+""" tweaks adding functionality to existing keys {{{{
+"nnoremap D Da
+"nnoremap U d^i
+"" Keep the cursor in place while joining lines
+"nnoremap J mzJ`z
+""" Vmap for maintain Visual Mode after shifting > and <
+"vmap < <gv
+"vmap > >gv
+"nnoremap <C-l> :nohlsearch<CR><C-l>zz
+"inoremap <C-l> <ESC>:nohlsearch<CR><C-l>zz
+""" }}}}
+
+""" insert/command mode like emacs {{{{
+"inoremap <C-a> <Home>
+"inoremap <C-e> <End>
+"inoremap <A-bs> <c-w>
+"cnoremap <C-a> <Home>
+"cnoremap <C-e> <End>
+"cnoremap <A-bs> <c-w>
+"" }}}}
+
+""" bubbling text {{{{
+"""" Bubble multiple lines; note that the *noremap's don't work here.
+"""" with vim-impaired and Drew Neil's mappings
+"nmap <C-Up> [e
+"nmap <C-Down> ]e
+"""" Move visual block
+"vnoremap J [egv
+"vnoremap K ]egv
+"vmap <C-Up> [egv
+"vmap <C-Down> ]egv
+"" }}}}
+
+"" }}}}
+
+""" window navigation via Meta {{{{
+"tnoremap <a-1> <c-\><c-n>1<c-w><c-w>
+"tnoremap <a-2> <c-\><c-n>2<c-w><c-w>
+"tnoremap <a-3> <c-\><c-n>3<c-w><c-w>
+"tnoremap <a-4> <c-\><c-n>4<c-w><c-w>
+"tnoremap <a-5> <c-\><c-n>5<c-w><c-w>
+"tnoremap <a-6> <c-\><c-n>6<c-w><c-w>
+"nnoremap <a-1> 1<c-w><c-w>
+"nnoremap <a-2> 2<c-w><c-w>
+"nnoremap <a-1> 1<c-w><c-w>
+"nnoremap <a-2> 2<c-w><c-w>
+"nnoremap <a-3> 3<c-w><c-w>
+"nnoremap <a-4> 4<c-w><c-w>
+"nnoremap <a-5> 5<c-w><c-w>
+"nnoremap <a-6> 6<c-w><c-w>
+"nnoremap <a-7> 7<c-w><c-w>
+"nnoremap <a-8> 8<c-w><c-w>
+"nnoremap <a-9> 9<c-w><c-w>
+"inoremap <a-h> <C-\><C-N><C-w>h
+"inoremap <a-j> <C-\><C-N><C-w>j
+"inoremap <a-k> <C-\><C-N><C-w>k
+"inoremap <a-l> <C-\><C-N><C-w>l
+"nnoremap <a-h> <C-w>h
+"nnoremap <a-j> <C-w>j
+"nnoremap <a-k> <C-w>k
+"nnoremap <a-l> <C-w>l
+
+"" let g:dwm_map_keys = 0
+"nnoremap <c-k> <c-w>W
+"nnoremap <c-j> <c-w><c-p>
+"tnoremap <c-j> <c-\><c-n><c-w><c-p>
+""" to normal mode with jj or jk {{{{
+"inoremap jj <ESC>
+"inoremap jk <ESC>
+"tnoremap jj <c-\><c-n>
+"" this is esp good for getting out of fzf searches
+"tnoremap jk <c-\><c-n>:q<cr>
+"" }}}}
+"" }}}
+""
+"" leader {{{
+""" the big picture hire is:
+""" * a small number of important keys get single-char leader
+
+""" PB specifics {{{{
+"nnoremap <leader>x :so %<CR>
+"nnoremap <leader>w :w<CR>
+"nnoremap <leader>m :History<CR>
+"" BufExplorer is pretty much emacs
+"nnoremap <leader>b :BufExplorer<CR>
+"nnoremap <leader>u :UndotreeToggle<cr>
+
+"" needs better mapping; note jedi has some leader keys.
+"" these are from fzf
+"" should BLines be <leader>g? to be parallel to Line?
+"nnoremap <leader>\ :BLines<space><CR>
+"nnoremap <leader>g :BLines<space><CR>
+"nnoremap <leader>G :Lines<space>
+"nnoremap <leader>a :Ag<space>
+"nnoremap <leader>f :Files<space>
+"nnoremap <leader>` :Marks<CR>
+"inoremap <c-x><c-l> <plug>(fzf-complete-line)
+
+"vnoremap <leader>v c[<C-r>"](<Esc>"*pli)<Esc>
+
+"" this is a demo, wraps viw in double-q
+"" :nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
+
+"" shadowing : commands
+"" nnoremap <leader>w :ChooseWin<cr>
+"" nnoremap <leader>wt :ChooseWinSwap<cr>
+"" nnoremap <leader>ws :ChooseWinSwapStay<cr>
+
+"" direct editing
+"nnoremap <leader>ev :e ~/dotfiles/vim-common/common.vim<cr>
+"nnoremap <leader>en :e ~/Documents/notes/vim-notes.md<cr>
+"nnoremap <leader>em :call EditMacro()<cr> <Plug>em
+
+"" Dash for word under point
+"nmap <silent> <leader>d <Plug>DashSearch
+
+"" spelling hack. NB the cursor moves bc the mark is relative to the byte
+"" position in the line. how to make the cursor stick?
+"nnoremap <leader>l mt[s1z=`t
+"nnoremap <c-s> mt[s1z=`t
+"inoremap <C-s> <ESC>mt[s1z=`ta
+
+"" }}}}
+
+""" buffer+window navigation {{{{
+"nnoremap <leader>1 :b1<CR>
+"nnoremap <leader>2 :b2 <CR>
+"nnoremap <leader>3 :b3 <CR>
+"nnoremap <leader>4 :b4 <CR>
+"nnoremap <leader>5 :b5 <CR>
+"nnoremap <leader>6 :b6 <CR>
+"nnoremap <leader>7 :b7 <CR>
+"nnoremap <leader>8 :b8 <CR>
+"nnoremap <leader>9 :b9 <CR>
+"nnoremap <leader>0 :b10 <CR>
+
+""" }}}}
+
+"" }}}
 
 " language {{{
 

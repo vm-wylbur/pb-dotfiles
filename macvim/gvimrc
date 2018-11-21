@@ -1,8 +1,77 @@
-set guifont=Monaco:h14
-" au! BufRead,BufNewFile *.markdown set filetype=mkd
-" au! BufRead,BufNewFile *.md       set filetype=mkd
+" to do:
+"   - why does buftabline not show up? 
+
+set guifont=Monaco:h16
+set relativenumber
+set hlsearch
+
+set runtimepath+=$HOME/.local/share/nvim 
 
 " set runtimepath+=$HOME/dotfiles/vim-common
-" set runtimepath+=$HOME/.config/nvim/autoload
-" source ~/dotfiles/vim-common/common.vim
+call plug#begin(expand('~/.config/nvim/plugged'))
+Plug 'tpope/vim-commentary' 
+Plug 'tpope/vim-unimpaired' 
+Plug 'justinmk/vim-sneak'
+Plug 'kshenoy/vim-signature'
+Plug 'airblade/vim-gitgutter'
+Plug 'ap/vim-buftabline'
+Plug 'icymind/NeoSolarized' 
+Plug 'reedes/vim-pencil'
+call plug#end()
 
+
+" #---NB: all the cmds below are common w neovim
+"
+let g:buftabline_numbers=1
+
+let g:sneak#label = 1
+let g:sneak#streak = 1
+nmap s <Plug>SneakLabel_s
+nmap S <Plug>SneakLabel_S
+
+colorscheme NeoSolarized
+let g:neosolarized_bold = 1
+let g:neosolarized_underline = 1
+let g:neosolarized_italic = 1
+let g:neosolarized_vertSplitBgTrans = 0
+let g:neosolarized_contrast = "high"
+set background=dark
+
+execute 'set colorcolumn=' . join(range(81,335), ',')
+
+let g:gitgutter_eager = 0
+let g:gitgutter_async = 1
+let g:gitgutter_realtime = 1
+
+if has("persistent_undo")
+	set undodir=~/.undodir/
+	set undofile
+endif
+
+set tabstop=2
+set softtabstop=0
+set shiftwidth=2
+set expandtab
+set smarttab autoindent
+
+set incsearch
+set ignorecase
+set smartcase
+set showmatch
+set gdefault
+" }}}}
+
+"" Turn on spell checking {{{{
+set spell
+set spelllang=en_us spell
+
+set autoread
+augroup autoSaveAndRead
+	autocmd!
+	autocmd TextChanged,InsertLeave,FocusLost * silent! wall
+	autocmd CursorHold * silent! checktime
+augroup END 
+
+source $HOME/dotfiles/vim-common/remaps.vim
+
+" done. 
