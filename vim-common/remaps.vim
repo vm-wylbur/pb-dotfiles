@@ -7,11 +7,8 @@
 
 let g:mapleader='\'
 
-"" PB specific remaps
-""" because scrolling is *the* main thing we do
 nnoremap <space> <C-d>
 nnoremap <C-space> <C-u>
-""" repeat the last macro w CR
 nnoremap <return> @@
 
 "" tweaks adding functionality to existing keys {{{{
@@ -22,8 +19,7 @@ nnoremap J mzJ`z
 "" Vmap for maintain Visual Mode after shifting > and <
 vmap < <gv
 vmap > >gv
-nnoremap <C-l> :nohlsearch<CR><C-l>zz
-inoremap <C-l> <ESC>:nohlsearch<CR><C-l>zz
+nnoremap <Esc><Esc> :<C-u>nohlsearch<CR>
 "" }}}}
 
 "" insert/command mode like emacs {{{{

@@ -1,6 +1,6 @@
 " Preamble {{{
 "
-" Last Modified: <Tue 20 Nov 2018 10:33:57 PM CST>
+" Last Modified: <Tue 27 Nov 2018 09:46:13 AM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2018 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -38,7 +38,7 @@ Plug 'tpope/vim-repeat'               " doesn't work? config for surround
 
 " screen and window management
 Plug 'mhinz/vim-startify'             " cute!
-Plug 'qpkorr/vim-bufkill'
+Plug 'qpkorr/vim-bufkill'             " :BD is very useful
 
 " editing and formatting
 Plug 'tpope/vim-surround'             " adds surround action to create cmts
@@ -47,6 +47,7 @@ Plug 'tpope/vim-unimpaired'           " many additional movements with [ and ]
 Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
 Plug 'tommcdo/vim-exchange'           " cx{motion} to exhange text objs
 Plug 'machakann/vim-highlightedyank'  " blink
+Plug 'haya14busa/incsearch.vim'
 
 " completion
 " note: YCM never worked
@@ -58,6 +59,7 @@ Plug 'machakann/vim-highlightedyank'  " blink
 "   Plug 'zchee/deoplete-jedi'
 "   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 " endif
+" Plug 'ajh17/VimCompletesMe'
 
 " navigation
 Plug 'justinmk/vim-sneak'        " I should use this more.
@@ -101,7 +103,6 @@ Plug 'tpope/vim-markdown'
 Plug 'w0rp/ale'
 
 call plug#end()
-" }}}
 
 " must follow all Plug calls
 filetype plugin indent on
@@ -109,10 +110,20 @@ filetype plugin indent on
 
 " plugin configs {{{
 
+" :h g:incsearch#auto_nohlsearch
+set hlsearch
+let g:incsearch#auto_nohlsearch = 1
+map n  <Plug>(incsearch-nohl-n)
+map N  <Plug>(incsearch-nohl-N)
+map *  <Plug>(incsearch-nohl-*)
+map #  <Plug>(incsearch-nohl-#)
+map g* <Plug>(incsearch-nohl-g*)
+map g# <Plug>(incsearch-nohl-g#)
+
 " other solarized have bad colors in terminal
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 colorscheme NeoSolarized
-" colorscheme onedark
+" colorscheme oceanic_next
 
 let g:oceanic_next_terminal_bold = 1
 let g:oceanic_next_terminal_italic = 1
@@ -229,30 +240,14 @@ let g:scratch_autohide = 1
 
 "" basics {{{{
 set termguicolors
-" set background=dark
 syntax on
 set ruler
 set relativenumber
 set number
-" }}}}
 
-" cursor stuff {{{{
+" cursor stuff
 set mouse=a
 au VimLeave * set guicursor=a:block-blinkon0
-
-augroup CursorLine
-    au!
-    au VimEnter * setlocal cursorcolumn
-    au WinEnter * setlocal cursorcolumn
-    au BufWinEnter * setlocal cursorcolumn
-    au WinLeave * setlocal nocursorcolumn
-
-    au VimEnter * setlocal cursorline
-    au WinEnter * setlocal cursorline
-    au BufWinEnter * setlocal cursorline
-    au WinLeave * setlocal nocursorline
-augroup END
-" }}}}
 
 "" setting up right margin highlighting {{{{
 augroup BgHighlight
@@ -374,179 +369,11 @@ if exists('$SHELL')
 else
     set shell=/bin/bash
 endif
-" }}}}
-" }}}
 
 source $HOME/dotfiles/vim-common/remaps.vim
 
-
-"" mappings {{{
-""" the big picture here is:
-""" * remapping std vim keys should be enhancements, not overrides
-""" * leader keys are in groups
-""" * try to stay off remapping C- keys. There's already lots there.
-""" * A-x keys move among windows and do not-vimmy stuff
-
-""" mapleader {{{{
-"let g:mapleader='\'
-""" }}}}
-
-""" PB specific remaps {{{{
-"" because scrolling is *the* main thing we do
-"nnoremap <space> <C-d>
-"nnoremap <C-space> <C-u>
-"" repeat the last macro.
-"nnoremap <return> @@
-"" increment a number; C-a is overloaded everywhere.
-"nnoremap <A-a> <C-a>
-
-"" some notes here:
-
-"" }}}}
-
-""" tweaks adding functionality to existing keys {{{{
-"nnoremap D Da
-"nnoremap U d^i
-"" Keep the cursor in place while joining lines
-"nnoremap J mzJ`z
-""" Vmap for maintain Visual Mode after shifting > and <
-"vmap < <gv
-"vmap > >gv
-"nnoremap <C-l> :nohlsearch<CR><C-l>zz
-"inoremap <C-l> <ESC>:nohlsearch<CR><C-l>zz
-""" }}}}
-
-""" insert/command mode like emacs {{{{
-"inoremap <C-a> <Home>
-"inoremap <C-e> <End>
-"inoremap <A-bs> <c-w>
-"cnoremap <C-a> <Home>
-"cnoremap <C-e> <End>
-"cnoremap <A-bs> <c-w>
-"" }}}}
-
-""" bubbling text {{{{
-"""" Bubble multiple lines; note that the *noremap's don't work here.
-"""" with vim-impaired and Drew Neil's mappings
-"nmap <C-Up> [e
-"nmap <C-Down> ]e
-"""" Move visual block
-"vnoremap J [egv
-"vnoremap K ]egv
-"vmap <C-Up> [egv
-"vmap <C-Down> ]egv
-"" }}}}
-
-"" }}}}
-
-""" window navigation via Meta {{{{
-"tnoremap <a-1> <c-\><c-n>1<c-w><c-w>
-"tnoremap <a-2> <c-\><c-n>2<c-w><c-w>
-"tnoremap <a-3> <c-\><c-n>3<c-w><c-w>
-"tnoremap <a-4> <c-\><c-n>4<c-w><c-w>
-"tnoremap <a-5> <c-\><c-n>5<c-w><c-w>
-"tnoremap <a-6> <c-\><c-n>6<c-w><c-w>
-"nnoremap <a-1> 1<c-w><c-w>
-"nnoremap <a-2> 2<c-w><c-w>
-"nnoremap <a-1> 1<c-w><c-w>
-"nnoremap <a-2> 2<c-w><c-w>
-"nnoremap <a-3> 3<c-w><c-w>
-"nnoremap <a-4> 4<c-w><c-w>
-"nnoremap <a-5> 5<c-w><c-w>
-"nnoremap <a-6> 6<c-w><c-w>
-"nnoremap <a-7> 7<c-w><c-w>
-"nnoremap <a-8> 8<c-w><c-w>
-"nnoremap <a-9> 9<c-w><c-w>
-"inoremap <a-h> <C-\><C-N><C-w>h
-"inoremap <a-j> <C-\><C-N><C-w>j
-"inoremap <a-k> <C-\><C-N><C-w>k
-"inoremap <a-l> <C-\><C-N><C-w>l
-"nnoremap <a-h> <C-w>h
-"nnoremap <a-j> <C-w>j
-"nnoremap <a-k> <C-w>k
-"nnoremap <a-l> <C-w>l
-
-"" let g:dwm_map_keys = 0
-"nnoremap <c-k> <c-w>W
-"nnoremap <c-j> <c-w><c-p>
-"tnoremap <c-j> <c-\><c-n><c-w><c-p>
-""" to normal mode with jj or jk {{{{
-"inoremap jj <ESC>
-"inoremap jk <ESC>
-"tnoremap jj <c-\><c-n>
-"" this is esp good for getting out of fzf searches
-"tnoremap jk <c-\><c-n>:q<cr>
-"" }}}}
-"" }}}
-""
-"" leader {{{
-""" the big picture hire is:
-""" * a small number of important keys get single-char leader
-
-""" PB specifics {{{{
-"nnoremap <leader>x :so %<CR>
-"nnoremap <leader>w :w<CR>
-"nnoremap <leader>m :History<CR>
-"" BufExplorer is pretty much emacs
-"nnoremap <leader>b :BufExplorer<CR>
-"nnoremap <leader>u :UndotreeToggle<cr>
-
-"" needs better mapping; note jedi has some leader keys.
-"" these are from fzf
-"" should BLines be <leader>g? to be parallel to Line?
-"nnoremap <leader>\ :BLines<space><CR>
-"nnoremap <leader>g :BLines<space><CR>
-"nnoremap <leader>G :Lines<space>
-"nnoremap <leader>a :Ag<space>
-"nnoremap <leader>f :Files<space>
-"nnoremap <leader>` :Marks<CR>
-"inoremap <c-x><c-l> <plug>(fzf-complete-line)
-
-"vnoremap <leader>v c[<C-r>"](<Esc>"*pli)<Esc>
-
-"" this is a demo, wraps viw in double-q
-"" :nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
-
-"" shadowing : commands
-"" nnoremap <leader>w :ChooseWin<cr>
-"" nnoremap <leader>wt :ChooseWinSwap<cr>
-"" nnoremap <leader>ws :ChooseWinSwapStay<cr>
-
-"" direct editing
-"nnoremap <leader>ev :e ~/dotfiles/vim-common/common.vim<cr>
-"nnoremap <leader>en :e ~/Documents/notes/vim-notes.md<cr>
-"nnoremap <leader>em :call EditMacro()<cr> <Plug>em
-
-"" Dash for word under point
-"nmap <silent> <leader>d <Plug>DashSearch
-
-"" spelling hack. NB the cursor moves bc the mark is relative to the byte
-"" position in the line. how to make the cursor stick?
-"nnoremap <leader>l mt[s1z=`t
-"nnoremap <c-s> mt[s1z=`t
-"inoremap <C-s> <ESC>mt[s1z=`ta
-
-"" }}}}
-
-""" buffer+window navigation {{{{
-"nnoremap <leader>1 :b1<CR>
-"nnoremap <leader>2 :b2 <CR>
-"nnoremap <leader>3 :b3 <CR>
-"nnoremap <leader>4 :b4 <CR>
-"nnoremap <leader>5 :b5 <CR>
-"nnoremap <leader>6 :b6 <CR>
-"nnoremap <leader>7 :b7 <CR>
-"nnoremap <leader>8 :b8 <CR>
-"nnoremap <leader>9 :b9 <CR>
-"nnoremap <leader>0 :b10 <CR>
-
-""" }}}}
-
-"" }}}
-
+autocmd InsertLeave * write
 " language {{{
-
-"" markdown {{{{
 " In markdown files, Control + a surrounds highlighted text with square
 " brackets, then dumps system clipboard contents into parenthesis
 autocmd FileType markdown vnoremap <c-a> <Esc>`<i[<Esc>`>la](<Esc>"*]pa)<Esc>
@@ -658,16 +485,9 @@ augroup vimrc-remember-cursor-position
   autocmd!
   autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 augroup END
-" }}}}
-
-" }}}
-
-" misc functions {{{
-
-" }}}
 
 set modeline
 set modelines=5
 setlocal foldmethod=marker
 set nofoldenable
-" vim: set foldmethod=marker foldlevel=1:
+" done.
