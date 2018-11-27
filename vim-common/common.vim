@@ -1,6 +1,6 @@
-" Preamble {{{
+" Preamble
 "
-" Last Modified: <Tue 27 Nov 2018 09:46:13 AM PST>
+" Last Modified: <Tue 27 Nov 2018 09:54:01 AM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2018 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -17,7 +17,7 @@
 "
 " }}}
 
-" setup {{{
+" setup
 set nocompatible
 
 " I think both of these are unnecessary. filetype loads 2x without this line.
@@ -30,7 +30,7 @@ let g:vim_bootstrap_editor = 'nvim'				" nvim or vim
 set runtimepath+=$HOME/dotfiles/vim-common
 " }}}
 
-" plugins {{{
+" plugins
 call plug#begin(expand('~/.config/nvim/plugged'))
 
 "" hack for plugins themselves
@@ -60,6 +60,8 @@ Plug 'haya14busa/incsearch.vim'
 "   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 " endif
 " Plug 'ajh17/VimCompletesMe'
+Plug 'lifepillar/vim-mucomplete'
+
 
 " navigation
 Plug 'justinmk/vim-sneak'        " I should use this more.
@@ -108,7 +110,10 @@ call plug#end()
 filetype plugin indent on
 
 
-" plugin configs {{{
+" plugin configs
+
+
+
 
 " :h g:incsearch#auto_nohlsearch
 set hlsearch
@@ -182,8 +187,8 @@ if hostname() != 'eleanor'
   " let g:deoplete#file#enable_buffer_path = 1
 endif
 
-let g:cm_smart_enable = 1
-inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+" let g:cm_smart_enable = 1
+" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 
 " whitespace
 autocmd BufEnter * EnableStripWhitespaceOnSave
@@ -236,9 +241,9 @@ let g:scratch_filetype = 'markdown'
 let g:scratch_autohide = 1
 " }}}
 
-" cursor+gui+colors {{{
+" cursor+gui+colors
 
-"" basics {{{{
+"" basics
 set termguicolors
 syntax on
 set ruler
@@ -249,7 +254,7 @@ set number
 set mouse=a
 au VimLeave * set guicursor=a:block-blinkon0
 
-"" setting up right margin highlighting {{{{
+"" setting up right margin highlighting
 augroup BgHighlight
 autocmd!
     autocmd WinEnter * set cul
@@ -261,18 +266,21 @@ execute 'set colorcolumn=' . join(range(81,335), ',')
 
 " }}}
 
-" editing {{{
+" editing
 
-"" Autocomplete {{{{
-set omnifunc=syntaxcomplete#Complete
+"" Autocomplete
+" set omnifunc=syntaxcomplete#Complete
+let g:mucomplete#enable_auto_at_startup = 1
 set complete+=i
 set complete+=kspell
-set completeopt+=menuone,noselect
-set completeopt+=preview
+set completeopt+=menuone,noselect,noinsert
+set shortmess+=c
+set belloff+=ctrlg
+" set completeopt+=preview
 set nodigraph  " use c-k to start digraph: é
 " }}}}
 
-" Wildmenu {{{{
+" Wildmenu
 set wildignore+=.DS_Store,Icon\?,*.dmg,*.git,*.pyc,*.o,*.obj,*.so,*.swp,*.zip
 set wildmenu " Show possible matches when autocompleting
 set wildignorecase " Ignore case when completing file names and directories
@@ -280,7 +288,7 @@ set wildignorecase " Ignore case when completing file names and directories
 
 " set inccommand=split
 
-"" Auto commands at save {{{{
+"" Auto commands at save
 set autoread
 augroup autoSaveAndRead
   autocmd!
@@ -289,7 +297,7 @@ augroup autoSaveAndRead
 augroup END
 " }}}}
 
-"" Encoding {{{{
+"" Encoding
 set encoding=utf-8
 set fileencoding=utf-8
 set fileencodings=utf-8
@@ -297,11 +305,11 @@ set bomb
 set binary
 " }}}}
 
-"" Fix backspace indent {{{{
+"" Fix backspace indent
 set backspace=indent,eol,start
 " }}}}
 
-"" Tabs. May be overwritten by autocmd rules {{{{
+"" Tabs. May be overwritten by autocmd rules
 set tabstop=2
 set softtabstop=0
 set shiftwidth=2
@@ -309,25 +317,25 @@ set expandtab
 set smarttab autoindent
 " }}}}
 
-"" Enable hidden buffers {{{{
+"" Enable hidden buffers
 set hidden
 " }}}}
 
-"" for MacOS {{{{
+"" for MacOS
 if has('macunix')
   vmap <S-x> :!pbcopy<CR>
   vmap <S-c> :w !pbcopy<CR><CR>
 endif
 " }}}}
 
-"" Copy/Paste/Cut {{{{
+"" Copy/Paste/Cut
 set clipboard=unnamed
 if has('unnamedplus')
   set clipboard=unnamed,unnamedplus
 endif
 " }}}}
 
-"" Disable visualbell {{{{
+"" Disable visualbell
 set noerrorbells visualbell t_vb=
 if has('autocmd')
   autocmd GUIEnter * set visualbell t_vb=
@@ -335,7 +343,7 @@ endif
 set showcmd
 " }}}}
 
-"" Searching {{{{
+"" Searching
 " set hlsearch
 set incsearch
 set ignorecase
@@ -344,17 +352,17 @@ set showmatch
 set gdefault
 " }}}}
 
-"" Turn on spell checking {{{{
+"" Turn on spell checking
 set spell
 set spelllang=en_us spell
-"" }}}}
 
-"" shells and directories for swp files {{{{
+"" shells and directories for swp files
 " set nobackup
 if exists($SUDO_USER)
   set nobackup
   set nowritebackup
 else
+  " TODO: check for dir exist and create
   set backupdir=~/.vim/tmp/backup
   set backupdir+=.
 endif
@@ -372,8 +380,15 @@ endif
 
 source $HOME/dotfiles/vim-common/remaps.vim
 
+" Autocmd Rules
+"" Remember cursor position
+augroup vimrc-remember-cursor-position
+  autocmd!
+  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+augroup END
+
 autocmd InsertLeave * write
-" language {{{
+" language
 " In markdown files, Control + a surrounds highlighted text with square
 " brackets, then dumps system clipboard contents into parenthesis
 autocmd FileType markdown vnoremap <c-a> <Esc>`<i[<Esc>`>la](<Esc>"*]pa)<Esc>
@@ -382,16 +397,16 @@ autocmd FileType markdown setlocal nocursorcolumn
 " }}}}
 "
 
-" snippets {{{{
+" snippets
 let g:UltiSnipsSnippetDirectories = ['~/dotfiles/vim-common/UltiSnips', 'UltiSnips']
 let g:UltiSnipsSnippetsDir = '~/dotfiles/vim-common/UltiSnips'
-let g:UltiSnipsExpandTrigger='<tab>'
-let g:UltiSnipsJumpForwardTrigger='<tab>'
+" let g:UltiSnipsExpandTrigger='<tab>'
+" let g:UltiSnipsJumpForwardTrigger='<tab>'
 let g:UltiSnipsJumpBackwardTrigger='<c-b>'
 let g:UltiSnipsEditSplit='vertical'
 " }}}}
 
-" w0rp/ale {{{{
+" w0rp/ale
 let g:ale_linters = {
 \   'python': ['flake8'],
 \   'r': ['lintr'],
@@ -417,7 +432,7 @@ let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_save = 1
 " }}}}
 
-"" python {{{{
+"" python
 augroup vimrc-python
   autocmd!
   autocmd FileType python setlocal expandtab shiftwidth=4 tabstop=8 colorcolumn=79
@@ -441,7 +456,7 @@ let g:python_highlight_all = 1
 " }}}}
 
 " }}}
-" timestamp {{{
+" timestamp
 " https://gist.github.com/jelera/783801
 " auto-update the timestamp right before saving a file
 
@@ -460,7 +475,7 @@ function! s:timestamp()
     call s:subst(1, 20, pat, rep)
 endfunction
 " subst taken from timestamp.vim
-" {{{ subst( start, end, pat, rep): substitute on range start - end.
+"  subst( start, end, pat, rep): substitute on range start - end.
 function! s:subst(start, end, pat, rep)
     let lineno = a:start
     while lineno <= a:end
@@ -476,15 +491,6 @@ function! s:subst(start, end, pat, rep)
 	let lineno = lineno + 1
     endwhile
 endfunction
-" }}}
-
-" Autocmd Rules {{{
-
-"" Remember cursor position {{{{
-augroup vimrc-remember-cursor-position
-  autocmd!
-  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-augroup END
 
 set modeline
 set modelines=5
