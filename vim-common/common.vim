@@ -1,6 +1,6 @@
 " Preamble
 "
-" Last Modified: <Mon 10 Dec 2018 04:12:40 PM PST>
+" Last Modified: <Mon 10 Dec 2018 04:40:48 PM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2018 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -72,7 +72,7 @@ Plug 'honza/vim-snippets'
 Plug 'jlanzarotta/bufexplorer'   " helpful but SLOW
 Plug 'ap/vim-buftabline'         " adds buffer tabs and numbers
 Plug 'dhruvasagar/vim-vinegar'   " - for curdir and adds some netrw behaviors
-Plug 'tpope/vim-eunuch'          " u-nick(s), get it? *nix bits: Find, Rename
+" Plug 'tpope/vim-eunuch'          " u-nick(s), get it? *nix bits: Find, Rename
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
@@ -82,13 +82,14 @@ Plug 'kshenoy/vim-signature'           " less cluttered, marks more visible
 Plug 'itchyny/lightline.vim'           " workable. Prob could be done by hand.
 Plug 'luochen1990/rainbow'             " I really like these!
 Plug 'itchyny/vim-cursorword'          " this works w * operator
-" Plug 'icymind/NeoSolarized'
-Plug 'joshdick/onedark.vim'
 Plug 'mhartington/oceanic-next'
+" Plug 'icymind/NeoSolarized'
+" Plug 'joshdick/onedark.vim'
 " Plug 'flazz/vim-colorschemes'
 " Plug 'arcticicestudio/nord-vim'
 " Plug 'jsit/disco.vim'
-Plug 'romainl/flattened'
+" Plug 'romainl/flattened'
+" Plug 'sickill/vim-monokai'
 
 " languages
 Plug 'sheerun/vim-polyglot'
@@ -131,9 +132,11 @@ map g# <Plug>(incsearch-nohl-g#)
 
 " other solarized have bad colors in terminal
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+colorscheme OceanicNext
+"---deprecated colors
+" colorscheme monokai
 " colorscheme NeoSolarized
 " colorscheme nord
-colorscheme OceanicNext
 " colorscheme TangoDark
 " colorscheme flattened
 " g:disco_nobright = 0
