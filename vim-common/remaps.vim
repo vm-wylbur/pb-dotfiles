@@ -9,7 +9,7 @@ let g:mapleader='\'
 
 nnoremap <space> <C-d>
 nnoremap <C-space> <C-u>
-nnoremap <return> @@
+nnoremap <C-return> @@
 
 "" tweaks adding functionality to existing keys {{{{
 nnoremap D Da

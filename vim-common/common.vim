@@ -1,6 +1,6 @@
 " Preamble
 "
-" Last Modified: <Tue 27 Nov 2018 09:54:01 AM PST>
+" Last Modified: <Mon 10 Dec 2018 04:12:40 PM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2018 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -82,9 +82,13 @@ Plug 'kshenoy/vim-signature'           " less cluttered, marks more visible
 Plug 'itchyny/lightline.vim'           " workable. Prob could be done by hand.
 Plug 'luochen1990/rainbow'             " I really like these!
 Plug 'itchyny/vim-cursorword'          " this works w * operator
-Plug 'icymind/NeoSolarized'
+" Plug 'icymind/NeoSolarized'
 Plug 'joshdick/onedark.vim'
 Plug 'mhartington/oceanic-next'
+" Plug 'flazz/vim-colorschemes'
+" Plug 'arcticicestudio/nord-vim'
+" Plug 'jsit/disco.vim'
+Plug 'romainl/flattened'
 
 " languages
 Plug 'sheerun/vim-polyglot'
@@ -92,8 +96,9 @@ Plug 'davidhalter/jedi-vim'
 Plug 'lervag/vimtex'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'reedes/vim-pencil'
-Plug 'tpope/vim-fugitive'
-Plug 'tmhedberg/SimpylFold'            " folding for python, za/zc
+" Plug 'tpope/vim-fugitive'
+" Plug 'tmhedberg/SimpylFold'            " folding for python, za/zc
+" Plug 'jalvesaq/Nvim-R'
 
 " markdown stuff
 Plug 'vim-pandoc/vim-pandoc'
@@ -112,8 +117,7 @@ filetype plugin indent on
 
 " plugin configs
 
-
-
+let R_user_maps_only = 1
 
 " :h g:incsearch#auto_nohlsearch
 set hlsearch
@@ -127,12 +131,16 @@ map g# <Plug>(incsearch-nohl-g#)
 
 " other solarized have bad colors in terminal
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-colorscheme NeoSolarized
-" colorscheme oceanic_next
+" colorscheme NeoSolarized
+" colorscheme nord
+colorscheme OceanicNext
+" colorscheme TangoDark
+" colorscheme flattened
+" g:disco_nobright = 0
+" g:disco_red_error_only = 1
 
 let g:oceanic_next_terminal_bold = 1
 let g:oceanic_next_terminal_italic = 1
-" colorscheme OceanicNext
 
 let g:neosolarized_bold = 1
 let g:neosolarized_underline = 1
@@ -154,7 +162,7 @@ let g:gitgutter_async = 1
 let g:gitgutter_realtime = 1
 
 if has("persistent_undo")
-    set undodir=~/.undodir/
+    " set undodir=~/.undodir/
     set undofile
 endif
 
@@ -175,7 +183,7 @@ let g:comfortable_motion_scroll_up_key = "k"
 let g:timestamp_modelines = 1
 
 " deoplete
-if hostname() != 'eleanor'
+" if hostname() != 'eleanor'
   " call deoplete#enable()
   " autocmd CompleteDone * pclose
   " let g:deoplete#enable_at_startup = 1
@@ -185,7 +193,7 @@ if hostname() != 'eleanor'
   " let g:deoplete#sources#jedi#show_docstring = 1
   " let g:deoplete#sources#jedi#short_types = 1
   " let g:deoplete#file#enable_buffer_path = 1
-endif
+" endif
 
 " let g:cm_smart_enable = 1
 " inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -195,7 +203,7 @@ autocmd BufEnter * EnableStripWhitespaceOnSave
 " autocmd BufEnter * lcd %:p:h
 
 
-
+imap
 " Insert mode completion
 " imap <c-x><c-k> <plug>(fzf-complete-word)
 " imap <c-x><c-f> <plug>(fzf-complete-path)
@@ -392,10 +400,9 @@ autocmd InsertLeave * write
 " In markdown files, Control + a surrounds highlighted text with square
 " brackets, then dumps system clipboard contents into parenthesis
 autocmd FileType markdown vnoremap <c-a> <Esc>`<i[<Esc>`>la](<Esc>"*]pa)<Esc>
-autocmd FileType markdown setlocal nocursorline
-autocmd FileType markdown setlocal nocursorcolumn
-" }}}}
-"
+autocmd FileType r setlocal commentstring=#\ %s
+autocmd FileType r inoremap C-. %>%
+
 
 " snippets
 let g:UltiSnipsSnippetDirectories = ['~/dotfiles/vim-common/UltiSnips', 'UltiSnips']
@@ -421,7 +428,7 @@ let g:ale_sign_error = '✗'
 highlight link ALEWarningSign String
 highlight link ALEErrorSign Title
 let g:ale_sign_column_always = 1
-let g:ale_change_sign_column_color = 1
+let g:ale_change_sign_column_color = 0
 let g:ale_vim_vint_show_style_issues = 1
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
