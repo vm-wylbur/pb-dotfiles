@@ -74,10 +74,12 @@ vnoremap <leader>v c[<C-r>"](<Esc>"*pli)<Esc>
 " this is a demo, wraps viw in double-q
 " :nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
 
+" doesn't work :(
+" vnoremap <leader>c y y`[V`]:Commentary<CR>
+
 " direct editing
 nnoremap <leader>ev :e ~/dotfiles/vim-common/common.vim<cr>
 nnoremap <leader>en :e ~/Documents/notes/vim-notes.md<cr>
-nnoremap <leader>em :call EditMacro()<cr> <Plug>em
 
 " spelling hack. NB the cursor moves bc the mark is relative to the byte
 " position in the line. how to make the cursor stick?

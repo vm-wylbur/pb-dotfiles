@@ -3,13 +3,14 @@
 " git@github.com:vm-wylbur/pb-dotfiles.git
 " (c) 2018 [HRDAG](https://hrdag.org), GPL-2 or later
 "
-" pb-dotfiles/macvim/gvimrc  symlinked to ~/.vimrc 
+" pb-dotfiles/macvim/gvimrc  symlinked to ~/.vimrc
 
 set guifont=Monaco:h16
 set runtimepath+=$HOME/.local/share/nvim
 
 " set runtimepath+=$HOME/dotfiles/vim-common
 call plug#begin(expand('~/.config/nvim/plugged'))
+" Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'           " for bubbling
 Plug 'justinmk/vim-sneak'
@@ -29,12 +30,11 @@ filetype plugin indent on
 source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
 source $HOME/dotfiles/vim-common/plugins.vim
 
-let g:pencil#wrapModeDefault = 'soft'   " default is 'hard'
-augroup emailConfig
-	autocmd!
-  autocmd FileType markdown,mkd call pencil#init()
-  autocmd FileType text         call pencil#init()
-augroup END
+if has("gui_macvim")
+	let macvim_hig_shift_movement = 1
+endif
+set lines=60
+set columns=85
 
 source $HOME/dotfiles/vim-common/remaps.vim
 source $HOME/dotfiles/vim-common/sets.vim
