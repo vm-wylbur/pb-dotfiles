@@ -11,6 +11,9 @@ nnoremap <space> <C-d>
 nnoremap <C-space> <C-u>
 nnoremap <C-return> @@
 
+nnoremap <Tab> :bnext <cr>
+nnoremap <S-Tab> :bprev <cr>
+
 "" tweaks adding functionality to existing keys {{{{
 nnoremap D Da
 nnoremap U d^i
@@ -20,7 +23,6 @@ nnoremap J mzJ`z
 vmap < <gv
 vmap > >gv
 nnoremap <Esc><Esc> :<C-u>nohlsearch<CR>
-"" }}}}
 
 "" insert/command mode like emacs {{{{
 inoremap <C-a> <Home>
@@ -29,16 +31,12 @@ inoremap <A-bs> <c-w>
 cnoremap <C-a> <Home>
 cnoremap <C-e> <End>
 cnoremap <A-bs> <c-w>
-" }}}}
 
 "" bubbling text {{{{
 """ Bubble multiple lines; note that the *noremap's don't work here.
 """ with vim-impaired and Drew Neil's mappings
 nmap <C-Up> [e
 nmap <C-Down> ]e
-""" Move visual block
-vnoremap J [egv
-vnoremap K ]egv
 vmap <C-Up> [egv
 vmap <C-Down> ]egv
 

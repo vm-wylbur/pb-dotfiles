@@ -1,6 +1,6 @@
 " Preamble
 "
-" Last Modified: <Mon 10 Dec 2018 04:40:48 PM PST>
+" Last Modified: <Sun 23 Dec 2018 05:15:34 PM PST>
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " (c) 2018 [HRDAG](https://hrdag.org), GPL-2 or later
 "
@@ -15,20 +15,13 @@
 " - clean up the autocmd stuff, esp for markdown. see _learning vimscript the hard way_
 " - should think more about wildmode and tab completion
 "
-" }}}
 
 " setup
 set nocompatible
-
-" I think both of these are unnecessary. filetype loads 2x without this line.
-" filetype plugin on
-" let g:vim_bootstrap_langs = 'python'
 let g:python_host_skip_check = 1
 let g:python3_host_skip_check = 1
-
 let g:vim_bootstrap_editor = 'nvim'				" nvim or vim
 set runtimepath+=$HOME/dotfiles/vim-common
-" }}}
 
 " plugins
 call plug#begin(expand('~/.config/nvim/plugged'))
@@ -50,26 +43,15 @@ Plug 'machakann/vim-highlightedyank'  " blink
 Plug 'haya14busa/incsearch.vim'
 
 " completion
-" note: YCM never worked
-"       nvim-completion-manager works on eleanor but not petunia
-"       deoplete works on petunia but not eleanor
-" if hostname() == 'eleanor' || has('gui_macvim')
-"   Plug 'roxma/nvim-completion-manager'
-" else
-"   Plug 'zchee/deoplete-jedi'
-"   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-" endif
-" Plug 'ajh17/VimCompletesMe'
 Plug 'lifepillar/vim-mucomplete'
 
 
 " navigation
 Plug 'justinmk/vim-sneak'        " I should use this more.
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
+" Plug 'SirVer/ultisnips'
+" Plug 'honza/vim-snippets'
 
 "" files, buffers, and tags
-Plug 'jlanzarotta/bufexplorer'   " helpful but SLOW
 Plug 'ap/vim-buftabline'         " adds buffer tabs and numbers
 Plug 'dhruvasagar/vim-vinegar'   " - for curdir and adds some netrw behaviors
 " Plug 'tpope/vim-eunuch'          " u-nick(s), get it? *nix bits: Find, Rename
@@ -131,8 +113,8 @@ map g* <Plug>(incsearch-nohl-g*)
 map g# <Plug>(incsearch-nohl-g#)
 
 " other solarized have bad colors in terminal
-let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-colorscheme OceanicNext
+" let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+" colorscheme OceanicNext
 "---deprecated colors
 " colorscheme monokai
 " colorscheme NeoSolarized
@@ -141,21 +123,15 @@ colorscheme OceanicNext
 " colorscheme flattened
 " g:disco_nobright = 0
 " g:disco_red_error_only = 1
+" let g:oceanic_next_terminal_bold = 1
+" let g:oceanic_next_terminal_italic = 1
 
-let g:oceanic_next_terminal_bold = 1
-let g:oceanic_next_terminal_italic = 1
-
-let g:neosolarized_bold = 1
-let g:neosolarized_underline = 1
-let g:neosolarized_italic = 1
-let g:neosolarized_vertSplitBgTrans = 0
-let g:neosolarized_contrast = "high"
-set background=dark
+" set background=dark
 
 let g:jedi#force_py_version = 3
 
-highlight Comment cterm=italic
-highlight Comment gui=italic
+" highlight Comment cterm=italic
+" highlight Comment gui=italic
 " change cursor shape with mode
 " let &t_ZH="\e[3m"
 " let &t_ZR="\e[23m"
@@ -164,14 +140,6 @@ let g:gitgutter_eager = 0
 let g:gitgutter_async = 1
 let g:gitgutter_realtime = 1
 
-if has("persistent_undo")
-    " set undodir=~/.undodir/
-    set undofile
-endif
-
-" FIXME
-" nnoremap <c--> <Plug>choosewin
-let g:choosewin_overlay_enable = 1
 
 set signcolumn=yes
 
@@ -180,42 +148,11 @@ let g:sneak#streak = 1
 nmap s <Plug>SneakLabel_s
 nmap S <Plug>SneakLabel_S
 
-let g:comfortable_motion_scroll_down_key = "j"
-let g:comfortable_motion_scroll_up_key = "k"
-
-let g:timestamp_modelines = 1
-
-" deoplete
-" if hostname() != 'eleanor'
-  " call deoplete#enable()
-  " autocmd CompleteDone * pclose
-  " let g:deoplete#enable_at_startup = 1
-  " let g:deoplete#auto_complete_start_length = 1
-  " let g:deoplete#disable_auto_complete = 0
-  " let g:deoplete#sources#jedi#statement_length = 30
-  " let g:deoplete#sources#jedi#show_docstring = 1
-  " let g:deoplete#sources#jedi#short_types = 1
-  " let g:deoplete#file#enable_buffer_path = 1
-" endif
-
-" let g:cm_smart_enable = 1
-" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 
 " whitespace
 autocmd BufEnter * EnableStripWhitespaceOnSave
-" autocmd BufEnter * lcd %:p:h
 
-
-imap
-" Insert mode completion
-" imap <c-x><c-k> <plug>(fzf-complete-word)
-" imap <c-x><c-f> <plug>(fzf-complete-path)
-" imap <c-x><c-j> <plug>(fzf-complete-file-ag)
-imap <c-x><c-l> <plug>(fzf-complete-line)
-
-" cheat40.vim needs a hack to open the window at 42 chars
-" this is a workaround for Markology but it doesn't look bad.
-let g:cheat40_use_default = 0
+" imap <c-x><c-l> <plug>(fzf-complete-line)
 
 let g:rainbow_active = 1
 
@@ -230,15 +167,12 @@ let g:pencil#wrapModeDefault = 'soft'   " default is 'hard'
     autocmd FileType tex           call pencil#init()
   augroup END
 autocmd FileType markdown,mkd,tex setlocal spell
-autocmd FileType markdown,mkd,tex setlocal wrap
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 autocmd BufRead,BufNew *.md set filetype=markdown
 
-autocmd FileType tex setlocal spell
-autocmd FileType tex setlocal wrap
 
 " stop spellcheck in terminal
-autocmd FileType terminal setlocal nospell
+au TermOpen * setlocal nonumber norelativenumber nospell
 
 
 let g:buftabline_numbers=1
@@ -246,24 +180,8 @@ let g:buftabline_indicators='on' " this is helpful.
 let g:buftabline_separators='on'
 " let g:MRU_Exclude_Files = '.*/.git/COMMIT_EDITMSG$'
 
-let g:scratch_persistence_file = '~/tmp/scratch.md'
-let g:scratch_insert_autohide = 0
-let g:scratch_filetype = 'markdown'
-let g:scratch_autohide = 1
-" }}}
 
-" cursor+gui+colors
 
-"" basics
-set termguicolors
-syntax on
-set ruler
-set relativenumber
-set number
-
-" cursor stuff
-set mouse=a
-au VimLeave * set guicursor=a:block-blinkon0
 
 "" setting up right margin highlighting
 augroup BgHighlight
@@ -273,11 +191,7 @@ autocmd!
 augroup END
 " makes right margin diff color
 execute 'set colorcolumn=' . join(range(81,335), ',')
-" }}}}
 
-" }}}
-
-" editing
 
 "" Autocomplete
 " set omnifunc=syntaxcomplete#Complete
@@ -301,95 +215,16 @@ set wildignorecase " Ignore case when completing file names and directories
 
 "" Auto commands at save
 set autoread
-augroup autoSaveAndRead
-  autocmd!
-  autocmd TextChanged,InsertLeave,FocusLost * silent! wall
-  autocmd CursorHold * silent! checktime
-augroup END
+" augroup autoSaveAndRead
+"   autocmd!
+"   autocmd TextChanged,InsertLeave,FocusLost * silent! wall
+"   autocmd CursorHold * silent! checktime
+" augroup END
 " }}}}
 
-"" Encoding
-set encoding=utf-8
-set fileencoding=utf-8
-set fileencodings=utf-8
-set bomb
-set binary
-" }}}}
-
-"" Fix backspace indent
-set backspace=indent,eol,start
-" }}}}
-
-"" Tabs. May be overwritten by autocmd rules
-set tabstop=2
-set softtabstop=0
-set shiftwidth=2
-set expandtab
-set smarttab autoindent
-" }}}}
-
-"" Enable hidden buffers
-set hidden
-" }}}}
-
-"" for MacOS
-if has('macunix')
-  vmap <S-x> :!pbcopy<CR>
-  vmap <S-c> :w !pbcopy<CR><CR>
-endif
-" }}}}
-
-"" Copy/Paste/Cut
-set clipboard=unnamed
-if has('unnamedplus')
-  set clipboard=unnamed,unnamedplus
-endif
-" }}}}
-
-"" Disable visualbell
-set noerrorbells visualbell t_vb=
-if has('autocmd')
-  autocmd GUIEnter * set visualbell t_vb=
-endif
-set showcmd
-" }}}}
-
-"" Searching
-" set hlsearch
-set incsearch
-set ignorecase
-set smartcase
-set showmatch
-set gdefault
-" }}}}
-
-"" Turn on spell checking
-set spell
-set spelllang=en_us spell
-
-"" shells and directories for swp files
-" set nobackup
-if exists($SUDO_USER)
-  set nobackup
-  set nowritebackup
-else
-  " TODO: check for dir exist and create
-  set backupdir=~/.vim/tmp/backup
-  set backupdir+=.
-endif
-
-set noswapfile
-
-set fileformats=unix,dos,mac
-set showcmd
-
-if exists('$SHELL')
-    set shell=$SHELL
-else
-    set shell=/bin/bash
-endif
-
+source $HOME/dotfiles/vim-common/sets.vim
 source $HOME/dotfiles/vim-common/remaps.vim
+source $HOME/dotfiles/vim-common/gui.vim
 
 " Autocmd Rules
 "" Remember cursor position
@@ -398,7 +233,6 @@ augroup vimrc-remember-cursor-position
   autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 augroup END
 
-autocmd InsertLeave * write
 " language
 " In markdown files, Control + a surrounds highlighted text with square
 " brackets, then dumps system clipboard contents into parenthesis
@@ -408,13 +242,10 @@ autocmd FileType r inoremap C-. %>%
 
 
 " snippets
-let g:UltiSnipsSnippetDirectories = ['~/dotfiles/vim-common/UltiSnips', 'UltiSnips']
-let g:UltiSnipsSnippetsDir = '~/dotfiles/vim-common/UltiSnips'
-" let g:UltiSnipsExpandTrigger='<tab>'
-" let g:UltiSnipsJumpForwardTrigger='<tab>'
-let g:UltiSnipsJumpBackwardTrigger='<c-b>'
-let g:UltiSnipsEditSplit='vertical'
-" }}}}
+" let g:UltiSnipsSnippetDirectories = ['~/dotfiles/vim-common/UltiSnips', 'UltiSnips']
+" let g:UltiSnipsSnippetsDir = '~/dotfiles/vim-common/UltiSnips'
+" let g:UltiSnipsJumpBackwardTrigger='<c-b>'
+" let g:UltiSnipsEditSplit='vertical'
 
 " w0rp/ale
 let g:ale_linters = {
@@ -452,8 +283,6 @@ augroup END
 
 " jedi-vim
 let g:jedi#popup_on_dot = 0
-let g:jedi#goto_assignments_command = '<leader>g'
-let g:jedi#goto_definitions_command = '<leader>d'
 let g:jedi#documentation_command = 'K'
 let g:jedi#usages_command = '<leader>n'
 let g:jedi#rename_command = '<leader>r'
@@ -463,44 +292,7 @@ let g:jedi#smart_auto_mappings = 0
 
 let g:polyglot_disabled = ['python', 'tex', 'markdown']
 let g:python_highlight_all = 1
-" }}}}
 
-" }}}
-" timestamp
-" https://gist.github.com/jelera/783801
-" auto-update the timestamp right before saving a file
-
-function! EditMacro()
-  call inputsave()
-  let g:regToEdit = input('Register to edit: ')
-  call inputrestore()
-  execute "nnoremap <Plug>em :let @" . eval("g:regToEdit") . "='<c-r><c-r>" . eval("g:regToEdit")
-endfunction
-
-autocmd! BufWritePre * :call s:timestamp()
-" to update timestamp when saving if its in the first 20 lines of a file
-function! s:timestamp()
-    let pat = '\(\(Last\)\?\s*\([Cc]hanged\?\|[Mm]odified\|[Uu]pdated\?\)\s*:\s*\).*'
-    let rep = '\1' . '<' . strftime("%a %d %b %Y %I:%M:%S %p %Z") . '>'
-    call s:subst(1, 20, pat, rep)
-endfunction
-" subst taken from timestamp.vim
-"  subst( start, end, pat, rep): substitute on range start - end.
-function! s:subst(start, end, pat, rep)
-    let lineno = a:start
-    while lineno <= a:end
-	let curline = getline(lineno)
-	if match(curline, a:pat) != -1
-	    let newline = substitute( curline, a:pat, a:rep, '' )
-	    if( newline != curline )
-		" Only substitute if we made a change
-		"silent! undojoin
-		keepjumps call setline(lineno, newline)
-	    endif
-	endif
-	let lineno = lineno + 1
-    endwhile
-endfunction
 
 set modeline
 set modelines=5

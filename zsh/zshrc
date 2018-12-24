@@ -3,7 +3,7 @@
 #  Maintainer: PB
 #  License: (c) HRDAG 2018, some rights reserved: GPL v2 or newer
 #
-# Last modified: <Tue 20 Nov 2018 10:45:48 PM CST>
+# Last modified: <Fri 21 Dec 2018 10:14:38 AM PST>
 #
 # Executes commands at the start of an interactive session.
 
@@ -86,9 +86,7 @@ HISTDUP=erase               #Erase duplicates in the history file
 alias gs="git status"
 # alias gl="git log --graph --pretty=oneline --abbrev-commit"
 alias gl='git log --pretty=format:"%h%x09%an%x09%ad%x09%s"'
-# alias gl="$HOME/bin/git-log-compact"
-alias gd="git diff"
-alias gdc="git diff --cached"
+alias gc='git commit'
 
 alias gcc="gcc-8"
 alias gcov="gcov-8"
