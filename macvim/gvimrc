@@ -1,4 +1,9 @@
-" to do:
+"
+" Author: [Patrick Ball](mailto://pball@hrdag.org)
+" git@github.com:vm-wylbur/pb-dotfiles.git
+" (c) 2018 [HRDAG](https://hrdag.org), GPL-2 or later
+"
+" pb-dotfiles/macvim/gvimrc  symlinked to ~/.vimrc 
 
 set guifont=Monaco:h16
 set runtimepath+=$HOME/.local/share/nvim
@@ -11,27 +16,18 @@ Plug 'justinmk/vim-sneak'
 Plug 'kshenoy/vim-signature'
 Plug 'airblade/vim-gitgutter'
 Plug 'qpkorr/vim-bufkill'             " :BD is very useful
-Plug 'itchyny/lightline.vim'         
+Plug 'machakann/vim-highlightedyank'  " blink
+Plug 'itchyny/lightline.vim'
 Plug 'ap/vim-buftabline'
 Plug 'mhartington/oceanic-next'
 Plug 'reedes/vim-pencil'
+Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
 call plug#end()
 
+filetype plugin indent on
+
 source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
-
-let g:sneak#label = 1
-let g:sneak#streak = 1
-nmap s <plug>sneaklabel_s
-nmap s <plug>sneaklabel_s
-
-let g:pencil#wrapModeDefault = 'soft'
-
-set autoread
-augroup autoSaveAndRead
-	autocmd!
-	autocmd TextChanged,InsertLeave,FocusLost * silent! wall
-	autocmd CursorHold * silent! checktime
-augroup END
+source $HOME/dotfiles/vim-common/plugins.vim
 
 let g:pencil#wrapModeDefault = 'soft'   " default is 'hard'
 augroup emailConfig
@@ -40,10 +36,9 @@ augroup emailConfig
   autocmd FileType text         call pencil#init()
 augroup END
 
-
 source $HOME/dotfiles/vim-common/remaps.vim
 source $HOME/dotfiles/vim-common/sets.vim
 source $HOME/dotfiles/vim-common/gui.vim
-
+source $HOME/dotfiles/vim-common/autogrp.vim
 
 " done.

@@ -1,3 +1,10 @@
+"
+" Author: [Patrick Ball](mailto://pball@hrdag.org)
+" git@github.com:vm-wylbur/pb-dotfiles.git
+" (c) 2018 [HRDAG](https://hrdag.org), GPL-2 or later
+"
+" pb-dotfiles/vim-common/remaps.vim
+"
 " mappings
 "" the big picture here is:
 "" * remapping std vim keys should be enhancements, not overrides
@@ -24,7 +31,7 @@ vmap < <gv
 vmap > >gv
 nnoremap <Esc><Esc> :<C-u>nohlsearch<CR>
 
-"" insert/command mode like emacs {{{{
+"" insert/command mode like emacs
 inoremap <C-a> <Home>
 inoremap <C-e> <End>
 inoremap <A-bs> <c-w>
@@ -46,17 +53,9 @@ nnoremap <c-k> <c-w>k
 nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
 
-" this is neovim specific
-tnoremap <Esc> <C-\><C-n>
-
 "" to normal mode with jj or jk {{{{
 inoremap jj <ESC>
 inoremap jk <ESC>
-tnoremap jj <c-\><c-n>
-" this is esp good for getting out of fzf searches
-tnoremap jk <c-\><c-n>:q<cr>
-" }}}}
-" }}}
 "
 " leader {{{
 "" the big picture hire is:
@@ -74,7 +73,6 @@ vnoremap <leader>v c[<C-r>"](<Esc>"*pli)<Esc>
 
 " this is a demo, wraps viw in double-q
 " :nnoremap <leader>" viw<esc>a"<esc>bi"<esc>lel
-
 
 " direct editing
 nnoremap <leader>ev :e ~/dotfiles/vim-common/common.vim<cr>

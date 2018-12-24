@@ -1,12 +1,16 @@
+"
+" Author: [Patrick Ball](mailto://pball@hrdag.org)
+" git@github.com:vm-wylbur/pb-dotfiles.git
+" (c) 2018 [HRDAG](https://hrdag.org), GPL-2 or later
+"
+" pb-dotfiles/vim-common/sets.vim
 
-
- 
 set hidden
 set lazyredraw
 set ttyfast
 
 "" Copy/Paste/Cut
-set clipboard=unnamedplus
+set clipboard=unnamed
 
 set termguicolors
 syntax on
@@ -14,9 +18,9 @@ set ruler
 set relativenumber
 set number
 set mouse=a
-au VimLeave * set guicursor=a:block-blinkon0
 
 " visual behavior
+au VimLeave * set guicursor=a:block-blinkon0
 set noerrorbells visualbell t_vb=
 if has('autocmd')
   autocmd GUIEnter * set visualbell t_vb=
@@ -59,6 +63,10 @@ set fileencodings=utf-8
 set bomb
 set binary
 
+" stay consistent with disk
+set autoread
+autocmd TextChanged,InsertLeave,FocusLost * update
+
 "" shells and directories for swp files
 set noswapfile
 if exists($SUDO_USER)
@@ -86,4 +94,5 @@ if exists('$SHELL')
 else
     set shell=/bin/bash
 endif
-" done. 
+
+" done.
