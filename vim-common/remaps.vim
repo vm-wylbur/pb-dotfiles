@@ -18,9 +18,6 @@ nnoremap <space> <C-d>
 nnoremap <C-space> <C-u>
 nnoremap <C-return> @@
 
-nnoremap <Tab> :bnext <cr>
-nnoremap <S-Tab> :bprev <cr>
-
 "" tweaks adding functionality to existing keys {{{{
 nnoremap D Da
 nnoremap U d^i
@@ -65,9 +62,6 @@ inoremap jk <ESC>
 nnoremap <leader>x :so %<CR>
 nnoremap <leader>w :w<CR>
 nnoremap <leader>m :History<CR>
-" BufExplorer is pretty much emacs
-nnoremap <leader>b :BufExplorer<CR>
-nnoremap <leader>u :UndotreeToggle<cr>
 
 vnoremap <leader>v c[<C-r>"](<Esc>"*pli)<Esc>
 
@@ -78,7 +72,6 @@ vnoremap <leader>v c[<C-r>"](<Esc>"*pli)<Esc>
 " vnoremap <leader>c y y`[V`]:Commentary<CR>
 
 " direct editing
-nnoremap <leader>ev :e ~/dotfiles/vim-common/common.vim<cr>
 nnoremap <leader>en :e ~/Documents/notes/vim-notes.md<cr>
 
 " spelling hack. NB the cursor moves bc the mark is relative to the byte
@@ -99,4 +92,4 @@ nnoremap <leader>8 :b8 <CR>
 nnoremap <leader>9 :b9 <CR>
 nnoremap <leader>0 :b10 <CR>
 
-"" }}}}
+" done.

@@ -41,4 +41,5 @@ source $HOME/dotfiles/vim-common/sets.vim
 source $HOME/dotfiles/vim-common/gui.vim
 source $HOME/dotfiles/vim-common/autogrp.vim
 
+nnoremap <leader>ev :e $HOME/dotfiles/macvim/gvimrc<cr>
 " done.

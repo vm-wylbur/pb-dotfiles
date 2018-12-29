@@ -24,10 +24,10 @@ Plug 'qpkorr/vim-bufkill'             " :BD is very useful
 
 " editing and formatting
 Plug 'tpope/vim-surround'             " adds surround action to create cmts
-Plug 'tpope/vim-commentary'           " wow, all the time.
+Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-unimpaired'           " many additional movements with [ and ]
 Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
-Plug 'tommcdo/vim-exchange'           " cx{motion} to exhange text objs
+" Plug 'tommcdo/vim-exchange'           " cx{motion} to exhange text objs
 Plug 'machakann/vim-highlightedyank'  " blink
 Plug 'haya14busa/incsearch.vim'
 
@@ -57,15 +57,13 @@ Plug 'davidhalter/jedi-vim'
 Plug 'lervag/vimtex'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'reedes/vim-pencil'
-" Plug 'tpope/vim-fugitive'
-" Plug 'tmhedberg/SimpylFold'            " folding for python, za/zc
 " Plug 'jalvesaq/Nvim-R'
 
 " markdown stuff
 Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
 Plug 'vim-pandoc/vim-rmarkdown'
-Plug 'tpope/vim-markdown'
+" Plug 'tpope/vim-markdown'
 
 " linting
 Plug 'w0rp/ale'
@@ -74,6 +72,23 @@ call plug#end()
 
 " must follow all Plug calls
 filetype plugin indent on
+
+"---temp------------------------------
+" TESTING: tComment vs tpope's vim-commentary
+" tComment extra mappings:
+" yank visual before toggle comment
+vmap gy ygvgc
+" yank and past visual before toggle comment
+vmap gyy ygvgc'>gp'.
+" yank line before toggle comment
+nmap gy yygcc
+" yank and paste line before toggle comment and remember position
+" it works both in normal and insert mode
+" Use :t-1 instead of yyP to preserve registers
+nmap gyy mz:t-1<cr>gCc`zmz
+imap gyy <esc>:t-1<cr>gCcgi
+"---temp------------------------------
+
 
 source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
 source $HOME/dotfiles/vim-common/plugins.vim
@@ -85,13 +100,12 @@ tnoremap jk <c-\><c-n>:q<cr>
 
 
 "" Autocomplete
-" set omnifunc=syntaxcomplete#Complete
 let g:mucomplete#enable_auto_at_startup = 1
-set complete+=i
-set complete+=kspell
 set completeopt+=menuone,noselect,noinsert
 set shortmess+=c
 set belloff+=ctrlg
+set complete+=i
+set complete+=kspell
 
 " Wildmenu
 set wildignore+=.DS_Store,Icon\?,*.dmg,*.git,*.pyc,*.o,*.obj,*.so,*.swp,*.zip
@@ -155,5 +169,7 @@ source $HOME/dotfiles/vim-common/remaps.vim
 source $HOME/dotfiles/vim-common/sets.vim
 source $HOME/dotfiles/vim-common/gui.vim
 source $HOME/dotfiles/vim-common/autogrp.vim
+
+nnoremap <leader>ev :e $HOME/dotfiles/nvim/init.vim<cr>
 
 " done.
