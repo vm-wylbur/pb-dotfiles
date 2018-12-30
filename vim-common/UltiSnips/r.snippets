@@ -1,5 +1,5 @@
-snippet cpb "PB's python script template"
-#!/usr/bin/env python3 `!v execute('update', 'sil!')[-1]`
+snippet cpb "PB's R script template"
+#!/usr/bin/env Rscript --vanilla `!v execute('update', 'sil!')[-1]`
 # set expandtab ts=4 sw=4 ai fileencoding=utf-8
 #
 # Author: PB
@@ -21,18 +21,25 @@ project_path = Path(*fpath.parts[gpi:])
 snip.rv = ' ' + str(project_path)`
 #
 
-import argparse
+require(pacman)
+p_load(argparse, tidyr, dplyr)
 
 
-def getargs():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--input", default=None)
-    parser.add_argument("--output", default=None)
-    return parser.parse_args()
+getargs <- function() {
+    parser <- argparse::ArgumentParser()
+    parser$add_argument("--input=", default = "path/to/import")
+    parser$add_argument("--output=", default = "output/myoutput.csv")
+    parser$parse_args()
+}
 
 
-if __name__ == '__main__':
-    $0pass
+main <- function() {
+    args <- getargs()
+    $0
+}
+
+
+main()
 
 # done.
 endsnippet

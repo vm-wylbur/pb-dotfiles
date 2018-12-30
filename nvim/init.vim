@@ -36,8 +36,8 @@ Plug 'lifepillar/vim-mucomplete'
 
 " navigation
 Plug 'justinmk/vim-sneak'        " I should use this more.
-" Plug 'SirVer/ultisnips'
-" Plug 'honza/vim-snippets'
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 
 "" files, buffers, and tags
 Plug 'ap/vim-buftabline'         " adds buffer tabs and numbers
@@ -73,6 +73,7 @@ call plug#end()
 " must follow all Plug calls
 filetype plugin indent on
 
+
 "---temp------------------------------
 " TESTING: tComment vs tpope's vim-commentary
 " tComment extra mappings:
@@ -101,11 +102,18 @@ tnoremap jk <c-\><c-n>:q<cr>
 
 "" Autocomplete
 let g:mucomplete#enable_auto_at_startup = 1
-set completeopt+=menuone,noselect,noinsert
+set completeopt+=menuone,noselect
 set shortmess+=c
 set belloff+=ctrlg
 set complete+=i
 set complete+=kspell
+
+nnoremap <leader>s :call UltiSnips#ListSnippets()<CR>
+
+let g:mucomplete#chains = {
+	\ 'default' : ['path', 'omni', 'ulti', 'keyn', 'dict', 'uspl'],
+	\ 'vim'     : ['path', 'cmd', 'keyn']
+	\ }
 
 " Wildmenu
 set wildignore+=.DS_Store,Icon\?,*.dmg,*.git,*.pyc,*.o,*.obj,*.so,*.swp,*.zip
