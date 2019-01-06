@@ -101,7 +101,9 @@ tnoremap jk <c-\><c-n>:q<cr>
 highlight! link TermCursor Cursor
 highlight! TermCursorNC guibg=red guifg=white ctermbg=1 ctermfg=15
 
+" note quite with :w | bd  which should be <leader> gw
 let $GIT_EDITOR = 'nvr -cc split --remote-wait'
+let g:vimtex_compiler_progname = 'nvr'
 
 "" TODO: move to common file
 " Autocomplete
