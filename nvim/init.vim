@@ -101,6 +101,8 @@ tnoremap jk <c-\><c-n>:q<cr>
 highlight! link TermCursor Cursor
 highlight! TermCursorNC guibg=red guifg=white ctermbg=1 ctermfg=15
 
+let $GIT_EDITOR = 'nvr -cc split --remote-wait'
+
 "" TODO: move to common file
 " Autocomplete
 let g:mucomplete#enable_auto_at_startup = 1
