@@ -11,12 +11,17 @@ snippet cpb "PB's python script template"
 from pathlib import Path
 import git
 fpath = Path(path).resolve()
-git_repo = git.Repo(fpath, search_parent_directories=True)
-git_root = Path(git_repo.git.rev_parse("--show-toplevel"))
-assert not str(git_root).endswith('/')
+try:
+	git_repo = git.Repo(fpath, search_parent_directories=True)
+except git.exc.InvalidGitRepositoryError:
+	git_root = Path.home()
+	offset = 1
+else:
+	git_root = Path(git_repo.git.rev_parse("--show-toplevel"))
+	offset = 0
 git_proj = git_root.parts[-1]
 assert git_proj in fpath.parts, f"{git_proj} not in {fpath}"
-gpi = fpath.parts.index(git_proj)
+gpi = fpath.parts.index(git_proj) + offset
 project_path = Path(*fpath.parts[gpi:])
 snip.rv = ' ' + str(project_path)`
 #

@@ -94,13 +94,15 @@ imap gyy <esc>:t-1<cr>gCcgi
 source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
 source $HOME/dotfiles/vim-common/plugins.vim
 
-" this is neovim specific
+" terminal stuff, neovim specific
 tnoremap <Esc> <C-\><C-n>
 tnoremap jj <c-\><c-n>
 tnoremap jk <c-\><c-n>:q<cr>
+highlight! link TermCursor Cursor
+highlight! TermCursorNC guibg=red guifg=white ctermbg=1 ctermfg=15
 
-
-"" Autocomplete
+"" TODO: move to common file
+" Autocomplete
 let g:mucomplete#enable_auto_at_startup = 1
 set completeopt+=menuone,noselect
 set shortmess+=c
@@ -119,7 +121,7 @@ let g:mucomplete#chains = {
 set wildignore+=.DS_Store,Icon\?,*.dmg,*.git,*.pyc,*.o,*.obj,*.so,*.swp,*.zip
 set wildmenu " Show possible matches when autocompleting
 set wildignorecase " Ignore case when completing file names and directories
-" }}}}
+"
 
 
 "" terminal config
