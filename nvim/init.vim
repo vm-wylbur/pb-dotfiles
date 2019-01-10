@@ -57,6 +57,7 @@ Plug 'davidhalter/jedi-vim'
 Plug 'lervag/vimtex'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'reedes/vim-pencil'
+Plug 'vim-scripts/dbext.vim'
 " Plug 'jalvesaq/Nvim-R'
 
 " markdown stuff

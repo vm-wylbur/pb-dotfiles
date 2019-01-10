@@ -5,7 +5,7 @@
 # adapted for petunia, henwen
 #
 # configurable backup disk names
-backup_disk_names="backup-buffer|archives|working-archives|archives-2018"
+backup_disk_names="archives-2019"
 local_machine_name="henwen"
 
 datestr=$(date "+%Y-%m-%dT%H_%M_%S")
