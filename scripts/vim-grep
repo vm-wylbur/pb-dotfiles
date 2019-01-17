@@ -1,6 +1,0 @@
-#!/bin/bash
-# found on SO
-# function vim-grep () {
-nvim $(ag -l "$@" ./*)
-
-

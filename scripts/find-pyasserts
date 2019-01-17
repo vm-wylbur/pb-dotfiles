@@ -1,4 +1,0 @@
-#!/bin/bash
-# run to count plistython assert statements at pwd and below
-find . -type f -name '*py' -print0 | xargs -r0 -P2 grep -ic assert {} \;
-
