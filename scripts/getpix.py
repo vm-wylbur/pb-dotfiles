@@ -29,10 +29,11 @@ cnts = collections.defaultdict(int)
 
 
 def getargs():
-    parser = argparse.ArgumentParser(description="copies files from an Apple"
-                                     " Aperture or Photos Masters/ directory"
-                                     " into a bydate/YYYY/MM/DD structure,"
-                                     " preserving the EXIF date when possible.")
+    parser = argparse.ArgumentParser(description="copies image files from a"
+                                     " source directory into a "
+                                     " bydate/YYYY/MM/DD structure,"
+                                     " preserving the EXIF date when possible."
+                                     " Depends on gnu find and exiv2 on path.")
     parser.add_argument("--verbose", '-v', action='store_true')
     parser.add_argument("source", nargs=1)
     parser.add_argument("destination", nargs=1)
@@ -145,7 +146,7 @@ if __name__ == '__main__':
                 print(f"{pth} {cpsym}> {dst}")
             cnts['copied'] += 1
 
-            if cnts['copied'] % 500 == 0:
+            if args.verbose and cnts['copied'] % 500 == 0:
                 print(f"{_now()}: {dict(cnts)}.")
 
     now = datetime.datetime.now().isoformat()

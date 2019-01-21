@@ -23,9 +23,14 @@ Plug 'ap/vim-buftabline'
 Plug 'mhartington/oceanic-next'
 Plug 'reedes/vim-pencil'
 Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
+Plug 'junegunn/vim-easy-align'
 call plug#end()
 
 filetype plugin indent on
+
+xmap ga <Plug>(EasyALign)
+nmap ga <Plug>(EasyALign)
+
 
 source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
 source $HOME/dotfiles/vim-common/plugins.vim
