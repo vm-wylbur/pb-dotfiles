@@ -62,6 +62,7 @@ inoremap jk <ESC>
 nnoremap <leader>x :so %<CR>
 nnoremap <leader>w :w<CR>
 nnoremap <leader>m :History<CR>
+nnoremap <leader>o :only<CR>
 
 vnoremap <leader>v c[<C-r>"](<Esc>"*pli)<Esc>
 

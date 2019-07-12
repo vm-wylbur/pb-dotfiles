@@ -22,7 +22,7 @@ Plug 'itchyny/lightline.vim'
 Plug 'ap/vim-buftabline'
 Plug 'mhartington/oceanic-next'
 Plug 'reedes/vim-pencil'
-Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
+" Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
 Plug 'junegunn/vim-easy-align'
 call plug#end()
 
@@ -47,4 +47,34 @@ source $HOME/dotfiles/vim-common/gui.vim
 source $HOME/dotfiles/vim-common/autogrp.vim
 
 nnoremap <leader>ev :e $HOME/dotfiles/macvim/gvimrc<cr>
+
+vnoremap ;bc "ey:call CalcBC()<CR>
+function! CalcBC()
+  let has_equal = 0
+  " remove newlines and trailing spaces
+  let @e = substitute (@e, "\n", "", "g")
+  let @e = substitute (@e, '\s*$', "", "g")
+  " if we end with an equal, strip, and remember for output
+  if @e =~ "=$"
+    let @e = substitute (@e, '=$', "", "")
+    let has_equal = 1
+  endif
+  " sub common func names for bc equivalent
+  let @e = substitute (@e, '\csin\s*(', "s (", "")
+  let @e = substitute (@e, '\ccos\s*(', "c (", "")
+  let @e = substitute (@e, '\catan\s*(', "a (", "")
+  let @e = substitute (@e, "\cln\s*(", "l (", "")
+  " escape chars for shell
+  let @e = escape (@e, '*()')
+  " run bc, strip newline
+  let answer = substitute (system ("echo " . @e . " \| bc -l"), "\n", "", "")
+  " append answer or echo
+  if has_equal == 1
+    normal `>
+    exec "normal a" . answer
+  else
+    echo "answer = " . answer
+  endif
+endfunction
+
 " done.

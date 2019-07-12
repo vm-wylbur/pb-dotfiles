@@ -27,7 +27,6 @@ Plug 'tpope/vim-surround'             " adds surround action to create cmts
 Plug 'tomtom/tcomment_vim'
 Plug 'tpope/vim-unimpaired'           " many additional movements with [ and ]
 Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
-" Plug 'tommcdo/vim-exchange'           " cx{motion} to exhange text objs
 Plug 'machakann/vim-highlightedyank'  " blink
 Plug 'haya14busa/incsearch.vim'
 
@@ -53,7 +52,7 @@ Plug 'mhartington/oceanic-next'
 
 " languages
 Plug 'sheerun/vim-polyglot'
-Plug 'davidhalter/jedi-vim'
+" Plug 'davidhalter/jedi-vim'
 Plug 'lervag/vimtex'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'reedes/vim-pencil'
@@ -101,6 +100,7 @@ tnoremap jj <c-\><c-n>
 tnoremap jk <c-\><c-n>:q<cr>
 highlight! link TermCursor Cursor
 highlight! TermCursorNC guibg=red guifg=white ctermbg=1 ctermfg=15
+" Change cursor shape between insert and normal mode in iTerm2.app
 
 " note quite with :w | bd  which should be <leader> gw
 let $GIT_EDITOR = 'nvr -cc split --remote-wait'
@@ -109,11 +109,6 @@ let g:vimtex_compiler_progname = 'nvr'
 "" TODO: move to common file
 " Autocomplete
 let g:mucomplete#enable_auto_at_startup = 1
-set completeopt+=menuone,noselect
-set shortmess+=c
-set belloff+=ctrlg
-set complete+=i
-set complete+=kspell
 
 nnoremap <leader>s :call UltiSnips#ListSnippets()<CR>
 
@@ -186,5 +181,6 @@ source $HOME/dotfiles/vim-common/gui.vim
 source $HOME/dotfiles/vim-common/autogrp.vim
 
 nnoremap <leader>ev :e $HOME/dotfiles/nvim/init.vim<cr>
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 
 " done.

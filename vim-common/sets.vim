@@ -19,6 +19,13 @@ set relativenumber
 set number
 set mouse=a
 
+" completions
+set completeopt+=menuone,noselect
+set shortmess+=c
+set belloff+=ctrlg
+set complete+=i
+set complete+=kspell
+
 " visual behavior
 au VimLeave * set guicursor=a:block-blinkon0
 set noerrorbells visualbell t_vb=

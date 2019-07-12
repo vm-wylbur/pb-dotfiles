@@ -1,6 +1,5 @@
 " Colors and GUI
 
-let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 set background=dark
 highlight Comment cterm=italic
 highlight Comment gui=italic

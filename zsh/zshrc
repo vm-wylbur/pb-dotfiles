@@ -56,6 +56,7 @@ PATH+=":$HOME/projects/hrdag/snap/bin"
 PATH+=":$HOME/projects/hrdag/resource-utils/bin"
 PATH+=":$HOME/dotfiles/scripts"
 PATH+=":$HOME/.local/bin"
+PATH+="/usr/local/opt/ruby/bin"
 export PATH
 export fpath=( "$HOME/dotfiles/zsh/zfunctions" $fpath )
 
