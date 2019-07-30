@@ -16,7 +16,7 @@ set mail_check_stats
 set my_server = "mail.messagingengine.com"
 set my_smtp_server = "mail.messagingengine.com"
 set my_user = "pball@fastmail.fm"
-set my_pass = "rjg6k3mgvj4pc8yu"
+set my_pass = ""
 
 # this is me
 set from=pball@fastmail.fm
