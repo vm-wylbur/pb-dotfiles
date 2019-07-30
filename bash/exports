@@ -44,7 +44,7 @@ export CXX=g++-5
 export LD=gcc-5
 
 # for unlimited github calls
-export HOMEBREW_GITHUB_API_TOKEN="7105df98ca887eda6aa4125926a86945b5da40bd"
+source ~/.github-token
 export PYENV_ROOT=$HOME/.pyenv
 
 # CUDA stuff: not working for BLAS yet nor gpu calcs
@@ -52,8 +52,8 @@ export PYENV_ROOT=$HOME/.pyenv
 # export CUDA_ROOT="/usr/local/cuda/bin"
 # export CUDA_HOME="/usr/local/cuda"
 # export NVBLAS_CONFIG_FILE="/Users/pball/nvblas.conf"
-# DYLD_FORCE_FLAT_NAMESPACE=y 
-# DYLD_INSERT_LIBRARIES=/Developer/NVIDIA/CUDA-9.0/lib/libnvblas.9.0.dylib 
+# DYLD_FORCE_FLAT_NAMESPACE=y
+# DYLD_INSERT_LIBRARIES=/Developer/NVIDIA/CUDA-9.0/lib/libnvblas.9.0.dylib
 
 # setup nvim server
 export NVIM_LISTEN_ADDRESS=/tmp/nvimsocket

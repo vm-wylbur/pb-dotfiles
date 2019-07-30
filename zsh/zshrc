@@ -138,7 +138,7 @@ autoload -U select-word-style  # makes backward-word-kill stop at non-alpha
 select-word-style bash
 
 # ---local-----
-export HOMEBREW_GITHUB_API_TOKEN="7105df98ca887eda6aa4125926a86945b5da40bd"
+source ~/.github-token
 
 export LOCALGIT="/Users/pball/projects"
 export HRDAGGIT="$LOCALGIT/hrdag"
