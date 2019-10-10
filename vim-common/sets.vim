@@ -40,9 +40,9 @@ set laststatus=2
 set signcolumn=yes
 
 " Tabs. May be overwritten by autocmd rules
-set tabstop=2
+set tabstop=4
 set softtabstop=0
-set shiftwidth=2
+set shiftwidth=4
 set expandtab
 set smarttab autoindent
 
