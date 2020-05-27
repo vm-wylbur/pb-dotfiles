@@ -42,6 +42,7 @@ Plug 'honza/vim-snippets'
 Plug 'ap/vim-buftabline'         " adds buffer tabs and numbers
 Plug 'dhruvasagar/vim-vinegar'   " - for curdir and adds some netrw behaviors
 
+
 " colors and UI
 Plug 'airblade/vim-gitgutter'          " put chars in gutter
 Plug 'kshenoy/vim-signature'           " less cluttered, marks more visible

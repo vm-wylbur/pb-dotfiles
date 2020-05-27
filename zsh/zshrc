@@ -47,11 +47,11 @@ export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=black,bold'
 # but puts all the std /usr paths after the gnubin stuff.
 xpath="$PATH"
 PATH="$HOME/bin"
+PATH+=":/usr/local/sbin"
 PATH+=":$HOME/anaconda3/bin"
 PATH+=":/usr/local/opt/coreutils/libexec/gnubin"
 PATH+=":/usr/local/opt/make/libexec/gnubin"
 PATH+=":$xpath"
-PATH+=":/Applications/RStudio.app/Contents/MacOS/pandoc"
 PATH+=":$HOME/projects/hrdag/snap/bin"
 PATH+=":$HOME/projects/hrdag/resource-utils/bin"
 PATH+=":$HOME/dotfiles/scripts"
@@ -140,7 +140,7 @@ select-word-style bash
 # ---local-----
 source ~/.github-token
 
-export LOCALGIT="/Users/pball/projects"
+export LOCALGIT="$HOME/projects"
 export HRDAGGIT="$LOCALGIT/hrdag"
 export PERSONALGIT="$LOCALGIT/personal"
 
@@ -164,5 +164,6 @@ PROMPT='[%j]%(?.%F{magenta}.%F{red})${PURE_PROMPT_SYMBOL:-❯}%f '
 
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/.iterm2_shell_integration.zsh
+source ~/.machinespecific
 # done.
 

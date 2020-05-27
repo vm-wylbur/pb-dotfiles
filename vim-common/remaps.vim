@@ -93,4 +93,5 @@ nnoremap <leader>8 :b8 <CR>
 nnoremap <leader>9 :b9 <CR>
 nnoremap <leader>0 :b10 <CR>
 
+iab dts <c-r>=strftime('%c')<CR>
 " done.

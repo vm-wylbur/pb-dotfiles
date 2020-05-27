@@ -55,6 +55,8 @@ def get_exif_ts_dir(dpath):
     with open(os.devnull, 'w') as FNULL:
         stdopts = {'stdout': PIPE, 'stderr': FNULL}
         findcmd = ['find', dpath, '-maxdepth', '1', '-type', 'f', '-print0']
+        # TODO: filter findcmd to exclude files with 'preview' in the filename
+        # they're noise. 
         ps1 = Popen(findcmd, **stdopts)
         ps2 = Popen(['xargs', '-0', 'exiv2'], stdin=ps1.stdout, **stdopts)
 
