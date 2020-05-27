@@ -163,7 +163,7 @@ prompt_pure_pieces=(
 PROMPT='[%j]%(?.%F{magenta}.%F{red})${PURE_PROMPT_SYMBOL:-❯}%f '
 
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-if [[ -t ~/.iterm2_shell_integration.zsh ]]; then
+if [[ -f ~/.iterm2_shell_integration.zsh ]]; then
    # only true on MacOS
    source ~/.iterm2_shell_integration.zsh
 fi
