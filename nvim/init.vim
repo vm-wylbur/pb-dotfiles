@@ -24,7 +24,7 @@ Plug 'qpkorr/vim-bufkill'             " :BD is very useful
 
 " editing and formatting
 Plug 'tpope/vim-surround'             " adds surround action to create cmts
-Plug 'tomtom/tcomment_vim'
+Plug 'tomtom/tcomment_vim'            " comment in blocks
 Plug 'tpope/vim-unimpaired'           " many additional movements with [ and ]
 Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
 Plug 'machakann/vim-highlightedyank'  " blink
@@ -41,6 +41,7 @@ Plug 'honza/vim-snippets'
 "" files, buffers, and tags
 Plug 'ap/vim-buftabline'         " adds buffer tabs and numbers
 Plug 'dhruvasagar/vim-vinegar'   " - for curdir and adds some netrw behaviors
+Plug 'vim-scripts/Align'
 
 
 " colors and UI
@@ -89,8 +90,9 @@ nmap gy yygcc
 " Use :t-1 instead of yyP to preserve registers
 nmap gyy mz:t-1<cr>gCc`zmz
 imap gyy <esc>:t-1<cr>gCcgi
-"---temp------------------------------
 
+set listchars=eol:⏎,tab:␉·,trail:␠,nbsp:⎵
+"---temp------------------------------
 
 source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
 source $HOME/dotfiles/vim-common/plugins.vim
@@ -138,6 +140,7 @@ let g:ale_linters = {
 			\	   'tex': ['chktex'],
 			\	   'vim': ['vint'],
 \}
+let g:ale_fixers = {'r': ['styler']}
 let g:ale_enabled = 1
 let g:ale_sign_warning = '▲'
 let g:ale_sign_error = '✗'

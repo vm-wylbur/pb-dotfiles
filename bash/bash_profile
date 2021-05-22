@@ -50,18 +50,21 @@ complete -W "NSGlobalDomain" defaults;
 # Add `killall` tab completion for common apps
 complete -o "nospace" -W "Contacts Calendar Dock Finder Mail Safari iTunes SystemUIServer Terminal Twitter" killall;
 
-eval `gdircolors $HOME/src/dircolors-solarized/dircolors.ansi-dark`
+# eval `gdircolors $HOME/src/dircolors-solarized/dircolors.ansi-dark`
 
+eval `ssh-agent`
 ssh-add -K "${HOME}/.ssh/id_rsa"
 
-[ -f ~/.gpg-agent-info ] && source ~/.gpg-agent-info
-if [ -S "${GPG_AGENT_INFO%%:*}" ]; then
-  export GPG_AGENT_INFO
-else
-  eval $( gpg-agent --daemon --write-env-file ~/.gpg-agent-info )
-fi
-GPG_TTY=$(tty)
-export GPG_TTY
+eval "$(fasd --init auto)"
+
+# [ -f ~/.gpg-agent-info ] && source ~/.gpg-agent-info
+# if [ -S "${GPG_AGENT_INFO%%:*}" ]; then
+#   export GPG_AGENT_INFO
+# else
+#   eval $( gpg-agent --daemon --write-env-file ~/.gpg-agent-info )
+# fi
+# GPG_TTY=$(tty)
+# export GPG_TTY
 
 # this sets up the pyenv virtual environment manager
 eval "$(pyenv init -)"
@@ -69,3 +72,23 @@ eval "$(pyenv init -)"
 test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+
+# done.
+
+# >>> mamba initialize >>>
+# !! Contents within this block are managed by 'mamba init' !!
+export MAMBA_EXE="/home/pball/bin/micromamba";
+export MAMBA_ROOT_PREFIX="/opt/micromamba/";
+__mamba_setup="$('/home/pball/bin/micromamba' shell hook --shell bash --prefix '/opt/micromamba/' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__mamba_setup"
+else
+    if [ -f "/opt/micromamba/etc/profile.d/mamba.sh" ]; then
+        . "/opt/micromamba/etc/profile.d/mamba.sh"
+    else
+        export PATH="/opt/micromamba/bin:$PATH"
+    fi
+fi
+unset __mamba_setup
+# <<< mamba initialize <<<
