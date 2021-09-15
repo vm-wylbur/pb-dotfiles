@@ -59,4 +59,6 @@ source ~/.homebrew-github-token
 # setup nvim server
 export NVIM_LISTEN_ADDRESS=/tmp/nvimsocket
 
+export TMPDIR=/home/tmp
+
 # done

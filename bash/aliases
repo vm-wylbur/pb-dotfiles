@@ -1,5 +1,5 @@
 # -*-mode: shell-script-*-
-alias cur="cd ~/projects/hrdag/CO/individual/PN"
+alias cur="cd ~/projects/CO-S2/match/fase3"
 
 # Easier navigation: .., ..., ...., ....., ~ and -
 alias ..="cd .."
@@ -17,6 +17,9 @@ function _cg() {
 	cd "$1"
 }
 alias cg="_cg $1"
+alias j='xdir=$(fasd -ld | fzf --tac) && cd "$xdir"'
+
+alias pm='time nice -n15 make -j5 --load-average=5'
 
 # Shortcuts
 alias g="git"

@@ -39,12 +39,17 @@ set showmatch               " show matching parenthesis
 set laststatus=2
 set signcolumn=yes
 
+" modelines are the variables set at the top of files
+set modeline
+set modelines=5
+
 " Tabs. May be overwritten by autocmd rules
 set tabstop=4
 set softtabstop=0
 set shiftwidth=4
 set expandtab
-set smarttab autoindent
+filetype plugin indent on
+" set smarttab autoindent
 
 "" Searching
 set hlsearch

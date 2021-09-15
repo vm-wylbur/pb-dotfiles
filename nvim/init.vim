@@ -44,8 +44,8 @@ Plug 'honza/vim-snippets'
 
 "" files, buffers, and tags
 Plug 'ap/vim-buftabline'         " adds buffer tabs and numbers
-" Plug 'dhruvasagar/vim-vinegar'   " - for curdir and adds some netrw behaviors
 Plug 'majutsushi/tagbar'
+Plug 'vim-scripts/Align'
 
 
 " colors and UI
@@ -95,8 +95,9 @@ nmap gy yygcc
 " Use :t-1 instead of yyP to preserve registers
 nmap gyy mz:t-1<cr>gCc`zmz
 imap gyy <esc>:t-1<cr>gCcgi
-"---temp------------------------------
 nnoremap <leader>t :CtrlPTag<CR>
+
+set listchars=eol:⏎,tab:␉·,trail:␠,nbsp:⎵
 
 source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
 source $HOME/dotfiles/vim-common/plugins.vim
@@ -144,6 +145,7 @@ let g:ale_linters = {
 			\	   'tex': ['chktex'],
 			\	   'vim': ['vint'],
 \}
+let g:ale_fixers = {'r': ['styler']}
 let g:ale_enabled = 1
 let g:ale_sign_warning = '▲'
 let g:ale_sign_error = '✗'
