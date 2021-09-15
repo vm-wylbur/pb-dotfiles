@@ -7,9 +7,15 @@ Cache/
 Caches/
 cache/
 cacheable/
+.cmdstan*/
+.cmdstanr/
+stan/
+.emacs.d/
 .cache/
 .config/nvim/plugged/
 .mu/
+.gem/
+.gnupg/
 .Trash/
 .pyenv/
 anaconda3/

@@ -24,7 +24,7 @@ Plug 'qpkorr/vim-bufkill'             " :BD is very useful
 
 " editing and formatting
 Plug 'tpope/vim-surround'             " adds surround action to create cmts
-Plug 'tomtom/tcomment_vim'
+Plug 'tomtom/tcomment_vim'            " gc to toggle comments
 Plug 'tpope/vim-unimpaired'           " many additional movements with [ and ]
 Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
 Plug 'machakann/vim-highlightedyank'  " blink
@@ -35,12 +35,17 @@ Plug 'lifepillar/vim-mucomplete'
 
 " navigation
 Plug 'justinmk/vim-sneak'        " I should use this more.
+" Plug 'ctrlpvim/ctrlp.vim'
+Plug '/usr/local/opt/fzf'
+
+" snippets
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 "" files, buffers, and tags
 Plug 'ap/vim-buftabline'         " adds buffer tabs and numbers
-Plug 'dhruvasagar/vim-vinegar'   " - for curdir and adds some netrw behaviors
+" Plug 'dhruvasagar/vim-vinegar'   " - for curdir and adds some netrw behaviors
+Plug 'majutsushi/tagbar'
 
 
 " colors and UI
@@ -76,6 +81,7 @@ filetype plugin indent on
 
 
 "---temp------------------------------
+nnoremap gt :TagbarToggle<CR>
 " TESTING: tComment vs tpope's vim-commentary
 " tComment extra mappings:
 " yank visual before toggle comment
@@ -90,7 +96,7 @@ nmap gy yygcc
 nmap gyy mz:t-1<cr>gCc`zmz
 imap gyy <esc>:t-1<cr>gCcgi
 "---temp------------------------------
-
+nnoremap <leader>t :CtrlPTag<CR>
 
 source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
 source $HOME/dotfiles/vim-common/plugins.vim

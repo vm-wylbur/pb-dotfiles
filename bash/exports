@@ -46,6 +46,7 @@ export LD=gcc-5
 # for unlimited github calls
 source ~/.github-token
 export PYENV_ROOT=$HOME/.pyenv
+source ~/.homebrew-github-token
 
 # CUDA stuff: not working for BLAS yet nor gpu calcs
 # export LD_LIBRARY_PATH="/usr/local/cuda/lib:$LD_LIBRARY_PATH"
