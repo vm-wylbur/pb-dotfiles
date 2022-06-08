@@ -1,12 +1,13 @@
 # pb-dotfiles
 
-< Last update: 2022-06-08 12:54 >
+< Last update: 2022-06-08 14:18 >
 
 
-## install this
+## install
 * `neovim` + python deps
-* [`starship`](https://starship.rs/)
-* [`vim-plug`](https://github.com/junegunn/vim-plug)
+* [`starship`](https://starship.rs/) for prompts
+* [`antibody`](https://getantibody.github.io/) for zsh plugins
+* [`vim-plug`](https://github.com/junegunn/vim-plug) for neovim plugins
 
 
 ## vim
@@ -21,9 +22,10 @@ And each of the files has a plugged directory which keeps the plugins. maybe a `
 
 ## zsh 
 
+This should mostly be automagical, once the installations are done.
 
 ## bash 
 
-These startup files are called by `~/.bashrc` in linux. Note that I source .bashrc as the first step in bash_profile
+deprecate??
 
 <!-- done -->
