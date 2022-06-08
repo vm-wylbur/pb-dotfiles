@@ -20,6 +20,7 @@ show_always = true
 [hostname]
 ssh_only = false
 disabled = false
+style = "yellow"
 format = "[$hostname]($style)"
 
 [directory]
@@ -56,8 +57,8 @@ style = "bright-black"
 [cmd_duration]
 format = "[$duration]($style) "
 style = "yellow"
-min_time_to_notify = 750
-min_time = 750
+min_time_to_notify = 1500
+min_time = 1500
 show_milliseconds = true
 
 [jobs]

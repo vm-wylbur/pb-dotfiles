@@ -1,0 +1,13 @@
+# list all plugins here
+# whenever this changes, run
+# antibody bundle < $HOME/dotfiles/zsh/zsh_plugins.txt > ~/.zsh_plugins.sh
+
+MichaelAquilina/zsh-auto-notify
+djui/alias-tips
+caarlos0/zsh-mkc
+zsh-users/zsh-autosuggestions
+zsh-users/zsh-completions
+zsh-users/zsh-syntax-highlighting
+
+
+# done.

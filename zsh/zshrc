@@ -41,38 +41,14 @@ export ZSH_THEME="agnoster"
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=black,bold'
 
 # ---paths-----
-# FIXME: check the machine, then exec machine-specific paths
-# this starts with the output of /usr/libexec/path_helper in xpath
-# but puts all the std /usr paths after the gnubin stuff.
-BREWER="/opt/homebrew/bin/brew"
-xpath="$PATH"
-PATH="$HOME/bin"
-PATH+=":$HOME/anaconda3/bin"
-PATH+=":$HOME/.local/bin"
-PATH+=":/usr/local/sbin"
-PATH+=":/usr/local/bin"
-PATH="$($BREWER --prefix coreutils)/libexec/gnubin:$PATH"
-PATH="$($BREWER --prefix ed)/libexec/gnubin:$PATH"
-PATH="$($BREWER --prefix findutils)/libexec/gnubin:$PATH"
-PATH="$($BREWER --prefix gnu-indent)/libexec/gnubin:$PATH"
-PATH="$($BREWER --prefix gnu-sed)/libexec/gnubin:$PATH"
-PATH="$($BREWER --prefix gnu-tar)/libexec/gnubin:$PATH"
-PATH="$($BREWER --prefix gnu-which)/libexec/gnubin:$PATH"
-PATH="$($BREWER --prefix grep)/libexec/gnubin:$PATH"
-PATH+=":$xpath"
-PATH+=":$HOME/projects/hrdag/snap/bin"
-PATH+=":$HOME/projects/hrdag/resource-utils/bin"
-PATH+=":$HOME/dotfiles/scripts"
-PATH+="/usr/local/opt/ruby/bin"
-export PATH
+if [[ -f $HOME/.machinespecific/paths ]] ; then
+	source $HOME/.machinespecific/paths
+else
+	echo "no paths found! add ~/.machinespecific/paths"
+fi
+export PATH="$PATH:$HOME/bin:$HOME/dotfiles/scripts"
 
 # ---shell options-----
-case $(hostname -s) in
-	(porky) printf "in porky" ;;
-	(eleanor) printf "in eleanor" ;;
-	(*) printf "wtf??" ;;
-esac
-
 setopt AUTO_PUSHD
 setopt PUSHD_IGNORE_DUPS
 setopt CHASE_LINKS
@@ -92,6 +68,10 @@ HISTFILE=~/.zsh_history     #Where to save history to disk
 SAVEHIST=10000               #Number of history entries to save to disk
 HISTDUP=erase               #Erase duplicates in the history file
 
+# more zsh stuff: syntax, autosuggest, completions.
+source <(antibody init)
+antibody bundle < $HOME/dotfiles/zsh/zsh_plugins.txt
+
 # setting up fzf keybindings
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -101,28 +81,16 @@ alias gs="git status"
 alias gl='git log --pretty=format:"%h%x09%an%x09%ad%x09%s"'
 alias gc='git commit'
 
-alias gcc="gcc-8"
-alias gcov="gcov-8"
-alias g++="g++-8"
-alias cpp="cpp-8"
-alias c++="c++-8"
-
 alias '..'='cd ..'
 alias '...'='cd ../..'
 alias '....'='cd ../../..'
-# alias mm="make -f src/Makefile"
-alias nm="nvim Makefile"
+alias '.....'='cd ../../../..'
 alias ccat="pygmentize $1"
 
 alias ll="ls -ltrFG --color"
 alias la="ls -laFG  --color"
-# List only directories
-# alias lsd="ls -lF --color | grep --color=never '^d'"
 
-# overriding alias=j in zprezto's fasd module: use fzf, don't print scores
 alias j='xdir=$(fasd -ld | fzf --tac) && cd "$xdir"'
-
-# use fzf for history search
 alias h='print -z $(fc -l 1 | fzf +s --tac | $SED -re "s/^\s*[0-9]+\s*//")'
 
 # ---env vars-----
@@ -145,7 +113,6 @@ bindkey '^ ' autosuggest-accept
 # bindkey -v
 
 # autoload -U zmv   # the conventions are a bit opaque
-autoload -U promptinit; promptinit
 autoload -U select-word-style  # makes backward-word-kill stop at non-alpha
 select-word-style bash
 
