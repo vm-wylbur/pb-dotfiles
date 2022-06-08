@@ -39,8 +39,8 @@ Plug 'justinmk/vim-sneak'        " I should use this more.
 Plug '/usr/local/opt/fzf'
 
 " snippets
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
+" Plug 'SirVer/ultisnips'
+" Plug 'honza/vim-snippets'
 
 "" files, buffers, and tags
 Plug 'ap/vim-buftabline'         " adds buffer tabs and numbers
@@ -54,10 +54,10 @@ Plug 'kshenoy/vim-signature'           " less cluttered, marks more visible
 Plug 'itchyny/lightline.vim'           " workable. Prob could be done by hand.
 Plug 'luochen1990/rainbow'             " I really like these!
 Plug 'itchyny/vim-cursorword'          " this works w * operator
-Plug 'mhartington/oceanic-next'
+Plug 'lifepillar/vim-solarized8'
 
 " languages
-Plug 'sheerun/vim-polyglot'
+" Plug 'sheerun/vim-polyglot'
 " Plug 'davidhalter/jedi-vim'
 Plug 'lervag/vimtex'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
@@ -79,6 +79,8 @@ call plug#end()
 " must follow all Plug calls
 filetype plugin indent on
 
+colorscheme solarized8_high
+set background=dark
 
 "---temp------------------------------
 nnoremap gt :TagbarToggle<CR>
@@ -181,7 +183,7 @@ let g:jedi#show_call_signatures = '0'
 let g:jedi#completions_command = '<C-Space>'
 let g:jedi#smart_auto_mappings = 0
 
-let g:polyglot_disabled = ['python', 'tex', 'markdown']
+" let g:polyglot_disabled = ['python', 'tex', 'markdown']
 let g:python_highlight_all = 1
 
 source $HOME/dotfiles/vim-common/remaps.vim
