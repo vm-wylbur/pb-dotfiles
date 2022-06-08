@@ -41,6 +41,7 @@ export ZSH_THEME="agnoster"
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=black,bold'
 
 # ---paths-----
+# FIXME: check the machine, then exec machine-specific paths
 # this starts with the output of /usr/libexec/path_helper in xpath
 # but puts all the std /usr paths after the gnubin stuff.
 BREWER="/opt/homebrew/bin/brew"
@@ -119,7 +120,7 @@ alias j='xdir=$(fasd -ld | fzf --tac) && cd "$xdir"'
 alias h='print -z $(fc -l 1 | fzf +s --tac | $SED -re "s/^\s*[0-9]+\s*//")'
 
 # ---env vars-----
-export EDITOR='vim'
+export EDITOR='nvim'
 export LANG='en_US.UTF-8';
 export LC_ALL='en_US.UTF-8';
 export PAGER="most"
@@ -135,6 +136,7 @@ bindkey '^h' backward-delete-char
 bindkey '^w' backward-kill-word
 bindkey '^r' history-incremental-search-backward
 bindkey '^ ' autosuggest-accept
+# bindkey -v
 
 # autoload -U zmv   # the conventions are a bit opaque
 autoload -U promptinit; promptinit
@@ -150,22 +152,22 @@ export LOCALGIT="$HOME/projects"
 export HRDAGGIT="$LOCALGIT/hrdag"
 export PERSONALGIT="$LOCALGIT/personal"
 
-export PURE_ALWAYS_SHOW_USER=1
-
+# export PURE_ALWAYS_SHOW_USER=1
 # optionally define custom generators
-prompt_custom() {
-	preprompt+=( custom )
-}
-prompt pure
-
-# add the generator where it's needed
-prompt_pure_pieces=(
-  prompt_pure_render_hostname
-  prompt_pure_render_path
-  prompt_pure_render_vcs
-  prompt_pure_render_exec_time
-)
-PROMPT='[%j]%(?.%F{magenta}.%F{red})${PURE_PROMPT_SYMBOL:-❯}%f '
+# prompt_custom() {
+# 	preprompt+=( custom )
+# }
+# prompt pure
+# zstyle :prompt:pure:git:stash show yes
+#
+# # add the generator where it's needed
+# prompt_pure_pieces=(
+#   prompt_pure_render_hostname
+#   prompt_pure_render_path
+#   prompt_pure_render_vcs
+#   prompt_pure_render_exec_time
+# )
+# PROMPT='[%j]%(?.%F{magenta}.%F{red})${PURE_PROMPT_SYMBOL:-❯}%f '
 
 # source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 # if [[ -f ~/.iterm2_shell_integration.zsh ]]; then
@@ -173,5 +175,8 @@ PROMPT='[%j]%(?.%F{magenta}.%F{red})${PURE_PROMPT_SYMBOL:-❯}%f '
 #    source ~/.iterm2_shell_integration.zsh
 # fi
 # source ~/.machinespecific
+
+export STARSHIP_CONFIG="$HOME/.config/starship.toml"
+eval "$(starship init zsh)"
 # done.
 
