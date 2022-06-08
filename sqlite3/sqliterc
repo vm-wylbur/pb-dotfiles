@@ -1,8 +1,0 @@
-.output /dev/null
-PRAGMA synchronous = OFF;
-PRAGMA foreign_keys = ON;
-PRAGMA temp_store = MEMORY;
-PRAGMA journal_mode = OFF;
-PRAGMA locking_mode = NORMAL;
-.output stdout
-

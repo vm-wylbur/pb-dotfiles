@@ -2,12 +2,12 @@
 
 # based on https://blog.interlinked.org/tutorials/rsync_time_machine.html
 # PB, 2018-10-10
-# adapted for petunia, henwen
+# adapted for petunia, henwen, porky
 #
 # configurable backup disk names
 # backup_disk_names="archives-2019"
 backup_disk_names="backup"
-local_machine_name="henwen"
+local_machine_name="porky"
 
 datestr=$(date "+%Y-%m-%dT%H_%M_%S")
 
@@ -75,3 +75,4 @@ fi
 
 
 # TODO: if successful add rm -rf "${backup_path}/incomplete_back-*"
+# done.

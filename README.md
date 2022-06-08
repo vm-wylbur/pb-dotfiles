@@ -1,5 +1,13 @@
 # pb-dotfiles
-PB's dotfiles for bash and emacs
+
+last update: < Wed Jun  8 11:53:13 PDT 2022 >
+
+
+## install this
+* neovim + python deps
+* [starship](https://starship.rs/)
+* [vim-plug](https://github.com/junegunn/vim-plug)
+
 
 ## vim
 
@@ -15,9 +23,6 @@ And each of the files has a plugged directory which keeps the plugins. maybe a `
 
 * rename plugged dirs and symlink to common
 
-## emacs
-
-of course deprecated. 
 
 ## bash 
 
