@@ -1,5 +1,5 @@
 # -*-mode: shell-script-*-
-alias cur="cd ~/projects/CO-S2/match/fase3"
+alias cur="cd ~/projects/CO-S3/impute/fase4"
 
 # Easier navigation: .., ..., ...., ....., ~ and -
 alias ..="cd .."
