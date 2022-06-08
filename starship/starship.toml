@@ -20,7 +20,7 @@ show_always = true
 [hostname]
 ssh_only = false
 disabled = false
-format = "[$ssh_symbol$hostname]($style)"
+format = "[$hostname]($style)"
 
 [directory]
 style = "blue"
