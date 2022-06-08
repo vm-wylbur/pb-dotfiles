@@ -1,9 +1,7 @@
 #
 #  Author: PB
 #  Maintainer: PB
-#  License: (c) HRDAG 2018, some rights reserved: GPL v2 or newer
-#
-# Last modified: <Fri 21 Dec 2018 10:14:38 AM PST>
+#  License: (c) HRDAG 2022, some rights reserved: GPL v2 or newer
 #
 # Executes commands at the start of an interactive session.
 
@@ -45,21 +43,27 @@ export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=black,bold'
 # ---paths-----
 # this starts with the output of /usr/libexec/path_helper in xpath
 # but puts all the std /usr paths after the gnubin stuff.
+BREWER="/opt/homebrew/bin/brew"
 xpath="$PATH"
 PATH="$HOME/bin"
 PATH+=":$HOME/anaconda3/bin"
 PATH+=":$HOME/.local/bin"
 PATH+=":/usr/local/sbin"
 PATH+=":/usr/local/bin"
-PATH+=":/usr/local/opt/coreutils/libexec/gnubin"
-PATH+=":/usr/local/opt/make/libexec/gnubin"
+PATH="$($BREWER --prefix coreutils)/libexec/gnubin:$PATH"
+PATH="$($BREWER --prefix ed)/libexec/gnubin:$PATH"
+PATH="$($BREWER --prefix findutils)/libexec/gnubin:$PATH"
+PATH="$($BREWER --prefix gnu-indent)/libexec/gnubin:$PATH"
+PATH="$($BREWER --prefix gnu-sed)/libexec/gnubin:$PATH"
+PATH="$($BREWER --prefix gnu-tar)/libexec/gnubin:$PATH"
+PATH="$($BREWER --prefix gnu-which)/libexec/gnubin:$PATH"
+PATH="$($BREWER --prefix grep)/libexec/gnubin:$PATH"
 PATH+=":$xpath"
 PATH+=":$HOME/projects/hrdag/snap/bin"
 PATH+=":$HOME/projects/hrdag/resource-utils/bin"
 PATH+=":$HOME/dotfiles/scripts"
 PATH+="/usr/local/opt/ruby/bin"
 export PATH
-export fpath=( "$HOME/dotfiles/zsh/zfunctions" $fpath )
 
 # ---shell options-----
 setopt AUTO_PUSHD
@@ -103,8 +107,6 @@ alias '....'='cd ../../..'
 alias nm="nvim Makefile"
 alias ccat="pygmentize $1"
 
-# unalias rm
-
 alias ll="ls -ltrFG --color"
 alias la="ls -laFG  --color"
 # List only directories
@@ -120,6 +122,7 @@ alias h='print -z $(fc -l 1 | fzf +s --tac | $SED -re "s/^\s*[0-9]+\s*//")'
 export EDITOR='vim'
 export LANG='en_US.UTF-8';
 export LC_ALL='en_US.UTF-8';
+export PAGER="most"
 
 # ---for zsh-----
 export KEYTIMEOUT=1
@@ -153,7 +156,6 @@ export PURE_ALWAYS_SHOW_USER=1
 prompt_custom() {
 	preprompt+=( custom )
 }
-
 prompt pure
 
 # add the generator where it's needed
@@ -165,11 +167,11 @@ prompt_pure_pieces=(
 )
 PROMPT='[%j]%(?.%F{magenta}.%F{red})${PURE_PROMPT_SYMBOL:-❯}%f '
 
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-if [[ -f ~/.iterm2_shell_integration.zsh ]]; then
+# source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+# if [[ -f ~/.iterm2_shell_integration.zsh ]]; then
    # only true on MacOS
-   source ~/.iterm2_shell_integration.zsh
-fi
-source ~/.machinespecific
+#    source ~/.iterm2_shell_integration.zsh
+# fi
+# source ~/.machinespecific
 # done.
 
