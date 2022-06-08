@@ -23,7 +23,8 @@ show_always = true
 ssh_only = false
 disabled = false
 style = "yellow"
-format = "[$hostname]($style)"
+ssh_symbol = "🌐"
+format = "[$hostname]($style)[$ssh_symbol](bold red)"
 
 [directory]
 style = "blue"
