@@ -67,6 +67,12 @@ PATH+="/usr/local/opt/ruby/bin"
 export PATH
 
 # ---shell options-----
+case $(hostname -s) in
+	(porky) printf "in porky" ;;
+	(eleanor) printf "in eleanor" ;;
+	(*) printf "wtf??" ;;
+esac
+
 setopt AUTO_PUSHD
 setopt PUSHD_IGNORE_DUPS
 setopt CHASE_LINKS
@@ -152,31 +158,7 @@ export LOCALGIT="$HOME/projects"
 export HRDAGGIT="$LOCALGIT/hrdag"
 export PERSONALGIT="$LOCALGIT/personal"
 
-# export PURE_ALWAYS_SHOW_USER=1
-# optionally define custom generators
-# prompt_custom() {
-# 	preprompt+=( custom )
-# }
-# prompt pure
-# zstyle :prompt:pure:git:stash show yes
-#
-# # add the generator where it's needed
-# prompt_pure_pieces=(
-#   prompt_pure_render_hostname
-#   prompt_pure_render_path
-#   prompt_pure_render_vcs
-#   prompt_pure_render_exec_time
-# )
-# PROMPT='[%j]%(?.%F{magenta}.%F{red})${PURE_PROMPT_SYMBOL:-❯}%f '
-
-# source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-# if [[ -f ~/.iterm2_shell_integration.zsh ]]; then
-   # only true on MacOS
-#    source ~/.iterm2_shell_integration.zsh
-# fi
-# source ~/.machinespecific
-
-export STARSHIP_CONFIG="$HOME/.config/starship.toml"
+export STARSHIP_CONFIG="$HOME/dotfiles/starship/starship.toml"
 eval "$(starship init zsh)"
 # done.
 
