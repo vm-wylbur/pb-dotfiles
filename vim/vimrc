@@ -22,3 +22,4 @@ set modelines=5
 setlocal foldmethod=marker
 " }}}
 " vim: set foldmethod=marker foldlevel=0:
+" done.

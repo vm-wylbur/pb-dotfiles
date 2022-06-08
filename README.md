@@ -1,6 +1,6 @@
 # pb-dotfiles
 
-< Last update: 2022-06-08 14:18 >
+< Last update: 2022-06-08 14:44 >
 
 
 ## install

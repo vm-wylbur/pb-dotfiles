@@ -25,7 +25,6 @@ Plug 'qpkorr/vim-bufkill'             " :BD is very useful
 " editing and formatting
 Plug 'tpope/vim-surround'             " adds surround action to create cmts
 Plug 'tomtom/tcomment_vim'            " gc to toggle comments
-Plug 'tpope/vim-unimpaired'           " many additional movements with [ and ]
 Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
 Plug 'machakann/vim-highlightedyank'  " blink
 Plug 'haya14busa/incsearch.vim'
@@ -35,7 +34,6 @@ Plug 'lifepillar/vim-mucomplete'
 
 " navigation
 Plug 'justinmk/vim-sneak'        " I should use this more.
-" Plug 'ctrlpvim/ctrlp.vim'
 Plug '/usr/local/opt/fzf'
 
 " snippets
@@ -45,8 +43,7 @@ Plug '/usr/local/opt/fzf'
 "" files, buffers, and tags
 Plug 'ap/vim-buftabline'         " adds buffer tabs and numbers
 Plug 'majutsushi/tagbar'
-Plug 'vim-scripts/Align'
-
+" Plug 'vim-scripts/Align'
 
 " colors and UI
 Plug 'airblade/vim-gitgutter'          " put chars in gutter
@@ -58,7 +55,7 @@ Plug 'lifepillar/vim-solarized8'
 
 " languages
 " Plug 'sheerun/vim-polyglot'
-" Plug 'davidhalter/jedi-vim'
+Plug 'davidhalter/jedi-vim'
 Plug 'lervag/vimtex'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'reedes/vim-pencil'
@@ -69,11 +66,13 @@ Plug 'vim-scripts/dbext.vim'
 Plug 'vim-pandoc/vim-pandoc'
 Plug 'vim-pandoc/vim-pandoc-syntax'
 Plug 'vim-pandoc/vim-rmarkdown'
-" Plug 'tpope/vim-markdown'
 
 " linting
 Plug 'w0rp/ale'
 
+" for firenvim
+" post-plugin-install: :call firenvim#install(0)
+Plug 'glacambre/firenvim'
 call plug#end()
 
 " must follow all Plug calls
@@ -97,7 +96,7 @@ nmap gy yygcc
 " Use :t-1 instead of yyP to preserve registers
 nmap gyy mz:t-1<cr>gCc`zmz
 imap gyy <esc>:t-1<cr>gCcgi
-nnoremap <leader>t :CtrlPTag<CR>
+" nnoremap <leader>t :CtrlPTag<CR>
 
 set listchars=eol:⏎,tab:␉·,trail:␠,nbsp:⎵
 
