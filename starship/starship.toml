@@ -1,0 +1,72 @@
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$cmd_duration\
+$line_break\
+$jobs\
+$character"""
+
+[username]
+style_user = "blue"
+style_root = "bold red"
+format = "[$user]($style)@"
+disabled = false
+show_always = true
+
+[hostname]
+ssh_only = false
+disabled = false
+format = "[$ssh_symbol$hostname]($style)"
+
+[directory]
+style = "blue"
+format = ":[$path]($style) "
+truncation_length = 4
+truncate_to_repo = false
+truncation_symbol = "…/"
+
+[character]
+success_symbol = "[❯](green)"
+error_symbol = "[❯](red)"
+vicmd_symbol = "[❮](green)"
+
+[git_branch]
+format = "on [$branch]($style)"
+style = "bright-black"
+
+[git_status]
+format = " [[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
+style = "cyan"
+conflicted = "​"
+untracked = "​"
+modified = "​"
+staged = "​"
+renamed = "​"
+deleted = "​"
+stashed = "≡"
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "bright-black"
+
+[cmd_duration]
+format = "[$duration]($style) "
+style = "yellow"
+min_time_to_notify = 750
+min_time = 750
+show_milliseconds = true
+
+[jobs]
+symbol = "+ "
+style = "bold green"
+format = "[$number]($style) "
+number_threshold = 1
+threshold = 1
+symbol_threshold = 10
+
+
+# done.
