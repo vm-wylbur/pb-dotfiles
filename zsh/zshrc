@@ -18,6 +18,26 @@ function chpwd() {
   ls -ltrFG --color
 }
 
+# ---paths-----
+# FIXME: review how zsh does paths, there's a better way!
+if [[ -f $HOME/.machinespecific/paths ]] ; then
+	source $HOME/.machinespecific/paths
+else
+	echo "no paths found! add ~/.machinespecific/paths"
+fi
+export PATH="$PATH:$HOME/bin:$HOME/dotfiles/scripts"
+typeset -U path
+
+# --- plugin manager: antidote-----
+[[ -e ~/.antidote ]] || git clone https://github.com/mattmc3/antidote.git ~/.antidote
+if [[ ! -f ~/.zsh_plugins.txt ]] ; then
+	echo "missing zsh plugins file! trying to symlink"
+	ln -sf ~/dotfiles/zsh/zsh_plugins.txt ~/.zsh_plugins.txt
+fi
+source ~/.antidote/antidote.zsh
+antidote load
+
+
 # ---PB additions below-----
 # init fasd on eleanor; fasd is part of pretzo on petunia
 case $HOST in
@@ -40,13 +60,6 @@ export TERM=xterm-256color
 export ZSH_THEME="agnoster"
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=black,bold'
 
-# ---paths-----
-if [[ -f $HOME/.machinespecific/paths ]] ; then
-	source $HOME/.machinespecific/paths
-else
-	echo "no paths found! add ~/.machinespecific/paths"
-fi
-export PATH="$PATH:$HOME/bin:$HOME/dotfiles/scripts"
 
 # ---shell options-----
 setopt AUTO_PUSHD
@@ -65,12 +78,9 @@ setopt incappendhistory  #Immediately append to the history file, not just when 
 
 HISTSIZE=10000               #How many lines of history to keep in memory
 HISTFILE=~/.zsh_history     #Where to save history to disk
-SAVEHIST=10000               #Number of history entries to save to disk
+SAVEHIST=100000               #Number of history entries to save to disk
 HISTDUP=erase               #Erase duplicates in the history file
 
-# more zsh stuff: syntax, autosuggest, completions.
-source <(antibody init)
-antibody bundle < $HOME/dotfiles/zsh/zsh_plugins.txt
 
 # setting up fzf keybindings
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
