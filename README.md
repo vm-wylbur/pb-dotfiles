@@ -1,6 +1,6 @@
 # pb-dotfiles
 
-< Last update: 2022-06-08 14:44 >
+< Last update: 2022-06-10 11:33 >
 
 
 ## install
@@ -26,6 +26,6 @@ This should mostly be automagical, once the installations are done.
 
 ## bash 
 
-deprecate??
+I keep these because I still use bash on some machines, eg, at AWS
 
 <!-- done -->
