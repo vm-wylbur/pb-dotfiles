@@ -1,16 +1,16 @@
 "
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " git@github.com:vm-wylbur/pb-dotfiles.git
-" (c) 2018 [HRDAG](https://hrdag.org), GPL-2 or later
+" (c) 2022 [HRDAG](https://hrdag.org), GPL-2 or later
 "
 " pb-dotfiles/macvim/gvimrc  symlinked to ~/.vimrc
 
 set guifont=Monaco:h16
 set runtimepath+=$HOME/.local/share/nvim
+set runtimepath+=$HOME/.vim/autoload
+set runtimepath+=$HOME/.config/plugged
 
-" set runtimepath+=$HOME/dotfiles/vim-common
 call plug#begin(expand('~/.config/nvim/plugged'))
-" Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-unimpaired'           " for bubbling
 Plug 'justinmk/vim-sneak'
@@ -20,61 +20,44 @@ Plug 'qpkorr/vim-bufkill'             " :BD is very useful
 Plug 'machakann/vim-highlightedyank'  " blink
 Plug 'itchyny/lightline.vim'
 Plug 'ap/vim-buftabline'
-Plug 'mhartington/oceanic-next'
 Plug 'reedes/vim-pencil'
-" Plug 'ntpeters/vim-better-whitespace' " to remove trailing whitespace on save
 Plug 'junegunn/vim-easy-align'
+Plug 'lifepillar/vim-solarized8'
 call plug#end()
+
+" --- plugin variables -----
+let g:buftabline_numbers = 1
+let g:pencil#wrapModeDefault = 'soft'   " default is 'hard'
+
 
 filetype plugin indent on
 
-xmap ga <Plug>(EasyALign)
-nmap ga <Plug>(EasyALign)
-
-
-source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
-source $HOME/dotfiles/vim-common/plugins.vim
 
 if has("gui_macvim")
 	let macvim_hig_shift_movement = 1
 endif
+
 set lines=60
 set columns=85
+color solarized8_flat
+set background=dark
 
+" --- some plugin setups, repliacing vim-common
+augroup pencil
+	autocmd!
+	autocmd FileType markdown,mkd  call pencil#init({'wrap': 'soft'})
+	autocmd FileType text          call pencil#init({'wrap': 'hard', 'autoformat': 1})
+	autocmd FileType tex,rmarkdown call pencil#init({'wrap': 'soft'})
+augroup END
+
+
+source $HOME/dotfiles/vim-common/plugins.vim
+source $HOME/dotfiles/vim-common/line.vimrc   " for the lightline config
 source $HOME/dotfiles/vim-common/remaps.vim
 source $HOME/dotfiles/vim-common/sets.vim
-source $HOME/dotfiles/vim-common/gui.vim
-source $HOME/dotfiles/vim-common/autogrp.vim
+" source $HOME/dotfiles/vim-common/gui.vim
+" source $HOME/dotfiles/vim-common/autogrp.vim
 
 nnoremap <leader>ev :e $HOME/dotfiles/macvim/gvimrc<cr>
-
-vnoremap ;bc "ey:call CalcBC()<CR>
-function! CalcBC()
-  let has_equal = 0
-  " remove newlines and trailing spaces
-  let @e = substitute (@e, "\n", "", "g")
-  let @e = substitute (@e, '\s*$', "", "g")
-  " if we end with an equal, strip, and remember for output
-  if @e =~ "=$"
-    let @e = substitute (@e, '=$', "", "")
-    let has_equal = 1
-  endif
-  " sub common func names for bc equivalent
-  let @e = substitute (@e, '\csin\s*(', "s (", "")
-  let @e = substitute (@e, '\ccos\s*(', "c (", "")
-  let @e = substitute (@e, '\catan\s*(', "a (", "")
-  let @e = substitute (@e, "\cln\s*(", "l (", "")
-  " escape chars for shell
-  let @e = escape (@e, '*()')
-  " run bc, strip newline
-  let answer = substitute (system ("echo " . @e . " \| bc -l"), "\n", "", "")
-  " append answer or echo
-  if has_equal == 1
-    normal `>
-    exec "normal a" . answer
-  else
-    echo "answer = " . answer
-  endif
-endfunction
 
 " done.

@@ -1,7 +1,7 @@
 "
 " Author: [Patrick Ball](mailto://pball@hrdag.org)
 " git@github.com:vm-wylbur/pb-dotfiles.git
-" (c) 2018 [HRDAG](https://hrdag.org), GPL-2 or later
+" (c) 2022 [HRDAG](https://hrdag.org), GPL-2 or later
 "
 " pb-dotfiles/nvim/init.vim symlinked to ~/.config/nvim/init.vim
 "
@@ -55,7 +55,7 @@ Plug 'lifepillar/vim-solarized8'
 
 " languages
 " Plug 'sheerun/vim-polyglot'
-Plug 'davidhalter/jedi-vim'
+" Plug 'davidhalter/jedi-vim'
 Plug 'lervag/vimtex'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'reedes/vim-pencil'
@@ -173,14 +173,14 @@ augroup vimrc-python
 augroup END
 
 " jedi-vim
-let g:jedi#popup_on_dot = 0
-let g:jedi#force_py_version = 3
-let g:jedi#documentation_command = 'K'
-let g:jedi#usages_command = '<leader>n'
-let g:jedi#rename_command = '<leader>r'
-let g:jedi#show_call_signatures = '0'
-let g:jedi#completions_command = '<C-Space>'
-let g:jedi#smart_auto_mappings = 0
+" let g:jedi#popup_on_dot = 0
+" let g:jedi#force_py_version = 3
+" let g:jedi#documentation_command = 'K'
+" let g:jedi#usages_command = '<leader>n'
+" let g:jedi#rename_command = '<leader>r'
+" let g:jedi#show_call_signatures = '0'
+" let g:jedi#completions_command = '<C-Space>'
+" let g:jedi#smart_auto_mappings = 0
 
 " let g:polyglot_disabled = ['python', 'tex', 'markdown']
 let g:python_highlight_all = 1

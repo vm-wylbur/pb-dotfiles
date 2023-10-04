@@ -81,6 +81,7 @@ nnoremap <leader>l mt[s1z=`t
 nnoremap <c-s> mt[s1z=`t
 inoremap <C-s> <ESC>mt[s1z=`ta
 
+" TODO: buftabline has a Plug() command for these, might be better
 "" buffer navigation {{{{
 nnoremap <leader>1 :b1<CR>
 nnoremap <leader>2 :b2 <CR>

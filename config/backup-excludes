@@ -13,6 +13,8 @@ stan/
 .emacs.d/
 .cache/
 .config/nvim/plugged/
+.espressif/
+.platformio/
 .mu/
 .gem/
 .gnupg/

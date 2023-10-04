@@ -137,5 +137,10 @@ export PERSONALGIT="$LOCALGIT/personal"
 
 export STARSHIP_CONFIG="$HOME/dotfiles/starship/starship.toml"
 eval "$(starship init zsh)"
+
+
 # done.
+
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
 
