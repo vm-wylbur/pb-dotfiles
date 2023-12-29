@@ -56,6 +56,7 @@ Plug 'lifepillar/vim-solarized8'
 " languages
 " Plug 'sheerun/vim-polyglot'
 " Plug 'davidhalter/jedi-vim'
+Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop'}
 Plug 'lervag/vimtex'
 Plug 'raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'reedes/vim-pencil'
