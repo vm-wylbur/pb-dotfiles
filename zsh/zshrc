@@ -38,6 +38,7 @@ source ~/.antidote/antidote.zsh
 antidote load
 # a plugin that doesn't play nice with antidote
 source $HOME/src/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+ZVM_READKEY_ENGINE=$ZVM_READKEY_ENGINE_NEX
 
 # ---PB additions below-----
 # init fasd on eleanor; fasd is part of pretzo on petunia
@@ -103,6 +104,7 @@ alias la="ls -laFG  --color"
 
 alias j='xdir=$(fasd -ld | fzf --tac) && cd "$xdir"'
 alias h='print -z $(fc -l 1 | fzf +s --tac | $SED -re "s/^\s*[0-9]+\s*//")'
+alias tmux='TERM=screen-256color-bce tmux'
 
 # ---env vars-----
 export EDITOR='nvim'
