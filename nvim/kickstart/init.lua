@@ -1,10 +1,13 @@
--- TODO: remove git-related stuff from "config"
+--unk unkTODO: remove git-related stuff from "config"
+-- TODO: add benlubas/molten-nvim
 -- TODO: play with CWood-sdf/pineapple, color scheme picker
 -- TODO: play with GPT4 code creation https://github.com/bakks/butterfish.nvim
 
 -- Set <space> as the leader key
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
+-- TODO: make this dynamic from ~/.machinespecific
+vim.g.python3_host_prog = '/Users/pball/miniconda3/bin/python'
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
@@ -32,27 +35,87 @@ require('lazy').setup({
 
   -- -----------------------------------------------------------
   -- PB setup
-  'paretje/nvim-man',
-  'girishji/pythondoc.vim',
-  'lewis6991/satellite.nvim',
+  -- 'paretje/nvim-man',  -- :Man <cmd>
+  'girishji/pythondoc.vim',  -- :h pythontopic
+  'lewis6991/satellite.nvim', -- decorate scrollbar
   'Pocco81/auto-save.nvim',
+  'famiu/bufdelete.nvim',
+  'nvim-tree/nvim-web-devicons',
   -- TODO: reconsider { 'echasnovski/mini.surround', version = false },
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    build = "cd app && yarn install",
+    init = function()
+      vim.g.mkdp_filetypes = { "markdown" }
+    end,
+    ft = { "markdown" },
+  },
+
+  { 'milanglacier/yarepl.nvim', config = true },
+  -- see notes 2024-01-24
+  -- {
+  --   "pappasam/nvim-repl",
+  --   init = function()
+  --     vim.g["repl_filetype_commands"] = {
+  --       javascript = "node",
+  --       python = "ipython --no-autoindent"
+  --     }
+  --   end,
+  --   keys = {
+  --     { "<leader>rt", "<cmd>ReplToggle<cr>", desc = "Toggle nvim-repl" },
+  --     { "<leader>rc", "<cmd>ReplRunCell<cr>", desc = "nvim-repl run cell" },
+  --   },
+  -- },
+  -- molten doesn't appear :(
+  -- {
+  --   "benlubas/molten-nvim",
+  --   build = ":UpdateRemotePlugins",
+  --   init = function()
+  --     vim.g.molten_image_provider = "image.nvim"
+  --     vim.g.molten_use_border_highlights = true
+  --
+  --     -- don't change the mappings (unless it's related to your bug)
+  --     vim.keymap.set("n", "<localleader>mi", ":MoltenInit<CR>")
+  --     vim.keymap.set("n", "<localleader>e", ":MoltenEvaluateOperator<CR>")
+  --     vim.keymap.set("n", "<localleader>rr", ":MoltenReevaluateCell<CR>")
+  --     vim.keymap.set("v", "<localleader>r", ":<C-u>MoltenEvaluateVisual<CR>gv")
+  --     vim.keymap.set("n", "<localleader>os", ":noautocmd MoltenEnterOutput<CR>")
+  --     vim.keymap.set("n", "<localleader>oh", ":MoltenHideOutput<CR>")
+  --     vim.keymap.set("n", "<localleader>md", ":MoltenDelete<CR>")
+  --   end,
+  -- },
+  -- {
+  --   "3rd/image.nvim",
+  --   opts = {
+  --     backend = "kitty",
+  --     integrations = {},
+  --     max_width = 100,
+  --     max_height = 12,
+  --     max_height_window_percentage = math.huge,
+  --     max_width_window_percentage = math.huge,
+  --     window_overlap_clear_enabled = true,
+  --     window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "" },
+  --   },
+  --   version = "1.1.0", -- or comment out for latest
+  -- },
 
   {
     'ggandor/leap.nvim',
     dependencies = { 'tpope/vim-repeat' },
     opts = { },
   },
-
+  {
+    'renerocksai/telekasten.nvim',
+    dependencies = {
+      'nvim-telescope/telescope.nvim',
+      'renerocksai/calendar-vim',
+    }
+  },
   -- someday come back to vim-tmux-navigator, but it doesn't work.
 
-  -- todo-comments is great but has 2 issues:
-  -- 1) searches cwd, not open buffers
-  -- 2) seems impossible to turn off annoying highlighting of keywords
-  -- {
-  --   "folke/todo-comments.nvim",
-  --   dependencies = { "nvim-lua/plenary.nvim" },
-  -- },
+  -- todo-comments is great, see kickstart/lua/custom/plugins/todo.lua
+  --
   -- end PB setup --
   -- -----------------------------------------------------------
 
@@ -172,15 +235,28 @@ require('lazy').setup({
     },
   },
 
-  -- maybe onedark
-  -- Theme inspired by Atom
   {
-    'navarasu/onedark.nvim',
+    "bluz71/vim-moonfly-colors",
+    lazy = false,
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'onedark'
+      vim.cmd.syntax("enable")
+      vim.cmd.colorscheme("moonfly")
+
+      vim.api.nvim_set_hl(0, "MoltenOutputBorder", { link = "Normal" })
+      vim.api.nvim_set_hl(0, "MoltenOutputBorderFail", { link = "MoonflyCrimson" })
+      vim.api.nvim_set_hl(0, "MoltenOutputBorderSuccess", { link = "MoonflyBlue" })
     end,
   },
+  -- maybe onedark
+  -- Theme inspired by Atom
+  -- {
+  --   'navarasu/onedark.nvim',
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd.colorscheme 'onedark'
+  --   end,
+  -- },
   -- bamboo is ok excep comments are too prominent
   -- {
   --   'ribru17/bamboo.nvim',
@@ -242,13 +318,25 @@ require('lazy').setup({
       },
     },
   },
-
   {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = {
+          "markdown",
+          "markdown_inline",
+          "python",
+        },
+        highlight = {
+          enable = true,
+          additional_vim_regex_highlighing = false,
+        },
+      })
+    end,
     build = ':TSUpdate',
   },
 
@@ -541,16 +629,19 @@ require('which-key').register {
   ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
   ['<leader>g'] = { name = '[G]it', _ = 'which_key_ignore' },
   ['<leader>h'] = { name = 'Git [H]unk', _ = 'which_key_ignore' },
+  ['<leader>p'] = { name = '[P]ython', _ = 'which_key_ignore' },
   ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
   ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
   ['<leader>t'] = { name = '[T]odo', _ = 'which_key_ignore' },
   ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+  ['<leader>z'] = { name = '[Z]telekasten', _ = 'which_key_ignore' },
 }
 -- register which-key VISUAL mode
 -- required for visual <leader>hs (hunk stage) to work
 require('which-key').register({
   ['<leader>'] = { name = 'VISUAL <leader>' },
   ['<leader>h'] = { 'Git [H]unk' },
+  ['<leader>p'] = { 'Git [P]ython' },
 }, { mode = 'v' })
 
 -- mason-lspconfig requires that these setup functions are called in this order
@@ -668,11 +759,34 @@ require('leap').create_default_mappings()
 require('auto-save').setup()
 require('satellite').setup()
 
-vim.keymap.set("v", "s<", function()
-    -- surround selected text with "<>"
-    require("visual-surround").surround("<") -- it's enough to supply only opening or closing char
-end)
---
+-- vim.keymap.set('n', '<leader>pl', require('yarepl').REPLSendLine)
+
+
+require('telekasten').setup({
+  home = vim.fn.expand("~/notes"),
+  dailies = vim.fn.expand("~/notes"),
+  weeklies = vim.fn.expand("~/notes"),
+  templates = vim.fn.expand("~/dotfiles/vim-common/telekasten"),
+  template_new_note = vim.fn.expand("~/dotfiles/vim-common/telekasten/new.md"),
+  template_new_daily = vim.fn.expand("~/dotfiles/vim-common/telekasten/daily.md"),
+  template_new_weekly = vim.fn.expand("~/dotfiles/vim-common/telekasten/weekly.md"),
+  filename_space_subst = '_',
+})
+-- Launch panel if nothing is typed after <leader>z
+vim.keymap.set("n", "<leader>z", "<cmd>Telekasten panel<CR>")
+
+-- Most used functions
+vim.keymap.set("n", "<leader>zf", "<cmd>Telekasten find_notes<CR>")
+vim.keymap.set("n", "<leader>zg", "<cmd>Telekasten search_notes<CR>")
+vim.keymap.set("n", "<leader>zd", "<cmd>Telekasten goto_today<CR>")
+vim.keymap.set("n", "<leader>zz", "<cmd>Telekasten follow_link<CR>")
+vim.keymap.set("n", "<leader>zn", "<cmd>Telekasten new_note<CR>")
+vim.keymap.set("n", "<leader>zc", "<cmd>Telekasten show_calendar<CR>")
+vim.keymap.set("n", "<leader>zb", "<cmd>Telekasten show_backlinks<CR>")
+vim.keymap.set("n", "<leader>zI", "<cmd>Telekasten insert_img_link<CR>")
+vim.keymap.set("i", "[[", "<cmd>Telekasten insert_link<CR>")
+
+-- --
 require 'custom.pb-configs'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
