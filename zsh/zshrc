@@ -114,9 +114,12 @@ alias la="ls -laFG  --color"
 alias j='xdir=$(fasd -ld | fzf --tac) && cd "$xdir"'
 alias h='print -z $(fc -l 1 | fzf +s --tac | $SED -re "s/^\s*[0-9]+\s*//")'
 
+<<<<<<< HEAD
 # maybe alacritty+tmux fixes here?
 alias tmux='TERM=screen-256color-bce tmux'
 
+=======
+>>>>>>> 6ca657e (playing w zshrc)
 # ---env vars-----
 export EDITOR='nvim'
 export LANG='en_US.UTF-8';
@@ -156,6 +159,8 @@ eval "$(starship init zsh)"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
 
-# done.
+# for tmux to set window name.
+printf '\033]0;%s\007' "$USER@$HOSTNAME" # just the local part
 
+# done.
 
