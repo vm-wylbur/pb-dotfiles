@@ -117,8 +117,6 @@ alias h='print -z $(fc -l 1 | fzf +s --tac | $SED -re "s/^\s*[0-9]+\s*//")'
 # maybe alacritty+tmux fixes here?
 alias tmux='TERM=screen-256color-bce tmux'
 
-alias egrep="ggrep -E $1"
-
 # ---env vars-----
 export EDITOR='nvim'
 export LANG='en_US.UTF-8';
@@ -157,10 +155,6 @@ export STARSHIP_CONFIG="$HOME/dotfiles/starship/starship.toml"
 eval "$(starship init zsh)"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
-
-settitle() {
-    printf "\033k$1\033\\"
-}
 
 # done.
 
