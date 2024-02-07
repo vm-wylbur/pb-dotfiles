@@ -1,0 +1,30 @@
+# https://www.gnu.org/software/stow/manual/stow.htm
+# Comments and blank lines are allowed.
+
+RCS
+.+,v
+
+CVS
+\.\#.+       # CVS conflict files / emacs lock files
+\.cvsignore
+
+\.svn
+_darcs
+\.hg
+
+\.git
+\.gitignore
+
+.+~          # emacs backup files
+\#.*\#       # emacs autosave files
+
+^/starship
+^/share
+^/deprecated
+
+^/README.*
+^/.stow-*
+^/LICENSE.*
+^/COPYING
+
+# done.
