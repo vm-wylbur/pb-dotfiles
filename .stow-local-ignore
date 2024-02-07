@@ -23,8 +23,9 @@ _darcs
 ^/deprecated
 
 ^/README.*
-^/.stow-*
 ^/LICENSE.*
 ^/COPYING
+
+\.stow-global-ignore
 
 # done.
