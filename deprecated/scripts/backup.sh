@@ -29,7 +29,7 @@ if [ ! -d "$backup_path" ]; then
 fi
 
 logfile="$HOME/var/log/backup-${datestr}.log"
-backup_excludes="${backup_home}/dotfiles/config/backup-excludes"
+backup_excludes="${backup_home}/dotfiles/share/backup-excludes"
 
 backup_current="${backup_path}/current"
 backup_final="${backup_path}/back-${datestr}"

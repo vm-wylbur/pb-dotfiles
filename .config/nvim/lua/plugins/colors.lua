@@ -14,6 +14,10 @@ return {
 	{ "folke/tokyonight.nvim" },
 	{ "EdenEast/nightfox.nvim" },
 	{ "savq/melange-nvim" },
+	{ "Mofiqul/dracula.nvim" },
+	{ "catppuccin/nvim" },
+	{ "Shatur/neovim-ayu" },
+	{ "folke/styler.nvim" },
 	{ "patstockwell/vim-monokai-tasty" },
 	{ "bluz71/vim-nightfly-colors" },
 	-- {

@@ -115,7 +115,7 @@ alias j='xdir=$(fasd -ld | fzf --tac) && cd "$xdir"'
 alias h='print -z $(fc -l 1 | fzf +s --tac | $SED -re "s/^\s*[0-9]+\s*//")'
 
 # maybe alacritty+tmux fixes here?
-alias tmux='TERM=screen-256color-bce tmux'
+# alias tmux='TERM=screen-256color-bce tmux'
 
 # ---env vars-----
 export EDITOR='nvim'
