@@ -18,14 +18,15 @@ _darcs
 .+~          # emacs backup files
 \#.*\#       # emacs autosave files
 
-^/starship
-^/share
-^/deprecated
+starship
+share
+deprecated
 
 ^/README.*
 ^/LICENSE.*
 ^/COPYING
 
 \.stow-global-ignore
+\.stow-local-ignore
 
 # done.
