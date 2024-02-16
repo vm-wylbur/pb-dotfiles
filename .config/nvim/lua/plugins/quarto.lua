@@ -239,7 +239,7 @@ return {
         settings = {
           r = {
             lsp = {
-              rich_documentation = false,
+              rich_documentation = true,
             },
           },
         },
@@ -496,29 +496,6 @@ return {
       { "rafamadriz/friendly-snippets" },
       { "onsails/lspkind-nvim" },
 
-      -- optional
-      -- more things to try:
-      -- {
-      --   "zbirenbaum/copilot.lua",
-      --   config = function()
-      --     require("copilot").setup({
-      --       suggestion = {
-      --         enabled = true,
-      --         auto_trigger = true,
-      --         debounce = 75,
-      --         keymap = {
-      --           accept = "<c-a>",
-      --           accept_word = false,
-      --           accept_line = false,
-      --           next = "<M-]>",
-      --           prev = "<M-[>",
-      --           dismiss = "<C-]>",
-      --         },
-      --       },
-      --       panel = { enabled = false },
-      --     })
-      --   end,
-      -- },
     },
     config = function()
       local cmp = require("cmp")
@@ -547,6 +524,13 @@ return {
           trigger_debounce_time = 500,
         },
         mapping = {
+          -- ["<Tab>"] = vim.schedule_wrap(function(fallback)
+          --   if cmp.visible() and has_words_before() then
+          --     cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+          --   else
+          --     fallback()
+          --   end
+          -- end),
           ["<C-f>"] = cmp.mapping.scroll_docs(-4),
           ["<C-d>"] = cmp.mapping.scroll_docs(4),
           ["<C-n>"] = cmp.mapping(function(fallback)
@@ -566,15 +550,6 @@ return {
           ["<CR>"] = cmp.mapping.confirm({
             select = true,
           }),
-          ["<Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-              cmp.select_next_item()
-            elseif has_words_before() then
-              cmp.complete()
-            else
-              fallback()
-            end
-          end, { "i", "s" }),
           ["<S-Tab>"] = cmp.mapping(function(fallback)
             if cmp.visible() then
               cmp.select_prev_item()
@@ -588,6 +563,7 @@ return {
           format = lspkind.cmp_format({
             with_text = true,
             menu = {
+              Copilot = "[coplt]",
               otter = "[🦦]",
               nvim_lsp = "[LSP]",
               luasnip = "[snip]",
@@ -604,6 +580,7 @@ return {
           }),
         },
         sources = {
+          { name = "copilot", group_index = 2 },
           { name = "otter" }, -- for code chunks in quarto
           { name = "path", option = { label_trailing_slash = true } },
           { name = "nvim_lsp" },
@@ -624,6 +601,9 @@ return {
           documentation = {
             border = require("misc.style").border,
           },
+        },
+        experimental = {
+          ghost_text = true,
         },
       })
 

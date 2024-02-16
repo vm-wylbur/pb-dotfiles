@@ -88,7 +88,21 @@ return {
   { "nvim-telescope/telescope-fzf-native.nvim",  build = "make" },
   { "nvim-telescope/telescope-dap.nvim" },
   { "nvim-telescope/telescope-file-browser.nvim" },
-
+  {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    opts = {
+      -- add any options here
+    },
+    dependencies = {
+      -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+      "MunifTanjim/nui.nvim",
+      -- OPTIONAL:
+      --   `nvim-notify` is only needed, if you want to use the notification view.
+      --   If not available, we use `mini` as the fallback
+      "rcarriga/nvim-notify",
+    }
+  },
   {
     "nvim-lualine/lualine.nvim",
     config = function()
@@ -98,6 +112,30 @@ return {
           return ""
         end
         return "📷[" .. reg .. "]"
+      end
+
+      local function indent_style()
+        local space_pat = [[\v^ +]]
+        local tab_pat = [[\v^\t+]]
+        local space_indent = vim.fn.search(space_pat, 'nwc')
+        local tab_indent = vim.fn.search(tab_pat, 'nwc')
+        local mixed = (space_indent > 0 and tab_indent > 0)
+        local mixed_same_line
+        if not mixed then
+          mixed_same_line = vim.fn.search([[\v^(\t+ | +\t)]], 'nwc')
+          mixed = mixed_same_line > 0
+        end
+        if not mixed then return '' end
+        if mixed_same_line ~= nil and mixed_same_line > 0 then
+           return 'MI:'..mixed_same_line
+        end
+        local space_indent_cnt = vim.fn.searchcount({pattern=space_pat, max_count=1e3}).total
+        local tab_indent_cnt =  vim.fn.searchcount({pattern=tab_pat, max_count=1e3}).total
+        if space_indent_cnt > tab_indent_cnt then
+          return 'MI:'..tab_indent
+        else
+          return 'MI:'..space_indent
+        end
       end
 
       require("lualine").setup({
@@ -111,8 +149,8 @@ return {
           lualine_b = { "branch", "diff", "diagnostics" },
           -- lualine_b = {},
           lualine_c = { "searchcount" },
-          lualine_x = { "filetype" },
-          lualine_y = { "progress" },
+          lualine_x = { "copilot", "encoding", "fileformat", "filetype" },
+          lualine_y = { indent_style, "progress" },
           lualine_z = { "location" },
         },
         extensions = { "nvim-tree" },

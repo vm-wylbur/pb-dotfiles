@@ -1,0 +1,11 @@
+-- lazy.nvim example:
+return {
+  'tim-harding/neophyte',
+  tag = '0.2.2',
+  event = 'VeryLazy',
+  opts = {
+    -- Same as neophyte.setup({ ... })
+  },
+}
+
+
