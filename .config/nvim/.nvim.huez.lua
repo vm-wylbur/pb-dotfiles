@@ -1,1 +1,1 @@
-melange
+vim-monokai-tasty
