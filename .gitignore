@@ -13,3 +13,4 @@ figure/*
 *html
 tags
 lazy-lock.json
+.nvim.huez.lua
