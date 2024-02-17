@@ -1,7 +1,7 @@
 return {
 	{
 		"vague2k/huez.nvim",  -- run w :Huez
-		-- I like duskfox, melange
+		-- I like duskfox, melange, bamboo
 		dependencies = {
 			-- You probably already have this installed.
 			-- reccomended, but optional dependency.
@@ -20,11 +20,7 @@ return {
 	{ "folke/styler.nvim" },
 	{ "patstockwell/vim-monokai-tasty" },
 	{ "bluz71/vim-nightfly-colors" },
-	-- {
-	-- 	"catppuccin/nvim",
-	-- 	name = "catppuccin",
-	-- 	priority = 1000,
-	-- },
+	{ "ribru17/bamboo.nvim" },
 	{
 		"olimorris/onedarkpro.nvim",
 		priority = 1000,

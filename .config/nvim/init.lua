@@ -8,4 +8,4 @@ require("config.autocommands")
 require("config.keymap")
 require("config.color")
 require("config.pb")
-
+-- done.

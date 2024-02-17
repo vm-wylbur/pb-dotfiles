@@ -5,28 +5,23 @@ return {
   'famiu/bufdelete.nvim',
   'tpope/vim-sleuth',
   'rmagatti/auto-session',
-  { 'StonyBoy/nvim-update-time',
-    config = function()
-      require('nvim-update-time').setup({ last = 5, format = '%Y-%m-%d %H:%M:%S %Z'})
-    end,
+  {"christoomey/vim-tmux-navigator",
+    lazy = false,
+    cmd = {
+      "TmuxNavigateLeft",
+      "TmuxNavigateDown",
+      "TmuxNavigateUp",
+      "TmuxNavigateRight",
+      "TmuxNavigatePrevious",
+    },
+    keys = {
+      { "<c-h>", "<cmd>TmuxNavigateLeft<cr>" },
+      { "<c-j>", "<cmd>TmuxNavigateDown<cr>" },
+      { "<c-k>", "<cmd>TmuxNavigateUp<cr>" },
+      { "<c-l>", "<cmd>TmuxNavigateRight<cr>" },
+      { "<c-\\>", "<cmd>TmuxNavigatePrevious<cr>" },
+    },
   },
-  {"alexghergh/nvim-tmux-navigation", config = function()
-    local nvim_tmux_nav = require('nvim-tmux-navigation')
-
-    nvim_tmux_nav.setup {
-        disable_when_zoomed = true -- defaults to false
-    }
-
-    vim.keymap.set('n', "<C-h>", nvim_tmux_nav.NvimTmuxNavigateLeft)
-    vim.keymap.set('n', "<C-j>", nvim_tmux_nav.NvimTmuxNavigateDown)
-    vim.keymap.set('n', "<C-k>", nvim_tmux_nav.NvimTmuxNavigateUp)
-    vim.keymap.set('n', "<C-l>", nvim_tmux_nav.NvimTmuxNavigateRight)
-    -- vim.keymap.set('n', "<C-\\>", nvim_tmux_nav.NvimTmuxNavigateLastActive)
-    vim.keymap.set('n', "<C-Space>", nvim_tmux_nav.NvimTmuxNavigateNext)
-
-  end
-  },
-
   {
     -- Add indentation guides even on blank lines
     'lukas-reineke/indent-blankline.nvim',

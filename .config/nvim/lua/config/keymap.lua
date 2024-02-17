@@ -26,41 +26,9 @@ local imap = function(key, effect)
 	vim.keymap.set("i", key, effect, { silent = true, noremap = true })
 end
 
--- save with ctrl+s
--- imap("<C-s>", "<cmd>:w<cr><esc>")
--- nmap("<C-s>", "<cmd>:w<cr><esc>")
-
--- Move between windows using <ctrl> direction
--- nmap("<C-j>", "<C-W>j")
--- nmap("<C-k>", "<C-W>k")
--- nmap("<C-h>", "<C-W>h")
--- nmap("<C-l>", "<C-W>l")
--- local nvim_tmux_nav = require('nvim-tmux-navigation')
--- vim.keymap.set('n', "<C-h>", nvim_tmux_nav.NvimTmuxNavigateLeft)
--- vim.keymap.set('n', "<C-j>", nvim_tmux_nav.NvimTmuxNavigateDown)
--- vim.keymap.set('n', "<C-k>", nvim_tmux_nav.NvimTmuxNavigateUp)
--- vim.keymap.set('n', "<C-l>", nvim_tmux_nav.NvimTmuxNavigateRight)
-
--- Resize window using <shift> arrow keys
--- nmap("<S-Up>", "<cmd>resize +2<CR>")
--- nmap("<S-Down>", "<cmd>resize -2<CR>")
--- nmap("<S-Left>", "<cmd>vertical resize -2<CR>")
--- nmap("<S-Right>", "<cmd>vertical resize +2<CR>")
-
--- Add undo break-points
-imap(",", ",<c-g>u")
-imap(".", ".<c-g>u")
-imap(";", ";<c-g>u")
-
-nmap("Q", "<Nop>")
-
--- TODO:
--- terminal settings need attetion:
--- :cnoremap <C-A> <Home>
--- :cnoremap <C-F> <Right>
--- :cnoremap <C-B> <Left>
--- :cnoremap <Esc>b <S-Left>
--- :cnoremap <Esc>f <S-Right>
+-- local tmux_nav = require('vim_tmux_navigator')
+-- vim.keymap.set('n', tmux_nav.NvimTmuxNavigateLeft, "C-h")
+-- nmap("<c-l>", "<cmd>NvimTmuxNavigateRight<cr>")
 
 -- send code with ctrl+Enter
 -- just like in e.g. RStudio
@@ -98,23 +66,14 @@ nmap("n", "nzz")
 nmap("<c-d>", "<c-d>zz")
 nmap("<c-u>", "<c-u>zz")
 
+-- NO! a thousand times NO!!
 -- move between splits and tabs
-nmap("<c-h>", "<c-w>h")
-nmap("<c-l>", "<c-w>l")
-nmap("<c-j>", "<c-w>j")
-nmap("<c-k>", "<c-w>k")
-nmap("H", "<cmd>tabprevious<cr>")
-nmap("L", "<cmd>tabnext<cr>")
-
-local function toggle_light_dark_theme()
-	if vim.o.background == "light" then
-		vim.o.background = "dark"
-		vim.cmd([[Catppuccin mocha]])
-	else
-		vim.o.background = "light"
-		vim.cmd([[Catppuccin latte]])
-	end
-end
+-- nmap("<c-h>", "<c-w>h")
+-- nmap("<c-l>", "<c-w>l")
+-- nmap("<c-j>", "<c-w>j")
+-- nmap("<c-k>", "<c-w>k")
+-- nmap("H", "<cmd>tabprevious<cr>")
+-- nmap("L", "<cmd>tabnext<cr>")
 
 --show kepbindings with whichkey
 --add your own here if you want them to
@@ -301,27 +260,28 @@ wk.register({
 	["[q"] = { ":silent cprev<cr>", "quickfix prev" },
 }, { mode = "n", silent = true })
 
--- visual mode
-wk.register({
-	["<cr>"] = { "<Plug>SlimeRegionSend", "run code region" },
-	["<M-j>"] = { ":m'>+<cr>`<my`>mzgv`yo`z", "move line down" },
-	["<M-k>"] = { ":m'<-2<cr>`>my`<mzgv`yo`z", "move line up" },
-	["."] = { ":norm .<cr>", "repat last normal mode command" },
-	["q"] = { ":norm @q<cr>", "repat q macro" },
-}, { mode = "v" })
+-- -- visual mode
+-- wk.register({
+-- 	["<cr>"] = { "<Plug>SlimeRegionSend", "run code region" },
+-- 	["<M-j>"] = { ":m'>+<cr>`<my`>mzgv`yo`z", "move line down" },
+-- 	["<M-k>"] = { ":m'<-2<cr>`>my`<mzgv`yo`z", "move line up" },
+-- 	["."] = { ":norm .<cr>", "repat last normal mode command" },
+-- 	["q"] = { ":norm @q<cr>", "repat q macro" },
+-- }, { mode = "v" })
+--
+-- wk.register({
+-- 	["<leader>"] = { "<Plug>SlimeRegionSend", "run code region" },
+-- 	["p"] = { '"_dP', "replace without overwriting reg" },
+-- }, { mode = "v", prefix = "<leader>" })
+--
+-- -- insert mode
+-- wk.register({
+-- 	-- ['<c-e>'] = { "<esc>:FeMaco<cr>i", "edit code" },
+-- 	["<m-->"] = { " <- ", "assign" },
+-- 	["<m-m>"] = { " |>", "pipe" },
+-- 	["<m-i>"] = { insert_r_chunk, "r code chunk" },
+-- 	["<cm-i>"] = { insert_py_chunk, "python code chunk" },
+-- 	["<m-I>"] = { insert_py_chunk, "python code chunk" },
+-- 	["<c-x><c-x>"] = { "<c-x><c-o>", "omnifunc completion" },
+-- }, { mode = "i" })
 
-wk.register({
-	["<leader>"] = { "<Plug>SlimeRegionSend", "run code region" },
-	["p"] = { '"_dP', "replace without overwriting reg" },
-}, { mode = "v", prefix = "<leader>" })
-
--- insert mode
-wk.register({
-	-- ['<c-e>'] = { "<esc>:FeMaco<cr>i", "edit code" },
-	["<m-->"] = { " <- ", "assign" },
-	["<m-m>"] = { " |>", "pipe" },
-	["<m-i>"] = { insert_r_chunk, "r code chunk" },
-	["<cm-i>"] = { insert_py_chunk, "python code chunk" },
-	["<m-I>"] = { insert_py_chunk, "python code chunk" },
-	["<c-x><c-x>"] = { "<c-x><c-o>", "omnifunc completion" },
-}, { mode = "i" })
