@@ -26,9 +26,11 @@ local imap = function(key, effect)
 	vim.keymap.set("i", key, effect, { silent = true, noremap = true })
 end
 
--- local tmux_nav = require('vim_tmux_navigator')
--- vim.keymap.set('n', tmux_nav.NvimTmuxNavigateLeft, "C-h")
--- nmap("<c-l>", "<cmd>NvimTmuxNavigateRight<cr>")
+-- now with smart-splits.nvim
+vim.keymap.set('n', '<C-h>', require('smart-splits').move_cursor_left)
+vim.keymap.set('n', '<C-j>', require('smart-splits').move_cursor_down)
+vim.keymap.set('n', '<C-k>', require('smart-splits').move_cursor_up)
+vim.keymap.set('n', '<C-l>', require('smart-splits').move_cursor_right)
 
 -- send code with ctrl+Enter
 -- just like in e.g. RStudio
