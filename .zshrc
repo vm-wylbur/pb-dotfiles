@@ -15,6 +15,7 @@ esac
 # ---functions -----
 function chpwd() {
   emulate -L zsh
+  printf "\033]7;file://$(hostname)\033\\"
   ls -ltrFG --color
 }
 
