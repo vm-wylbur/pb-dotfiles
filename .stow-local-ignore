@@ -21,6 +21,7 @@ _darcs
 starship
 share
 deprecated
+scripts
 
 ^/README.*
 ^/LICENSE.*
