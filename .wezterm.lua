@@ -35,6 +35,16 @@ wezterm.on('format-tab-title', function(tab)
   return title
 end)
 
+-- https://stackoverflow.com/questions/11201262
+local open = io.open
+local function read_file(path)
+    local file = open(path, "rb") -- r read mode and b binary mode
+    if not file then return nil end
+    local content = file:read "*a" -- *a or *all reads the whole file
+    file:close()
+    return content
+end
+
 
 wezterm.on('update-right-status', function(window, pane)
   function rstrip(s)
@@ -51,11 +61,19 @@ wezterm.on('update-right-status', function(window, pane)
     remote_resp = "local"
   end
 
+  local jstr = read_file("/Users/pball/.local/state/wezterm")
+  local jvals = wezterm.json_parse(jstr)
+  wezterm.log_info(jvals)
+
   local date = wezterm.strftime '%a %-d %b %H:%M'
   -- the vars read from esc seq vars written to the pane have trailing \n
-  local cputemp = rstrip(pane:get_user_vars().cputemp or "no temp")
-  local memfree = rstrip(pane:get_user_vars().memfree or "no mem")
-  local cpuusage = rstrip(pane:get_user_vars().cpuusage or "no usg")
+  local cputemp = jvals.cputemp
+  local memfree = jvals.memfree
+  local cpuusage = jvals.cpuusage
+  -- local cputemp = rstrip(pane:get_user_vars().cputemp or "no temp")
+  -- local memfree = rstrip(pane:get_user_vars().memfree or "no mem")
+  -- local memfree = rstrip(os.getenv("WEZTERM_MEMFREE") or "no mem")
+  -- local cpuusage = rstrip(pane:get_user_vars().cpuusage or "no usg")
 
   wezterm.log_info('temp: ' .. cputemp)
   wezterm.log_info('usg: ' .. cpuusage)
@@ -89,7 +107,6 @@ wezterm.on('update-right-status', function(window, pane)
   local elements = {}
   -- How many cells have been formatted
   local num_cells = 0
-  wezterm.log_info(cells)
 
   -- Translate a cell into elements
   function push(text, is_last)
@@ -112,8 +129,6 @@ wezterm.on('update-right-status', function(window, pane)
     local cell = table.remove(cells, 1)
     push(cell, #cells == 0)
   end
-
-  wezterm.log_info(elements)
 
   window:set_right_status(wezterm.format(elements))
 end)

@@ -51,6 +51,7 @@ fi
 # init fasd on eleanor; fasd is part of pretzo on petunia
 case $HOST in
   (porky)
+    eval "$(fasd --init auto)"
     # $HOME/dotfiles/scripts/wezterm-macos.sh &
     ;;
   (henwen)
@@ -65,23 +66,6 @@ case $HOST in
     SED="sed"
     ;;
 esac
-
-# This function emits an OSC 1337 sequence to set a user var
-# associated with the current terminal pane.
-# It requires the `base64` utility to be available in the path.
-# This function is included in the wezterm shell integration script, but
-# is reproduced here for clarity
-__wezterm_set_user_var() {
-  if hash base64 2>/dev/null ; then
-    if [[ -z "${TMUX}" ]] ; then
-      printf "\033]1337;SetUserVar=%s=%s\007" "$1" `echo -n "$2" | base64`
-    else
-      printf "\033Ptmux;\033\033]1337;SetUserVar=%s=%s\007\033\\" "$1" `echo -n "$2" | base64`
-    fi
-  fi
-}
-
-__wezterm_set_user_var "foo" "bar"
 
 # colors
 export TERM=xterm-256color
@@ -179,11 +163,8 @@ eval "$(starship init zsh)"
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
 
 # for tmux to set window name.
-printf '\033]0;%s\007' "$USER@$HOSTNAME" # just the local part
+# printf '\033]0;%s\007' "$USER@$HOSTNAME" # just the local part
 
-if [[ -f $HOME/bin/wezterm.sh ]]; then
-  source $HOME/bin/wezterm.sh
-fi
 
 # done.
 
