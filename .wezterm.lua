@@ -61,15 +61,19 @@ wezterm.on('update-right-status', function(window, pane)
     remote_resp = "local"
   end
 
+  local date = wezterm.strftime '%a %-d %b %H:%M'
+
+  -- this only reads from the wezterm-local state file
+  -- needs to read from the terminals.
+  -- I think we're back to escape sequences.
   local jstr = read_file("/Users/pball/.local/state/wezterm")
   local jvals = wezterm.json_parse(jstr)
   wezterm.log_info(jvals)
-
-  local date = wezterm.strftime '%a %-d %b %H:%M'
-  -- the vars read from esc seq vars written to the pane have trailing \n
   local cputemp = jvals.cputemp
   local memfree = jvals.memfree
   local cpuusage = jvals.cpuusage
+
+  -- the vars read from esc seq vars written to the pane have trailing \n
   -- local cputemp = rstrip(pane:get_user_vars().cputemp or "no temp")
   -- local memfree = rstrip(pane:get_user_vars().memfree or "no mem")
   -- local memfree = rstrip(os.getenv("WEZTERM_MEMFREE") or "no mem")
