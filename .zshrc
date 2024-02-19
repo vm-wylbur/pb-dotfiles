@@ -162,6 +162,10 @@ eval "$(starship init zsh)"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
 
+if [[ -f $HOME/dotfiles/scripts/wezterm-record.py ]]; then
+  $HOME/dotfiles/scripts/wezterm-record.py &!
+fi
+
 # for tmux to set window name.
 # printf '\033]0;%s\007' "$USER@$HOSTNAME" # just the local part
 

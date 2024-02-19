@@ -4,13 +4,13 @@ import subprocess
 import time
 from pathlib import Path
 
-statefile = Path().home() / ".local/state/wezterm"
 
 if __name__ == "__main__":
+    statefile = Path().home() / ".local/state/wezterm"
+    statefile.parent.mkdir(parents=True, exist_ok=True)
+
     while True:
-        p = psutil.Process()
-        with p.oneshot():
-            ctp = p.cpu_percent()
+        ctp = psutil.cpu_percent(0.25)
         line = '{"cpuusage": "' + f"{ctp}%" + '", '
 
         gig = 1024*1024*1024
