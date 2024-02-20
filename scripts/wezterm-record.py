@@ -32,17 +32,16 @@ def main():
         # line += '"memfree": "' + f"{memfree}" + '", '
         outputs["memfree"] = memfree
 
+        cputmp = ""
         match platform.system():
             case "Linux":
                 try:
                     cputmp = max([float(m.current)
                                   for m in
                                   psutil.sensors_temperatures()['coretemp']])
-                    cputmp = f"{int(round(cputmp), 0)}°C"
+                    cputmp = f"{int(round(cputmp, 0))}°C"
                 except ValueError:
                     cputmp = "xx"
-                # line += '"cputemp": "' + f"{cputmp}°C" + '"}\n'
-                outputs["cputemp"] = f"{cputmp}°C"
 
             case "Darwin":
                 # bc MacOS doesn't let psutil see core temps
@@ -50,13 +49,12 @@ def main():
                 ran = subprocess.run('smctemp -c', shell=True, text=True, capture_output=True)
                 cputmp = f"{int(round(float(ran.stdout), 0))}°C"
                 # line += '"cputemp": "' + cputmp + '"}\n'
-                outputs["cputemp"] = cputmp
 
             case other:
                 raise NotImplementedError(f"what os? {platform.system()}")
 
-        # with open(STATEFILE, 'wt') as f:
-        #     f.write(line)
+        outputs["cputemp"] = cputmp
+
 
         with open(STATEJSON, "wt") as f:
             f.write(f"{json.dumps(outputs, sort_keys=True, indent=4)}\n")
