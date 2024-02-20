@@ -66,28 +66,31 @@ wezterm.on('update-right-status', function(window, pane)
   -- this only reads from the wezterm-local state file
   -- needs to read from the terminals.
   -- I think we're back to escape sequences.
-  local jstr = read_file("/Users/pball/.local/state/wezterm")
-  local jvals = wezterm.json_parse(jstr)
-  wezterm.log_info(jvals)
-  local cputemp = jvals.cputemp
-  local memfree = jvals.memfree
-  local cpuusage = jvals.cpuusage
+  -- local jstr = read_file("/Users/pball/.local/state/wezterm")
+  -- local jvals = wezterm.json_parse(jstr)
+  -- wezterm.log_info(jvals)
+  -- local cputemp = jvals.cputemp
+  -- local memfree = jvals.memfree
+  -- local cpuusage = jvals.cpuusage
+
+  local pkd = rstrip(pane:get_user_vars().pkd or "no pkd")
+  local jvals = wezterm.json_parse(pkd)
 
   -- the vars read from esc seq vars written to the pane have trailing \n
   -- local cputemp = rstrip(pane:get_user_vars().cputemp or "no temp")
   -- local memfree = rstrip(pane:get_user_vars().memfree or "no mem")
-  -- local memfree = rstrip(os.getenv("WEZTERM_MEMFREE") or "no mem")
   -- local cpuusage = rstrip(pane:get_user_vars().cpuusage or "no usg")
 
-  wezterm.log_info('temp: ' .. cputemp)
-  wezterm.log_info('usg: ' .. cpuusage)
-  wezterm.log_info('mem: ' .. memfree)
-  wezterm.log_info('remote: ' .. remote_resp)
+  -- wezterm.log_info('temp: ' .. pkd)
+  -- wezterm.log_info('usg: ' .. cpuusage)
+  -- wezterm.log_info('mem: ' .. memfree)
+  -- wezterm.log_info('remote: ' .. remote_resp)
 
   table.insert(cells, wezterm.hostname())
-  table.insert(cells, cputemp)
-  table.insert(cells, cpuusage)
-  table.insert(cells, memfree)
+  -- table.insert(cells, pkd)
+  table.insert(cells, jvals.cputtemp)
+  table.insert(cells, jvals.cpuusage)
+  table.insert(cells, jvals.memfree)
   table.insert(cells, remote_resp)
 
   -- The powerline < symbol
@@ -133,6 +136,8 @@ wezterm.on('update-right-status', function(window, pane)
     local cell = table.remove(cells, 1)
     push(cell, #cells == 0)
   end
+
+  wezterm.log_debug(elements)
 
   window:set_right_status(wezterm.format(elements))
 end)

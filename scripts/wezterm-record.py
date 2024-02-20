@@ -2,24 +2,44 @@
 import psutil
 import subprocess
 import time
+from datetime import datetime
 from pathlib import Path
 import platform
-import fcntl
+import signal
 import os
-import sys
-from lockfile import LockFile, AlreadyLocked, LockTimeout
+import re
 
-# only one instance can be running at a time.
-LOCKFILE = Path().home() / ".local/state/wezterm.lock"
 STATEFILE = Path().home() / ".local/state/wezterm"
+S2 = Path().home() / ".local/state/wezterm.json"
 
 
 def main():
     while True:
         ctp = psutil.cpu_percent(0.25)
-        line = '{"cpuusage": "' + f"{ctp}%" + '", '
+        line = '{ "cpuusage": "' + f"{ctp}%" + '", '
+
+        dtime = int(datetime.now().strftime("%s"))
+        line += '"timestamp": "' + f"{dtime}" + '", '
 
         gig = 1024*1024*1024
+        vm = psutil.virtual_memory()
+        memfree = (f"{int(round(vm.available/gig, 0))}/"
+                   f"{int(round(vm.total/gig, 0))}G")
+
+        line += '"memfree": "' + f"{memfree}" + '", '
+
+        match platform.system():
+            case "Linux":
+                try:
+                    cputmp = max([float(m.current)
+                                  for m in
+                                  psutil.sensors_temperatures()['coretemp']])
+                    cputmp = f"{int(round(cputmp), 0)}°C"
+                except ValueError:
+                    cputmp = "xx"
+                line += '"cputemp": "' + f"{cputmp}°C" + '" }\n'
+
+        gig = 1024.0*1024*1024
         vm = psutil.virtual_memory()
         memfree = (f"{int(round(vm.available/gig, 0))}/"
                    f"{int(round(vm.total/gig, 0))}G")
@@ -31,7 +51,7 @@ def main():
                     cputmp = max([float(m.current)
                                   for m in
                                   psutil.sensors_temperatures()['coretemp']])
-                    cputmp = f"{int(round(cputmp), 0))}°C"
+                    cputmp = f"{int(round(cputmp), 0)}°C"
                 except ValueError:
                     cputmp = "xx"
                 line += '"cputemp": "' + f"{cputmp}°C" + '" }\n'
@@ -51,15 +71,22 @@ def main():
         time.sleep(1)
 
 
+def only_me():
+    ws = re.compile(r'\s+')
+    ran = subprocess.run("ps ax".split(' '), capture_output=True, text=True)
+
+    ps_ax = {line for line in ran.stdout.split('\n')
+             if 'python' in line and 'wezterm-record.py' in line}
+
+    pids = {int(ws.split(row)[0]) for row in ps_ax} - {os.getpid()}
+
+    for pid in pids:
+        os.kill(pid, signal.SIGHUP)
+
+
 if __name__ == "__main__":
     STATEFILE.parent.mkdir(parents=True, exist_ok=True)
-
-    try:
-        with LockFile(LOCKFILE):
-            main()
-    # TODO: kill the other, or die.
-    except (AlreadyLocked, LockTimeout):
-        print("wezterm-record already running.")
-        sys.exit(1)
+    only_me()
+    main()
 
 # done

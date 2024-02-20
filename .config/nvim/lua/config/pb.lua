@@ -13,6 +13,7 @@ wk.register({
     t = { "<cmd>Telescope live_grep search_dirs={'~/dotfiles/'}<cr>", "Grep Dotfiles" },
     n = { "<cmd>Telescope find_files search_dirs={'~/notes/'}<cr>", "Find Notes" },
     g = { "<cmd>Telescope live_grep search_dirs={'~/notes/'}<cr>", "Grep Notes" },
+    p = { "<cmd>Telescope find_files search_dirs={'~/Downloads/python-3.12.1-docs-text/library/'}<cr>", "Grep Python docs"},
   },
 }, { prefix = "<leader>" })
 

@@ -51,7 +51,7 @@ fi
 # init fasd on eleanor; fasd is part of pretzo on petunia
 case $HOST in
   (porky)
-    eval "$(fasd --init auto)"
+    # eval "$(fasd --init auto)"
     # $HOME/dotfiles/scripts/wezterm-macos.sh &
     ;;
   (henwen)
@@ -164,6 +164,7 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 
 if [[ -f $HOME/dotfiles/scripts/wezterm-record.py ]]; then
   $HOME/dotfiles/scripts/wezterm-record.py &!
+  $HOME/dotfiles/scripts/write-escapes.sh &!
 fi
 
 # for tmux to set window name.
