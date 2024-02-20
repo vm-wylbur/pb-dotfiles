@@ -70,11 +70,11 @@ def only_me():
     lines = ran.stdout.split('\n')
 
     ttys = [ws.split(line) for line in lines
-            if 'bash' in line and 'wezterm-escapes' in line and 'tty' in line]
+            if 'bash' in line and 'wezterm-escapes' in line]
 
     # if the second field is "??" there's no controlling terminal and can kill
     # we don't want to run wezterm-escapes in defunct ttys
-    for row in [r for r in ttys if r[1] == "??"]:
+    for row in [r for r in ttys if "?" in r[1]]:
         os.kill(int(row[0]), signal.SIGKILL)
 
     # only one process of this script is allowed, so we SIGHUP the running one(s)
