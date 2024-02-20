@@ -36,20 +36,22 @@ wezterm.on('format-tab-title', function(tab)
 end)
 
 -- https://stackoverflow.com/questions/11201262
-local open = io.open
-local function read_file(path)
-    local file = open(path, "rb") -- r read mode and b binary mode
-    if not file then return nil end
-    local content = file:read "*a" -- *a or *all reads the whole file
-    file:close()
-    return content
+-- local open = io.open
+-- local function read_file(path)
+--     local file = open(path, "rb") -- r read mode and b binary mode
+--     if not file then return nil end
+--     local content = file:read "*a" -- *a or *all reads the whole file
+--     file:close()
+--     return content
+-- end
+
+function rstrip(s)
+  if not s then return nil end
+  return s:match'^(.*%S)%s*$'
 end
 
 
 wezterm.on('update-right-status', function(window, pane)
-  function rstrip(s)
-    return s:match'^(.*%S)%s*$'
-  end
   -- Each element holds the text for a cell in a "powerline" style << fade
   local cells = {}
   local meta = pane:get_metadata() or {}
@@ -61,34 +63,15 @@ wezterm.on('update-right-status', function(window, pane)
     remote_resp = "local"
   end
 
-  local date = wezterm.strftime '%a %-d %b %H:%M'
+  local date = wezterm.strftime '%a %b %-d %H:%M '
 
-  -- this only reads from the wezterm-local state file
-  -- needs to read from the terminals.
-  -- I think we're back to escape sequences.
-  -- local jstr = read_file("/Users/pball/.local/state/wezterm")
-  -- local jvals = wezterm.json_parse(jstr)
-  -- wezterm.log_info(jvals)
-  -- local cputemp = jvals.cputemp
-  -- local memfree = jvals.memfree
-  -- local cpuusage = jvals.cpuusage
-
-  local pkd = rstrip(pane:get_user_vars().pkd or "no pkd")
+  local pkd = rstrip(pane:get_user_vars().pkd) or "no pkd"
   local jvals = wezterm.json_parse(pkd)
-
-  -- the vars read from esc seq vars written to the pane have trailing \n
-  -- local cputemp = rstrip(pane:get_user_vars().cputemp or "no temp")
-  -- local memfree = rstrip(pane:get_user_vars().memfree or "no mem")
-  -- local cpuusage = rstrip(pane:get_user_vars().cpuusage or "no usg")
-
-  -- wezterm.log_info('temp: ' .. pkd)
-  -- wezterm.log_info('usg: ' .. cpuusage)
-  -- wezterm.log_info('mem: ' .. memfree)
-  -- wezterm.log_info('remote: ' .. remote_resp)
+  wezterm.log_info(date, jvals)
 
   table.insert(cells, wezterm.hostname())
   -- table.insert(cells, pkd)
-  table.insert(cells, jvals.cputtemp)
+  table.insert(cells, jvals.cputemp)
   table.insert(cells, jvals.cpuusage)
   table.insert(cells, jvals.memfree)
   table.insert(cells, remote_resp)
@@ -136,8 +119,6 @@ wezterm.on('update-right-status', function(window, pane)
     local cell = table.remove(cells, 1)
     push(cell, #cells == 0)
   end
-
-  wezterm.log_debug(elements)
 
   window:set_right_status(wezterm.format(elements))
 end)

@@ -164,7 +164,7 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 
 if [[ -f $HOME/dotfiles/scripts/wezterm-record.py ]]; then
   $HOME/dotfiles/scripts/wezterm-record.py &!
-  $HOME/dotfiles/scripts/write-escapes.sh &!
+  $HOME/dotfiles/scripts/wezterm-escapes.sh `basename $(tty)` &!
 fi
 
 # for tmux to set window name.
