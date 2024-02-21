@@ -6,7 +6,7 @@ return {
   'tpope/vim-sleuth',
   'rmagatti/auto-session',
   'mrjones2014/smart-splits.nvim',
-  { "girishji/pythondoc.vim", opts = {} },
+  "girishji/pythondoc.vim",
   -- {"christoomey/vim-tmux-navigator",
   --   lazy = false,
   --   cmd = {

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import psutil
 import subprocess
+import itertools as it
 import time
 from datetime import datetime
 from pathlib import Path
@@ -9,27 +10,29 @@ import platform
 import signal
 import os
 import re
+from typing import Final
 
-STATEFILE = Path().home() / ".local/state/wezterm"
-STATEJSON = Path().home() / ".local/state/wezterm.json"
+STATEFILE: Final[Path] = Path().home() / ".local/state/wezterm"
+STATEJSON: Final[Path] = Path().home() / ".local/state/wezterm.json"
+GIG: Final[float] = 1024*1024*1024.0
 
 
-def main():
+def roundgig(num: int | float) -> int:
+    return int(round(num/GIG, 0))
+
+
+def main() -> None:
     while True:
         ctp = psutil.cpu_percent(0.25)
-        # line = '{"cpuusage": "' + f"{ctp:>4}%" + '", '
         outputs = {"cpuusage": f"{ctp:>4}%"}
 
         dtime = int(datetime.now().strftime("%s"))
-        # line += '"timestamp": "' + f"{dtime}" + '", '
         outputs["timestamp"] = f"{dtime}"
 
-        gig = 1024*1024*1024.0
         vm = psutil.virtual_memory()
-        memfree = (f"{int(round(vm.available/gig, 0))}/"
-                   f"{int(round(vm.total/gig, 0))}G")
+        memfree = (f"{roundgig(vm.available)}/"
+                   f"{roundgig(vm.total)}G")
 
-        # line += '"memfree": "' + f"{memfree}" + '", '
         outputs["memfree"] = memfree
 
         cputmp = ""
@@ -55,14 +58,14 @@ def main():
 
         outputs["cputemp"] = cputmp
 
-
+        jsontxt = f"{json.dumps(outputs, sort_keys=True, indent=4)}\n"
         with open(STATEJSON, "wt") as f:
-            f.write(f"{json.dumps(outputs, sort_keys=True, indent=4)}\n")
+            f.write(jsontxt)
 
         time.sleep(1)
 
 
-def only_me():
+def only_me() -> None:
     # TODO: what happens if connectivity breaks? what does the tty report in ps Ax?
     ws = re.compile(r'\s+')
 
@@ -70,19 +73,19 @@ def only_me():
     lines = ran.stdout.split('\n')
     rows = [tuple(ws.split(line)) for line in lines]
 
-    escapes = [r for r in rows if 'wezterm-escapes' in r and 'running' in r]
+    escapes = it.filterfalse(lambda r: 'wezterm-escape' in r and 'running' in r, rows)
+    # escapes = [r for r in rows if 'wezterm-escapes' in r and 'running' in r]
     # if the second field is "?" there's no controlling terminal and can kill
     # we don't want to run wezterm-escapes in defunct ttys
     e_pids = {int(row[0]) for row in escapes if '?' in row[1]}
 
     # only one process of this script is allowed, so we SIGHUP the running one(s)
     records = [r for r in rows if 'wezterm-record.py' in r and 'running' in r]
-    r_pids = {int(r[0]) for r in records if 'wezterm-record.py' in row and 'running' in row}
+    r_pids = {int(row[0]) for row in records}
 
     pids = e_pids | r_pids - {os.getpid()}
     for pid in pids:
         os.kill(pid, signal.SIGHUP)
-
 
 
 if __name__ == "__main__":

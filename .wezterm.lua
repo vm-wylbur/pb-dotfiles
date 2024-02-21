@@ -26,24 +26,57 @@ config.keys = {
 smart_splits.apply_to_config(config)
 
 
-wezterm.on('format-tab-title', function(tab)
-  local pane = tab.active_pane
-  local title = pane.title
-  if pane.domain_name then
-    title = pane.domain_name
-  end
-  return title
-end)
+-- from docs, would be nice.
+-- local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
+-- local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
+-- config.tab_bar_style = {
+--   active_tab_left = wezterm.format {
+--     { Background = { Color = '#0b0022' } },
+--     { Foreground = { Color = '#2b2042' } },
+--     { Text = SOLID_LEFT_ARROW },
+--   },
+--   active_tab_right = wezterm.format {
+--     { Background = { Color = '#0b0022' } },
+--     { Foreground = { Color = '#2b2042' } },
+--     { Text = SOLID_RIGHT_ARROW },
+--   },
+--   inactive_tab_left = wezterm.format {
+--     { Background = { Color = '#0b0022' } },
+--     { Foreground = { Color = '#1b1032' } },
+--     { Text = SOLID_LEFT_ARROW },
+--   },
+--   inactive_tab_right = wezterm.format {
+--     { Background = { Color = '#0b0022' } },
+--     { Foreground = { Color = '#1b1032' } },
+--     { Text = SOLID_RIGHT_ARROW },
+--   },
+-- }
 
--- https://stackoverflow.com/questions/11201262
--- local open = io.open
--- local function read_file(path)
---     local file = open(path, "rb") -- r read mode and b binary mode
---     if not file then return nil end
---     local content = file:read "*a" -- *a or *all reads the whole file
---     file:close()
---     return content
--- end
+wezterm.on("format-tab-title",
+  function(tab, tabs, panes, config, hover, max_width)
+    if tab.is_active then
+      return {
+        {Background={Color="blue"}},
+        {Text=" " .. tab.active_pane.tab_id .. ":" .. tab.active_pane.domain_name .. " "},
+      }
+    end
+    local has_unseen_output = false
+    for _, pane in ipairs(tab.panes) do
+      if pane.has_unseen_output then
+        has_unseen_output = true
+        break;
+      end
+    end
+    if has_unseen_output then
+      return {
+        {background={Color="blue"}},
+        {Text=" " .. tab.active_pain.tab_id .. ":" .. tab.active_pane.domain_name .. " "},
+      }
+    end
+    return " " .. tab.active_pane.tab_id .. ":" .. tab.active_pane.domain_name .. " "
+end
+)
+
 
 function rstrip(s)
   if not s then return nil end
@@ -51,8 +84,8 @@ function rstrip(s)
 end
 
 
+-- status bar
 wezterm.on('update-right-status', function(window, pane)
-  -- Each element holds the text for a cell in a "powerline" style << fade
   local cells = {}
   local meta = pane:get_metadata() or {}
 
