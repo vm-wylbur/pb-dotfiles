@@ -66,21 +66,20 @@ def only_me():
     # TODO: what happens if connectivity breaks? what does the tty report in ps Ax?
     ws = re.compile(r'\s+')
 
-    ran = subprocess.run("ps Ax".split(' '), capture_output=True, text=True)
+    ran = subprocess.run("ps ax".split(' '), capture_output=True, text=True)
     lines = ran.stdout.split('\n')
+    rows = [tuple(ws.split(line)) for line in lines]
 
-    ttys = [ws.split(line) for line in lines
-            if 'bash' in line and 'wezterm-escapes' in line]
-
-    # if the second field is "??" there's no controlling terminal and can kill
+    escapes = [r for r in rows if 'wezterm-escapes' in r and 'running' in r]
+    # if the second field is "?" there's no controlling terminal and can kill
     # we don't want to run wezterm-escapes in defunct ttys
-    for row in [r for r in ttys if "?" in r[1]]:
-        os.kill(int(row[0]), signal.SIGKILL)
+    e_pids = {int(row[0]) for row in escapes if '?' in row[1]}
 
     # only one process of this script is allowed, so we SIGHUP the running one(s)
-    pids = {int(ws.split(row)[0]) for row in lines
-            if 'python' in row and 'wezterm-record.py' in row} - {os.getpid()}
+    records = [r for r in rows if 'wezterm-record.py' in r and 'running' in r]
+    r_pids = {int(r[0]) for r in records if 'wezterm-record.py' in row and 'running' in row}
 
+    pids = e_pids | r_pids - {os.getpid()}
     for pid in pids:
         os.kill(pid, signal.SIGHUP)
 
