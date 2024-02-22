@@ -27,7 +27,7 @@ if [[ -f $HOME/.machinespecific/paths ]] ; then
 else
 	echo "no paths found! add ~/.machinespecific/paths"
 fi
-export PATH="$PATH:$HOME/bin:$HOME/dotfiles/scripts"
+export PATH="$PATH:$HOME/bin:$HOME/dotfiles/scripts:$HOME/.local/bin"
 typeset -U path
 
 # --- plugin manager: antidote-----
