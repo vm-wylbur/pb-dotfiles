@@ -57,7 +57,7 @@ wezterm.on("format-tab-title",
     if tab.is_active then
       return {
         {Background={Color="blue"}},
-        {Text=" " .. tab.active_pane.tab_id .. ":" .. tab.active_pane.domain_name .. " "},
+        {Text=" " .. tab.active_pane.tab_id .. ":" .. tab.active_pane.get_domain_name() .. " "},
       }
     end
     local has_unseen_output = false
@@ -70,10 +70,10 @@ wezterm.on("format-tab-title",
     if has_unseen_output then
       return {
         {background={Color="blue"}},
-        {Text=" " .. tab.active_pain.tab_id .. ":" .. tab.active_pane.domain_name .. " "},
+        {Text=" " .. tab.active_pane.tab_id .. ":" .. tab.active_pane.get_domain_name() .. " "},
       }
     end
-    return " " .. tab.active_pane.tab_id .. ":" .. tab.active_pane.domain_name .. " "
+    return " " .. tab.active_pane.tab_id .. ":" .. tab.active_pane.get_domain_name() .. " "
 end
 )
 
