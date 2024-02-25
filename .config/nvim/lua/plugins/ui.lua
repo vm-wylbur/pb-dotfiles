@@ -1,6 +1,6 @@
 return {
   -- telescope
-  -- a nice seletion UI also to find and open files
+  -- a nice selection UI also to find and open files
   {
     "nvim-telescope/telescope.nvim",
     config = function()
@@ -81,15 +81,14 @@ return {
       -- telescope.load_extension('fzf')
       telescope.load_extension("ui-select")
       telescope.load_extension("file_browser")
-      telescope.load_extension("dap")
+      -- telescope.load_extension("dap")
     end,
   },
   { "nvim-telescope/telescope-ui-select.nvim" },
   { "nvim-telescope/telescope-fzf-native.nvim",  build = "make" },
-  { "nvim-telescope/telescope-dap.nvim" },
+  -- { "nvim-telescope/telescope-dap.nvim" },
   { "nvim-telescope/telescope-file-browser.nvim" },
-  {
-    "folke/noice.nvim",
+  { "folke/noice.nvim",
     event = "VeryLazy",
     opts = {
       -- add any options here
@@ -140,65 +139,81 @@ return {
 
       require("lualine").setup({
         options = {
-          section_separators = "",
-          component_separators = "",
+            section_separators = { left = '', right = '' },
+            component_separators = { left = '', right = '' },
           globalstatus = true,
         },
         sections = {
           lualine_a = { "mode", macro_recording },
-          lualine_b = { "branch", "diff", "diagnostics" },
-          -- lualine_b = {},
-          lualine_c = { "searchcount" },
+          lualine_b = {
+            { "filename",
+              file_status = true,      -- Displays file status (readonly status, modified status)
+              newfile_status = false,  -- Display new file status (new file means no write after created)
+              path = 3,
+              shorting_target = 30,    -- Shortens path to leave 40 spaces in the window
+            },
+          },
+          lualine_c = { "branch", "diff", "diagnostics", "searchcount" },
           lualine_x = { "copilot", "encoding", "fileformat", "filetype" },
           lualine_y = { indent_style, "progress" },
           lualine_z = { "location" },
         },
-        extensions = { "nvim-tree" },
+        tabline = { },
+        winbar = {
+          lualine_a = {
+            { 'buffers',
+              use_mode_colors = false,
+              -- colored = true,
+              mode = 2,
+              buffers_color = {
+                active = 'WarningMsg',
+                inactive = {color={fg='grey'}},
+              },
+              symbols = {
+                modified = ' ●',      -- Text to show when the buffer is modified
+                -- alternate_file = '#', -- Text to show to identify the alternate file
+                directory =  '',     -- Text to show when the buffer is a directory
+              },
+            },
+          },
+        },
+        inactive_winbar = {
+          lualine_a = {'filename'},
+        },
       })
     end,
   },
-  { 'rasulomaroff/reactive.nvim' },
+  { 'rasulomaroff/reactive.nvim' }, -- window-local highlights?
+
   {
-    "nanozuki/tabby.nvim",
-    config = function()
-      require("tabby.tabline").use_preset("tab_only")
-    end,
+    'stevearc/oil.nvim',
+    opts = {},
+    -- Optional dependencies
+    dependencies = { "nvim-tree/nvim-web-devicons" },
   },
-
-  -- {
-  --   'dstein64/nvim-scrollview',
-  --   config = function()
-  --     require('scrollview').setup({
-  --       current_only = true,
-  --     })
-  --   end
-  -- },
-
-  -- { 'RRethy/vim-illuminate' }, -- highlight current word
-
   -- filetree
-  {
-    "nvim-tree/nvim-tree.lua",
-    keys = {
-      { "<c-b>", ":NvimTreeToggle<cr>", desc = "toggle nvim-tree" },
-    },
-    config = function()
-      require("nvim-tree").setup({
-        disable_netrw = true,
-        update_focused_file = {
-          enable = true,
-        },
-        git = {
-          enable = true,
-          ignore = false,
-          timeout = 500,
-        },
-        diagnostics = {
-          enable = true,
-        },
-      })
-    end,
-  },
+  -- {
+  --   "nvim-tree/nvim-tree.lua",
+  --   keys = {
+  --     { "<c-x>", ":NvimTreeToggle<cr>", desc = "toggle nvim-tree" },
+  --   },
+  --   config = function()
+  --     require("nvim-tree").setup({
+  --       disable_netrw = true,
+  --       update_focused_file = {
+  --         enable = true,
+  --       },
+  --       git = {
+  --         enable = true,
+  --         ignore = false,
+  --         timeout = 500,
+  --       },
+  --       diagnostics = {
+  --         enable = true,
+  --       },
+  --     })
+  --   end,
+  -- },
   -- show keybinding help window
   { "folke/which-key.nvim" },
 
@@ -224,14 +239,15 @@ return {
       })
     end,
   },
-  -- show diagnostics list
-  {
-    "folke/trouble.nvim",
-    config = function()
-      require("trouble").setup({})
-    end,
-  },
 
+  -- show diagnostics list
+  -- {
+  --   "folke/trouble.nvim",
+  --   config = function()
+  --     require("trouble").setup({})
+  --   end,
+  -- },
+  --
   -- {
   --   "lukas-reineke/indent-blankline.nvim",
   --   config = function()
@@ -241,7 +257,7 @@ return {
   --   end,
   -- },
 
-  {
+  { -- highlighting for markdown
     "lukas-reineke/headlines.nvim",
     dependencies = "nvim-treesitter/nvim-treesitter",
     config = function()

@@ -26,6 +26,17 @@ local imap = function(key, effect)
 	vim.keymap.set("i", key, effect, { silent = true, noremap = true })
 end
 
+nmap("<m-1>", "<cmd>LualineBuffersJump! 1<cr>" )
+nmap("<leader>1", "<cmd>LualineBuffersJump! 1<cr>" )
+nmap("<leader>2", "<cmd>LualineBuffersJump! 2<cr>" )
+nmap("<leader>3", "<cmd>LualineBuffersJump! 3<cr>" )
+nmap("<leader>4", "<cmd>LualineBuffersJump! 4<cr>" )
+nmap("<leader>5", "<cmd>LualineBuffersJump! 5<cr>" )
+nmap("<leader>6", "<cmd>LualineBuffersJump! 6<cr>" )
+nmap("<leader>7", "<cmd>LualineBuffersJump! 7<cr>" )
+nmap("<leader>8", "<cmd>LualineBuffersJump! 8<cr>" )
+nmap("<leader>9", "<cmd>LualineBuffersJump! 9<cr>" )
+
 -- now with smart-splits.nvim
 vim.keymap.set('n', '<C-h>', require('smart-splits').move_cursor_left)
 vim.keymap.set('n', '<C-j>', require('smart-splits').move_cursor_down)
@@ -54,7 +65,7 @@ vmap("<", "<gv")
 nmap("<esc>", "<cmd>noh<cr>")
 
 -- find files with telescope
-nmap("<c-p>", "<cmd>Telescope find_files<cr>")
+-- nmap("<c-p>", "<cmd>Telescope find_files<cr>")
 nmap("<leader><space>", "<cmd>Telescope buffers<cr>")
 
 -- paste and without overwriting register
@@ -68,20 +79,15 @@ nmap("n", "nzz")
 nmap("<c-d>", "<c-d>zz")
 nmap("<c-u>", "<c-u>zz")
 
--- NO! a thousand times NO!!
--- move between splits and tabs
--- nmap("<c-h>", "<c-w>h")
--- nmap("<c-l>", "<c-w>l")
--- nmap("<c-j>", "<c-w>j")
--- nmap("<c-k>", "<c-w>k")
--- nmap("H", "<cmd>tabprevious<cr>")
--- nmap("L", "<cmd>tabnext<cr>")
-
 --show kepbindings with whichkey
 --add your own here if you want them to
 --show up in the popup as well
 wk.register({
-	b = { "<cmd>Telescope buffers<cr>", "buffers" },
+  a = { "<cmd>Telescope command_history<cr>", "command history" },
+	b = {
+		name = "buffers",
+		d = { ":Bdelete<cr>", "delete current buffer" },
+	},
 	c = {
 		name = "code",
 		c ={ ":SlimeConfig<cr>", "slime config" },
@@ -91,22 +97,70 @@ wk.register({
 		i = { ":vsplit term://ipython<cr>", "new ipython terminal" },
 		j = { ":vsplit term://julia<cr>", "new julia terminal" },
 	},
-	["coo"] = { "o# %%<cr>", "new code chunk below" },
-	["cOo"] = { "O# %%<cr>", "new code chunk above" },
-	["cob"] = { "o```{bash}<cr>```<esc>O", "bash code chunk" },
-	["cor"] = { "o```{r}<cr>```<esc>O", "r code chunk" },
-	["cop"] = { "o```{python}<cr>```<esc>O", "python code chunk" },
-	["coj"] = { "o```{julia}<cr>```<esc>O", "julia code chunk" },
-	["col"] = { "o```{julia}<cr>```<esc>O", "julia code chunk" },
-	v = {
-		name = "vim",
-		t = { toggle_light_dark_theme, "switch theme" },
-		c = { ":Telescope colorscheme<cr>", "colortheme" },
-		l = { ":Lazy<cr>", "Lazy" },
-		m = { ":Mason<cr>", "Mason" },
-		s = { ":e $MYVIMRC | :cd %:p:h | split . | wincmd k<cr>", "Settings" },
-		h = { ':execute "h " . expand("<cword>")<cr>', "help" },
+	f = {
+		name = "find (telescope)",
+		f = { "<cmd>Telescope find_files<cr>", "files" },
+		h = { "<cmd>Telescope help_tags<cr>", "help" },
+		k = { "<cmd>Telescope keymaps<cr>", "keymaps" },
+		r = { "<cmd>Telescope lsp_references<cr>", "references" },
+		g = { "<cmd>Telescope live_grep<cr>", "grep" },
+		b = { "<cmd>Telescope current_buffer_fuzzy_find<cr>", "fuzzy" },
+		o = { "<cmd>Telescope oldfiles<cr>", "recents" },
+		m = { "<cmd>Telescope marks<cr>", "marks" },
+		M = { "<cmd>Telescope man_pages<cr>", "man pages" },
+		c = { "<cmd>Telescope git_commits<cr>", "git commits" },
+		s = { "<cmd>Telescope lsp_document_symbols<cr>", "symbols" },
+		d = { "<cmd>Telescope buffers<cr>", "buffers" },
+		q = { "<cmd>Telescope quickfix<cr>", "quickfix" },
+		l = { "<cmd>Telescope loclist<cr>", "loclist" },
+		j = { "<cmd>Telescope jumplist<cr>", "marks" },
+		p = { "project" },
 	},
+	g = {
+		name = "git",
+		c = { ":GitConflictRefresh<cr>", "conflict" },
+		g = { ":Neogit<cr>", "neogit" },
+		s = { ":Gitsigns<cr>", "gitsigns" },
+		pl = { ":Octo pr list<cr>", "gh pr list" },
+		pr = { ":Octo review start<cr>", "gh pr review" },
+		wc = { ":lua require('telescope').extensions.git_worktree.create_git_worktree()<cr>", "worktree create" },
+		ws = { ":lua require('telescope').extensions.git_worktree.git_worktrees()<cr>", "worktree switch" },
+		d = {
+			name = "diff",
+			o = { ":DiffviewOpen<cr>", "open" },
+			c = { ":DiffviewClose<cr>", "close" },
+		},
+		b = {
+			name = "blame",
+			b = { ":GitBlameToggle<cr>", "toggle" },
+			o = { ":GitBlameOpenCommitURL<cr>", "open" },
+			c = { ":GitBlameCopyCommitURL<cr>", "copy" },
+		},
+	},
+	h = {
+		name = "help/debug/conceal",
+		c = {
+			name = "conceal",
+			h = { ":set conceallevel=1<cr>", "hide/conceal" },
+			s = { ":set conceallevel=0<cr>", "show/unconceal" },
+		},
+		t = {
+			name = "treesitter",
+			t = { vim.treesitter.inspect_tree, "show tree" },
+			c = { ":=vim.treesitter.get_captures_at_cursor()<cr>", "show capture" },
+			n = { ":=vim.treesitter.get_node():type()<cr>", "show node" },
+		},
+	},
+  j = {
+    name = "Jump", -- optional group name
+    c = { "<cmd>Telescope find_files search_dirs={'~/.config/nvim/'}<cr>", "Find Configs" },
+    o = { "<cmd>Telescope live_grep search_dirs={'~/.config/nvim/'}<cr>", "Grep Configs" },
+    d = { "<cmd>Telescope find_files search_dirs={'~/dotfiles/'}<cr>", "Find Dotfiles" },
+    t = { "<cmd>Telescope live_grep search_dirs={'~/dotfiles/'}<cr>", "Grep Dotfiles" },
+    n = { "<cmd>Telescope find_files search_dirs={'~/notes/'}<cr>", "Find Notes" },
+    g = { "<cmd>Telescope live_grep search_dirs={'~/notes/'}<cr>", "Grep Notes" },
+    p = { "<cmd>Telescope live_grep search_dirs={'~/Downloads/python-3.12.1-docs-text/library/'}<cr>", "Grep Python docs"},
+  },
 	l = {
 		name = "language/lsp",
 		r = { "<cmd>Telescope lsp_references<cr>", "references" },
@@ -147,39 +201,6 @@ wk.register({
 		e = { ":lua require'otter'.export()<cr>", "export" },
 		E = { ":lua require'otter'.export(true)<cr>", "export overwrite" },
 	},
-	f = {
-		name = "find (telescope)",
-		f = { "<cmd>Telescope find_files<cr>", "files" },
-		h = { "<cmd>Telescope help_tags<cr>", "help" },
-		k = { "<cmd>Telescope keymaps<cr>", "keymaps" },
-		r = { "<cmd>Telescope lsp_references<cr>", "references" },
-		g = { "<cmd>Telescope live_grep<cr>", "grep" },
-		b = { "<cmd>Telescope current_buffer_fuzzy_find<cr>", "fuzzy" },
-		o = { "<cmd>Telescope oldfiles<cr>", "recents" },
-		m = { "<cmd>Telescope marks<cr>", "marks" },
-		M = { "<cmd>Telescope man_pages<cr>", "man pages" },
-		c = { "<cmd>Telescope git_commits<cr>", "git commits" },
-		s = { "<cmd>Telescope lsp_document_symbols<cr>", "symbols" },
-		d = { "<cmd>Telescope buffers<cr>", "buffers" },
-		q = { "<cmd>Telescope quickfix<cr>", "quickfix" },
-		l = { "<cmd>Telescope loclist<cr>", "loclist" },
-		j = { "<cmd>Telescope jumplist<cr>", "marks" },
-		p = { "project" },
-	},
-	h = {
-		name = "help/debug/conceal",
-		c = {
-			name = "conceal",
-			h = { ":set conceallevel=1<cr>", "hide/conceal" },
-			s = { ":set conceallevel=0<cr>", "show/unconceal" },
-		},
-		t = {
-			name = "treesitter",
-			t = { vim.treesitter.inspect_tree, "show tree" },
-			c = { ":=vim.treesitter.get_captures_at_cursor()<cr>", "show capture" },
-			n = { ":=vim.treesitter.get_node():type()<cr>", "show node" },
-		},
-	},
 	s = {
 		name = "spellcheck",
 		s = { "<cmd>Telescope spell_suggest<cr>", "spelling" },
@@ -192,28 +213,16 @@ wk.register({
 		b = { "zw", "bad" },
 		["?"] = { "<cmd>Telescope spell_suggest<cr>", "suggest" },
 	},
-	g = {
-		name = "git",
-		c = { ":GitConflictRefresh<cr>", "conflict" },
-		g = { ":Neogit<cr>", "neogit" },
-		s = { ":Gitsigns<cr>", "gitsigns" },
-		pl = { ":Octo pr list<cr>", "gh pr list" },
-		pr = { ":Octo review start<cr>", "gh pr review" },
-		wc = { ":lua require('telescope').extensions.git_worktree.create_git_worktree()<cr>", "worktree create" },
-		ws = { ":lua require('telescope').extensions.git_worktree.git_worktrees()<cr>", "worktree switch" },
-		d = {
-			name = "diff",
-			o = { ":DiffviewOpen<cr>", "open" },
-			c = { ":DiffviewClose<cr>", "close" },
-		},
-		b = {
-			name = "blame",
-			b = { ":GitBlameToggle<cr>", "toggle" },
-			o = { ":GitBlameOpenCommitURL<cr>", "open" },
-			c = { ":GitBlameCopyCommitURL<cr>", "copy" },
-		},
+	v = {
+		name = "vim",
+		t = { toggle_light_dark_theme, "switch theme" },
+		c = { ":Telescope colorscheme<cr>", "colortheme" },
+		l = { ":Lazy<cr>", "Lazy" },
+		m = { ":Mason<cr>", "Mason" },
+		s = { ":e $MYVIMRC | :cd %:p:h | split . | wincmd k<cr>", "Settings" },
+		h = { ':execute "h " . expand("<cword>")<cr>', "help" },
 	},
-	w = { ":w<cr>", "write" },  -- save
+	w = { ":w<cr>", "write" },  -- TODO repurppose me!
 	x = { ":w<cr>:source %<cr>", "run file" }, -- run this file
 }, { mode = "n", prefix = "<leader>" })
 
@@ -249,15 +258,15 @@ end
 -- normal mode
 wk.register({
 	["<c-LeftMouse>"] = { "<cmd>lua vim.lsp.buf.definition()<CR>", "go to definition" },
-	["<c-q>"] = { "<cmd>q<cr>", "close buffer" },
+	-- ["<c-q>"] = { "<cmd>q<cr>", "close buffer" }, -- this closes everything :(
 	["<esc>"] = { "<cmd>noh<cr>", "remove search highlight" },
 	["n"] = { "nzzzv", "center search" },
 	["gN"] = { "Nzzzv", "center search" },
 	["gl"] = { "<c-]>", "open help link" },
 	["gf"] = { ":e <cfile><CR>", "edit file" },
-	["<m-i>"] = { insert_r_chunk, "r code chunk" },
-	["<cm-i>"] = { insert_py_chunk, "python code chunk" },
-	["<m-I>"] = { insert_py_chunk, "python code chunk" },
+	-- ["<m-i>"] = { insert_r_chunk, "r code chunk" },
+	-- ["<cm-i>"] = { insert_py_chunk, "python code chunk" },
+	-- ["<m-I>"] = { insert_py_chunk, "python code chunk" },
 	["]q"] = { ":silent cnext<cr>", "quickfix next" },
 	["[q"] = { ":silent cprev<cr>", "quickfix prev" },
 }, { mode = "n", silent = true })

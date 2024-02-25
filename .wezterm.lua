@@ -1,14 +1,18 @@
 -- Pull in the wezterm API
 local wezterm = require 'wezterm'
-local mux = wezterm.mux
 local config = wezterm.config_builder()
 local smart_splits = wezterm.plugin.require('https://github.com/mrjones2014/smart-splits.nvim')
 
 config.font_dirs = {'/Users/pball/Library/Fonts/'}
-config.font = wezterm.font("JetBrains Mono")
+config.font = wezterm.font_with_fallback {
+    {family="UbuntuMono Nerd Font", weight="Regular",
+      stretch="Normal", style="Normal"},
+    {family="Hack Nerd Font Mono", weight="Regular",
+      stretch="Normal", style="Normal"},
+}
 config.color_scheme = 'Tango (terminal.sexy)'
 config.font_size = 18
-config.use_fancy_tab_bar = true
+-- config.tab_bar_appearance = "Fancy"
 
 config.leader = { key="b", mods="CTRL" }
 config.keys = {
@@ -23,43 +27,25 @@ config.keys = {
     action = wezterm.action{SplitHorizontal={domain="CurrentPaneDomain"}},
   },
 }
+config.use_dead_keys = false
+
 smart_splits.apply_to_config(config)
 
-
--- from docs, would be nice.
--- local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_right_hard_divider
--- local SOLID_RIGHT_ARROW = wezterm.nerdfonts.pl_left_hard_divider
--- config.tab_bar_style = {
---   active_tab_left = wezterm.format {
---     { Background = { Color = '#0b0022' } },
---     { Foreground = { Color = '#2b2042' } },
---     { Text = SOLID_LEFT_ARROW },
---   },
---   active_tab_right = wezterm.format {
---     { Background = { Color = '#0b0022' } },
---     { Foreground = { Color = '#2b2042' } },
---     { Text = SOLID_RIGHT_ARROW },
---   },
---   inactive_tab_left = wezterm.format {
---     { Background = { Color = '#0b0022' } },
---     { Foreground = { Color = '#1b1032' } },
---     { Text = SOLID_LEFT_ARROW },
---   },
---   inactive_tab_right = wezterm.format {
---     { Background = { Color = '#0b0022' } },
---     { Foreground = { Color = '#1b1032' } },
---     { Text = SOLID_RIGHT_ARROW },
---   },
--- }
+config.window_frame = {
+ -- something?
+}
 
 wezterm.on("format-tab-title",
   function(tab, tabs, panes, config, hover, max_width)
+    local pane_id = tab.active_pane.pane_id
+
     if tab.is_active then
       return {
         {Background={Color="blue"}},
-        {Text=" " .. tab.active_pane.tab_id .. ":" .. tab.active_pane.get_domain_name() .. " "},
+        {Text=" " .. tab.tab_id .. ":" .. tab.active_pane.get_domain_name() .. " "},
       }
     end
+
     local has_unseen_output = false
     for _, pane in ipairs(tab.panes) do
       if pane.has_unseen_output then
@@ -70,10 +56,10 @@ wezterm.on("format-tab-title",
     if has_unseen_output then
       return {
         {background={Color="blue"}},
-        {Text=" " .. tab.active_pane.tab_id .. ":" .. tab.active_pane.get_domain_name() .. " "},
+        {Text=" " .. tab.tab_id .. ":" .. tab.active_pane.get_domain_name() .. " "},
       }
     end
-    return " " .. tab.active_pane.tab_id .. ":" .. tab.active_pane.get_domain_name() .. " "
+    return " " .. tab.tab_id .. ":" .. tab.active_pane.get_domain_name() .. " "
 end
 )
 
@@ -99,7 +85,7 @@ wezterm.on('update-right-status', function(window, pane)
   local date = wezterm.strftime '%a %b %-d %H:%M '
 
   local pkd = rstrip(pane:get_user_vars().pkd) or "no pkd"
-  local jvals = wezterm.json_parse(pkd)
+  local jvals = pcall(wezterm.json_parse(pkd))
   wezterm.log_info(date, jvals)
 
   table.insert(cells, wezterm.hostname())
@@ -131,7 +117,7 @@ wezterm.on('update-right-status', function(window, pane)
   -- How many cells have been formatted
   local num_cells = 0
 
-  -- Translate a cell into elements
+  -- push a cell into elements
   function push(text, is_last)
     local cell_no = num_cells + 1
     if is_last then

@@ -1,21 +1,7 @@
 -- [[ PB settings ]]
 vim.wo.relativenumber = true
 vim.o.lazyredraw = false
-
--- TODO: move to keymaps.lua
-local wk = require("which-key")
-wk.register({
-  j = {
-    name = "Jump", -- optional group name
-    c = { "<cmd>Telescope find_files search_dirs={'~/.config/nvim/'}<cr>", "Find Configs" },
-    o = { "<cmd>Telescope live_grep search_dirs={'~/.config/nvim/'}<cr>", "Grep Configs" },
-    d = { "<cmd>Telescope find_files search_dirs={'~/dotfiles/'}<cr>", "Find Dotfiles" },
-    t = { "<cmd>Telescope live_grep search_dirs={'~/dotfiles/'}<cr>", "Grep Dotfiles" },
-    n = { "<cmd>Telescope find_files search_dirs={'~/notes/'}<cr>", "Find Notes" },
-    g = { "<cmd>Telescope live_grep search_dirs={'~/notes/'}<cr>", "Grep Notes" },
-    p = { "<cmd>Telescope live_grep search_dirs={'~/Downloads/python-3.12.1-docs-text/library/'}<cr>", "Grep Python docs"},
-  },
-}, { prefix = "<leader>" })
+vim.o.cmdheight = 0
 
 require("noice").setup({
   lsp = {
@@ -38,6 +24,8 @@ require("noice").setup({
     enabled = false,
   },
 })
+
+require("oil").setup()
 
 -- deletes trailing whitespace on save, maintaining cursor position
 vim.api.nvim_create_autocmd({ "BufWritePre" }, {
