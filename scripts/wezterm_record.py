@@ -77,6 +77,8 @@ def only_me(ps_result) -> None:
              if running.search(line)]
     rows = [ProcessRec(*ws.split(line)) for line in lines]
 
+    print(rows)
+
     escapes = [r for r in rows if 'escapes' in r.arg1]
     # if the second field is "?" there's no controlling terminal and can SIGHUP
     # we don't want to run wezterm-escapes in defunct ttys
@@ -97,6 +99,7 @@ if __name__ == "__main__":
     # running `px ax` out of the function makes it easier to test.
     ran = subprocess.run(shlex.split("ps ax"),
                          capture_output=True, text=True, check=True)
+
     only_me(ran.stdout)
 
     main()

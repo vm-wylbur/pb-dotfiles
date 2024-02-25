@@ -162,8 +162,8 @@ eval "$(starship init zsh)"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
 
-if [[ -f $HOME/dotfiles/scripts/wezterm-record.py ]]; then
-  $HOME/dotfiles/scripts/wezterm-record.py running &!
+if [[ -f $HOME/dotfiles/scripts/wezterm_record.py ]]; then
+  $HOME/dotfiles/scripts/wezterm_record.py running &!
   $HOME/dotfiles/scripts/wezterm-escapes.sh running &!
 fi
 
