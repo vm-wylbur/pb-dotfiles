@@ -1,19 +1,21 @@
 -- Pull in the wezterm API
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
+local act = wezterm.action
 local smart_splits = wezterm.plugin.require('https://github.com/mrjones2014/smart-splits.nvim')
 
 config.font_dirs = {'/Users/pball/Library/Fonts/'}
 config.font = wezterm.font_with_fallback {
-    {family="UbuntuMono Nerd Font", weight="Regular",
-      stretch="Normal", style="Normal"},
     {family="Hack Nerd Font Mono", weight="Regular",
+      stretch="Normal", style="Normal"},
+    {family="UbuntuMono Nerd Font", weight="Regular",
       stretch="Normal", style="Normal"},
 }
 config.color_scheme = 'Tango (terminal.sexy)'
-config.font_size = 18
+config.font_size = 17
 -- config.tab_bar_appearance = "Fancy"
 
+-- keys
 config.leader = { key="b", mods="CTRL" }
 config.keys = {
   {
@@ -26,17 +28,6 @@ config.keys = {
     key = "\\", -- Split horizontal
     action = wezterm.action{SplitHorizontal={domain="CurrentPaneDomain"}},
   },
-}
-config.use_dead_keys = false
-
-smart_splits.apply_to_config(config)
-
-config.window_frame = {
- -- something?
-}
-
-local act = wezterm.action
-config.keys = {
   {
     key = 'E',
     mods = 'CTRL|SHIFT',
@@ -53,6 +44,8 @@ config.keys = {
     },
   },
 }
+config.use_dead_keys = false
+smart_splits.apply_to_config(config)
 
 
 -- wezterm.on("format-tab-title",
@@ -92,34 +85,11 @@ end
 
 -- status bar
 wezterm.on('update-right-status', function(window, pane)
-  local cells = {}
+  -- TODO: only set this if the pane is a remote ssh pane
   local meta = pane:get_metadata() or {}
-
   local remote_resp = meta.since_last_response_ms
-  if remote_resp then
-    remote_resp = string.format("%1.0f", remote_resp / 1000.0)
-  else
-    remote_resp = "local"
-  end
-
-  local date = wezterm.strftime '%a %b %-d %H:%M '
-
-  local pkd = rstrip(pane:get_user_vars().pkd) or "no pkd"
-  local jvals = pcall(wezterm.json_parse(pkd))
-  wezterm.log_info(date, jvals)
-
-  table.insert(cells, wezterm.hostname())
-  -- table.insert(cells, pkd)
-  table.insert(cells, jvals.cputemp)
-  table.insert(cells, jvals.cpuusage)
-  table.insert(cells, jvals.memfree)
-  table.insert(cells, remote_resp)
-
-  -- The powerline < symbol
   local LEFT_ARROW = utf8.char(0xe0b3)
-  -- The filled in variant of the < symbol
   local SOLID_LEFT_ARROW = utf8.char(0xe0b2)
-
   -- Color palette for the backgrounds of each cell
   local colors = {
     '#3c1361',
@@ -128,9 +98,28 @@ wezterm.on('update-right-status', function(window, pane)
     '#7c5295',
     '#b491c8',
   }
+  local cells = {}
 
   -- Foreground color for the text across the fade
   local text_fg = '#c0c0c0'
+
+  if remote_resp then
+    remote_resp = string.format("%1.0f", remote_resp / 1000.0)
+    local date = wezterm.strftime '%a %b %-d %H:%M '
+    local pkd = rstrip(pane:get_user_vars().pkd) or "no pkd"
+    local jvals = wezterm.json_parse(pkd)
+    wezterm.log_info(date, jvals)
+
+    table.insert(cells, wezterm.hostname())
+    table.insert(cells, jvals.cputemp)
+    table.insert(cells, jvals.cpuusage)
+    table.insert(cells, jvals.memfree)
+  else
+    remote_resp = "local"
+  end
+
+  table.insert(cells, remote_resp)
+
 
   -- The elements to be formatted
   local elements = {}
