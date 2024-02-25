@@ -35,33 +35,53 @@ config.window_frame = {
  -- something?
 }
 
-wezterm.on("format-tab-title",
-  function(tab, tabs, panes, config, hover, max_width)
-    local pane_id = tab.active_pane.pane_id
+local act = wezterm.action
+config.keys = {
+  {
+    key = 'E',
+    mods = 'CTRL|SHIFT',
+    action = act.PromptInputLine {
+      description = 'Enter new name for tab',
+      action = wezterm.action_callback(function(window, pane, line)
+        -- line will be `nil` if they hit escape without entering anything
+        -- An empty string if they just hit enter
+        -- Or the actual line of text they wrote
+        if line then
+          window:active_tab():set_title(line)
+        end
+      end),
+    },
+  },
+}
 
-    if tab.is_active then
-      return {
-        {Background={Color="blue"}},
-        {Text=" " .. tab.tab_id .. ":" .. tab.active_pane.get_domain_name() .. " "},
-      }
-    end
 
-    local has_unseen_output = false
-    for _, pane in ipairs(tab.panes) do
-      if pane.has_unseen_output then
-        has_unseen_output = true
-        break;
-      end
-    end
-    if has_unseen_output then
-      return {
-        {background={Color="blue"}},
-        {Text=" " .. tab.tab_id .. ":" .. tab.active_pane.get_domain_name() .. " "},
-      }
-    end
-    return " " .. tab.tab_id .. ":" .. tab.active_pane.get_domain_name() .. " "
-end
-)
+-- wezterm.on("format-tab-title",
+--   function(tab, tabs, panes, config, hover, max_width)
+--     local pane_id = tab.active_pane.pane_id
+--
+--     if tab.is_active then
+--       return {
+--         {Background={Color="blue"}},
+--         {Text=" " .. tab.tab_id .. ":" .. tab.active_pane.get_domain_name() .. " "},
+--       }
+--     end
+--
+--     local has_unseen_output = false
+--     for _, pane in ipairs(tab.panes) do
+--       if pane.has_unseen_output then
+--         has_unseen_output = true
+--         break;
+--       end
+--     end
+--     if has_unseen_output then
+--       return {
+--         {background={Color="blue"}},
+--         {Text=" " .. tab.tab_id .. ":" .. tab.active_pane.get_domain_name() .. " "},
+--       }
+--     end
+--     return " " .. tab.tab_id .. ":" .. tab.active_pane.get_domain_name() .. " "
+-- end
+-- )
 
 
 function rstrip(s)
