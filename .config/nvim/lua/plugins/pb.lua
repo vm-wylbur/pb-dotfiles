@@ -2,9 +2,10 @@
 -- Time-Stamp:
 return {
   -- {'Pocco81/auto-save.nvim', config = true },
+  'eandrju/cellular-automaton.nvim',
   'famiu/bufdelete.nvim',
   'tpope/vim-sleuth',
-  'rmagatti/auto-session',
+  -- 'rmagatti/auto-session', -- annoying! not as helpful as I thought.
   'mrjones2014/smart-splits.nvim',
   "girishji/pythondoc.vim",
   {

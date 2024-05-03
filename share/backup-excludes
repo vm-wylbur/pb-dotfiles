@@ -22,6 +22,8 @@ stan/
 .Trash/
 .pyenv/
 anaconda3/
+miniconda3/
+micromamba/
 __pycache__/
 MobileSync/
 mse_hashes/

@@ -4,16 +4,18 @@ local config = wezterm.config_builder()
 local act = wezterm.action
 local smart_splits = wezterm.plugin.require('https://github.com/mrjones2014/smart-splits.nvim')
 
+-- fonts
 config.font_dirs = {'/Users/pball/Library/Fonts/'}
 config.font = wezterm.font_with_fallback {
-    {family="Hack Nerd Font Mono", weight="Regular",
+    {family="Mononoki Nerd Font Mono", weight="Bold",
       stretch="Normal", style="Normal"},
     {family="UbuntuMono Nerd Font", weight="Regular",
       stretch="Normal", style="Normal"},
+    {family="Hack Nerd Font Mono", weight="Regular",
+      stretch="Normal", style="Normal"},
 }
 config.color_scheme = 'Tango (terminal.sexy)'
-config.font_size = 17
--- config.tab_bar_appearance = "Fancy"
+config.font_size = 16
 
 -- keys
 config.leader = { key="b", mods="CTRL" }
@@ -86,8 +88,6 @@ end
 -- status bar
 wezterm.on('update-right-status', function(window, pane)
   -- TODO: only set this if the pane is a remote ssh pane
-  local meta = pane:get_metadata() or {}
-  local remote_resp = meta.since_last_response_ms
   local LEFT_ARROW = utf8.char(0xe0b3)
   local SOLID_LEFT_ARROW = utf8.char(0xe0b2)
   -- Color palette for the backgrounds of each cell
@@ -103,6 +103,8 @@ wezterm.on('update-right-status', function(window, pane)
   -- Foreground color for the text across the fade
   local text_fg = '#c0c0c0'
 
+  local meta = pane:get_metadata() or {}
+  local remote_resp = meta.since_last_response_ms
   if remote_resp then
     remote_resp = string.format("%1.0f", remote_resp / 1000.0)
     local date = wezterm.strftime '%a %b %-d %H:%M '
@@ -120,14 +122,9 @@ wezterm.on('update-right-status', function(window, pane)
 
   table.insert(cells, remote_resp)
 
-
-  -- The elements to be formatted
-  local elements = {}
-  -- How many cells have been formatted
-  local num_cells = 0
-
-  -- push a cell into elements
-  function push(text, is_last)
+  local elements = {}   -- The elements to be formatted
+  local num_cells = 0   -- How many cells have been formatted
+  function push(text, is_last)     -- push a cell into elements
     local cell_no = num_cells + 1
     if is_last then
       table.insert(elements, { Foreground = { Color = '#000000' } })
