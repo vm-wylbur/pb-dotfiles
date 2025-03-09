@@ -4,6 +4,8 @@
 #  License: (c) HRDAG 2022, some rights reserved: GPL v2 or newer
 #
 # Executes commands at the start of an interactive session.
+# TODO: mess with the MANPATH to check for gnu utils first
+# maybe in ~/.machinespecific/
 
 # Make sure the shell is interactive
 case $- in
@@ -27,7 +29,7 @@ if [[ -f $HOME/.machinespecific/paths ]] ; then
 else
 	echo "no paths found! add ~/.machinespecific/paths"
 fi
-export PATH="$PATH:$HOME/bin:$HOME/dotfiles/scripts:$HOME/.local/bin"
+export PATH="$HOME/bin:$HOME/dotfiles/scripts:$HOME/.local/bin:$PATH"
 typeset -U path
 
 # --- plugin manager: antidote-----
@@ -53,6 +55,7 @@ case $HOST in
   (porky)
     # eval "$(fasd --init auto)"
     # $HOME/dotfiles/scripts/wezterm-macos.sh &
+    eval "$(zoxide init zsh)"
     ;;
   (henwen)
     eval "$(fasd --init auto)"
@@ -117,7 +120,7 @@ alias la="ls -laFG  --color"
 # alias la='exa -lh --all --git --sort=mod'
 # alias lt='exa -lh --git --tree'
 
-alias j='xdir=$(fasd -ld | fzf --tac) && cd "$xdir"'
+# alias j='xdir=$(fasd -ld | fzf --tac) && cd "$xdir"'
 alias h='print -z $(fc -l 1 | fzf +s --tac | $SED -re "s/^\s*[0-9]+\s*//")'
 
 # maybe alacritty+tmux fixes here?
@@ -153,23 +156,29 @@ if [[ -f $HOME/.github-token ]]; then
 fi
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=10'
 
+# messing around with how to read manpages
+# export MANPAGER="ov --section-delimiter '^[^\s]' --section-header"
+export MANPAGER="/bin/sh -c \"col -b | vim -c 'set ft=man ts=8 nomod nolist nonu noma linebreak breakindent wrap' -\""
+
 export LOCALGIT="$HOME/projects"
 export HRDAGGIT="$LOCALGIT/hrdag"
 export PERSONALGIT="$LOCALGIT/personal"
-
 export STARSHIP_CONFIG="$HOME/dotfiles/starship/starship.toml"
 eval "$(starship init zsh)"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
 
-if [[ -f $HOME/dotfiles/scripts/wezterm_record.py ]]; then
-  $HOME/dotfiles/scripts/wezterm_record.py running &!
-  $HOME/dotfiles/scripts/wezterm-escapes.sh running &!
-fi
-
-# for tmux to set window name.
-# printf '\033]0;%s\007' "$USER@$HOSTNAME" # just the local part
-
+# Python stuff
+# export PYENV_ROOT="$HOME/.pyenv"
+# [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+# eval "$(pyenv init - zsh)"
+# moving to uv:
+# echo 'eval "$(uv generate-shell-completion zsh)"' >> ~/.zshrc
+eval "$(uv generate-shell-completion zsh)"
+eval "$(uv generate-shell-completion zsh)"
+source "$HOME/.venv/bin/activate"
 
 # done.
 
+# Generated for envman. Do not edit.
+[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
