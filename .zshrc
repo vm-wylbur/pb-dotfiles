@@ -13,13 +13,15 @@ case $- in
     *) return ;;
 esac
 #
+autoload -Uz compinit
+compinit
 
 # ---functions -----
 function chpwd() {
   emulate -L zsh
   printf "\033]7;file://$(hostname -s)\033\\"
   echo -ne "\x1b]0;$(hostname -s)\x1b\\"
-ls -ltrFG --color
+  ls -ltrFG --color
 }
 
 # ---paths-----
@@ -49,26 +51,7 @@ fi
 
 
 # ---PB additions below-----
-# TODO: switch to zoxide
-# init fasd on eleanor; fasd is part of pretzo on petunia
-case $HOST in
-  (porky)
-    # eval "$(fasd --init auto)"
-    # $HOME/dotfiles/scripts/wezterm-macos.sh &
-    eval "$(zoxide init zsh)"
-    ;;
-  (henwen)
-    eval "$(fasd --init auto)"
-    SED="sed"
-    ;;
-  (eleanor)
-    eval "$(fasd --init auto)"
-    SED="sed"
-    ;;
-  (*) eval "$(fasd --init auto)"
-    SED="sed"
-    ;;
-esac
+SED='sed'
 
 # colors
 export TERM=xterm-256color
@@ -169,16 +152,8 @@ eval "$(starship init zsh)"
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
 
 # Python stuff
-# export PYENV_ROOT="$HOME/.pyenv"
-# [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-# eval "$(pyenv init - zsh)"
-# moving to uv:
-# echo 'eval "$(uv generate-shell-completion zsh)"' >> ~/.zshrc
 eval "$(uv generate-shell-completion zsh)"
-eval "$(uv generate-shell-completion zsh)"
-source "$HOME/.venv/bin/activate"
+# source "$HOME/.venv/bin/activate"
+eval "$(zoxide init zsh)"
 
-# done.
-
-# Generated for envman. Do not edit.
-[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
+# done
