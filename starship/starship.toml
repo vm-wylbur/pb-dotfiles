@@ -4,8 +4,7 @@ $hostname\
 $directory\
 $git_branch\
 $git_state\
-$python\
-$fill$cmd_duration\
+$fill$python $cmd_duration\
 $line_break\
 $jobs\
 $character"""
@@ -55,6 +54,6 @@ style = "yellow"
 symbol = " "
 
 [python]
-format = "via [${version}( (${virtualenv}))]($style)"
+format = "[py-venv:${version}](green)"
 style = "green"
 detect_extensions = ["py"]
