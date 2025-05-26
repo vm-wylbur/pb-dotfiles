@@ -4,6 +4,7 @@ $hostname\
 $directory\
 $git_branch\
 $git_state\
+$python\
 $fill$cmd_duration\
 $line_break\
 $jobs\
@@ -52,3 +53,8 @@ style = "yellow"
 
 [fill]
 symbol = " "
+
+[python]
+format = "via [${version}( (${virtualenv}))]($style)"
+style = "green"
+detect_extensions = ["py"]

@@ -147,18 +147,14 @@ export LOCALGIT="$HOME/projects"
 export HRDAGGIT="$LOCALGIT/hrdag"
 export PERSONALGIT="$LOCALGIT/personal"
 export STARSHIP_CONFIG="$HOME/dotfiles/starship/starship.toml"
-eval "$(starship init zsh)"
-
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
 
-<<<<<<< HEAD
 # Python stuff
 eval "$(uv generate-shell-completion zsh)"
 # source "$HOME/.venv/bin/activate"
 eval "$(zoxide init zsh)"
 
 # done
-=======
 export PAGER=/usr/bin/ov
 export MANPAGER=/usr/bin/ov
 
@@ -177,5 +173,4 @@ umask 027  #  (user=rwx, group=rx, others=)
 
 source ~/.venv/bin/activate
 
-eval "$(zoxide init zsh)"
 # done.
