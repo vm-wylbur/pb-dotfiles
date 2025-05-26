@@ -57,7 +57,7 @@ SED='sed'
 export TERM=xterm-256color
 export ZSH_THEME="agnoster"
 export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=black,bold'
-
+export PGDATABASE=pball
 
 # ---shell options-----
 setopt AUTO_PUSHD
@@ -151,9 +151,31 @@ eval "$(starship init zsh)"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
 
+<<<<<<< HEAD
 # Python stuff
 eval "$(uv generate-shell-completion zsh)"
 # source "$HOME/.venv/bin/activate"
 eval "$(zoxide init zsh)"
 
 # done
+=======
+export PAGER=/usr/bin/ov
+export MANPAGER=/usr/bin/ov
+
+alias pgpy='sudo -u postgres /usr/local/pgenv/bin/python'
+alias pgpip='sudo -u postgres /usr/local/pgenv/bin/pip'
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# for ghorg monitoring
+if [ -f ~/creds/ghorg-gh-personal-token.api ]; then
+  export GHORG_GITHUB_TOKEN=$(cat ~/creds/ghorg-gh-personal-token.api)
+fi
+umask 027  #  (user=rwx, group=rx, others=)
+
+source ~/.venv/bin/activate
+
+eval "$(zoxide init zsh)"
+# done.
