@@ -14,3 +14,4 @@ figure/*
 tags
 lazy-lock.json
 .nvim.huez.lua
+.config

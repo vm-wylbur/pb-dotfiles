@@ -7,7 +7,7 @@
 set -e
 
 # Available packages
-PACKAGES=("zsh" "vim" "p10k" "wezterm")
+PACKAGES=("zsh" "vim" "p10k")
 
 # Colors for output
 RED='\033[0;31m'
