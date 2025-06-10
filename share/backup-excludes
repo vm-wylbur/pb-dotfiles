@@ -2,10 +2,12 @@ Library/
 .ollama/
 .tmux/
 Thumbnails/
+.config/zed/
 Maildir/
 projects/hrdag/
 cache/
 Cache/
+Downloads/*.iso
 Caches/
 cache/
 cacheable/

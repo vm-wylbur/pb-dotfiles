@@ -14,7 +14,7 @@ datestr=$(date "+%Y-%m-%dT%H_%M_%S")
 backup_home="${HOME}"
 rsync_opts="--archive --one-file-system --hard-links --delete "
 rsync_opts+="--delete-excluded --safe-links --partial --progress "
-rsync_opts+="--relative"
+rsync_opts+="--relative --stats"
 
 # check for specific volume mounted anywhere.
 backup_mntd=$(ls -1 /Volumes/ | egrep "${backup_disk_names}")

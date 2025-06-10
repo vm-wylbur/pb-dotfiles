@@ -155,23 +155,24 @@ eval "$(uv generate-shell-completion zsh)"
 eval "$(zoxide init zsh)"
 
 # done
-export PAGER=/usr/bin/ov
-export MANPAGER=/usr/bin/ov
-
-alias pgpy='sudo -u postgres /usr/local/pgenv/bin/python'
-alias pgpip='sudo -u postgres /usr/local/pgenv/bin/pip'
+# Note: server-specific configs (postgres, ghorg) only on Linux
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  export PAGER=/usr/bin/ov
+  export MANPAGER=/usr/bin/ov
+  alias pgpy='sudo -u postgres /usr/local/pgenv/bin/python'
+  alias pgpip='sudo -u postgres /usr/local/pgenv/bin/pip'
+  # for ghorg monitoring
+  if [ -f ~/creds/ghorg-gh-personal-token.api ]; then
+    export GHORG_GITHUB_TOKEN=$(cat ~/creds/ghorg-gh-personal-token.api)
+  fi
+  source ~/.venv/bin/activate
+fi
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# for ghorg monitoring
-if [ -f ~/creds/ghorg-gh-personal-token.api ]; then
-  export GHORG_GITHUB_TOKEN=$(cat ~/creds/ghorg-gh-personal-token.api)
-fi
 umask 027  #  (user=rwx, group=rx, others=)
-
-source ~/.venv/bin/activate
 
 # done.
 
@@ -182,3 +183,9 @@ fi
 
 # Load p10k config
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/pball/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
