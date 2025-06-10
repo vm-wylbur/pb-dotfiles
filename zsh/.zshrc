@@ -103,7 +103,7 @@ alias la="ls -laFG  --color"
 # alias la='exa -lh --all --git --sort=mod'
 # alias lt='exa -lh --git --tree'
 
-# alias j='xdir=$(fasd -ld | fzf --tac) && cd "$xdir"'
+# j command now handled by zoxide (z/zi)
 alias h='print -z $(fc -l 1 | fzf +s --tac | $SED -re "s/^\s*[0-9]+\s*//")'
 
 # maybe alacritty+tmux fixes here?
