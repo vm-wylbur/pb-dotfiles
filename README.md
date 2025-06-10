@@ -1,32 +1,63 @@
 # pb-dotfiles
 
-< Last update: Tue Feb  6 19:14:10 PST 2024 >
+<!-- date -j -f "%Y-%m-%dT%H:%M:%SZ" "2025-06-10T17:07:03Z" "+%a %d %b %Y %H:%M %Z" -->
+< Last update: Tue 10 Jun 2025 10:04 PDT >
 
+## Structure
 
-## install
-* `neovim` + python deps
-* [`starship`](https://starship.rs/) for prompts
-* [`antibody`](https://getantibody.github.io/) for zsh plugins
-* [`vim-plug`](https://github.com/junegunn/vim-plug) for neovim plugins
+Dotfiles are organized into packages for easy management:
 
-
-## [`stow`](https://www.gnu.org/software/stow/)
-Install the files in this directory as symlinks in `$HOME` with this:
-```bash
- $ stow --target=$HOME $HOME/dotfiles/
+```
+dotfiles/
+├── zsh/              # ZSH configuration (.zshrc, .zsh_plugins.txt)
+├── vim/              # Vim configuration (.gvimrc)
+├── p10k/             # Powerlevel10k theme (.p10k.zsh)
+├── wezterm/          # WezTerm terminal configuration (.wezterm.lua)
+├── scripts/          # Utility scripts
+├── starship/         # Starship prompt configuration
+├── deprecated/       # Old configs (bash, old vim/nvim setups)
+└── manage.sh         # Management script
 ```
 
-## MailMate
+## Quick Start
 
-MailMate knows how to launch an editor for the body of an email. (See the MailMate issues thread or hidden prefs to find it).
+1. **Install all packages:**
+   ```bash
+   ./manage.sh install
+   ```
 
-### MacVim
+2. **Install specific package:**
+   ```bash
+   ./manage.sh install zsh
+   ```
 
-Works _ok_ but not super for MailMate email. The key challenge is that enough of the config is different from NeoVim that I have to debug the heck out of `~/.gvimrc`.
+3. **List available packages:**
+   ```bash
+   ./manage.sh list
+   ```
 
+## Dependencies
 
-## deprecated/bash, deprecated/
+* [`GNU Stow`](https://www.gnu.org/software/stow/) - for symlink management
+* [`Antidote`](https://github.com/mattmc3/antidote) - ZSH plugin manager (replaces antibody)
+* [`Starship`](https://starship.rs/) - cross-shell prompt
+* [`Powerlevel10k`](https://github.com/romkatv/powerlevel10k) - ZSH theme
+* [`WezTerm`](https://wezfurlong.org/wezterm/) - terminal emulator
 
-I keep these because I still use bash on some machines, eg, at AWS
+## Manual Stow Usage
 
-<!-- done -->
+If you prefer to use stow directly:
+
+```bash
+# Install all packages
+stow zsh vim p10k wezterm
+
+# Install single package
+stow zsh
+
+# Uninstall package
+stow -D zsh
+
+# Restow (useful after changes)
+stow -R zsh
+```
