@@ -189,3 +189,8 @@ fpath=(/Users/pball/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
 # End of Docker CLI completions
+
+# Adobe Creative Cloud control
+alias adobe-stop="~/adobe_control.sh stop"
+alias adobe-start="~/adobe_control.sh start" 
+alias adobe-status="~/adobe_control.sh status"
