@@ -78,7 +78,7 @@ Use language-specific comment format:
 # License: (c) HRDAG, 2025, GPL-2 or newer
 #
 # ------
-# relative/path/to/file
+# project-root/path/to/file
 ```
 hint: what's markdown's comment format? Not `#`. 
 
