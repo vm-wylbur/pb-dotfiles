@@ -111,6 +111,16 @@ hint: what's markdown's comment format? Not `#`.
 ### Tool Restrictions
 - **NEVER use `watch`** - it breaks terminal interaction
 
+### Task Completion Requirements
+- **NEVER declare a task complete without testing**
+- **NEVER propose committing code that hasn't been verified working**
+- **ALWAYS test the actual use case before claiming success**
+- **"Ready to commit" means "tested and working"**, not "looks good to me"
+- **Test in the real environment**, not just syntax checks
+- **Verify end-to-end functionality** before reporting completion
+- If a task involves user-facing behavior, test that exact behavior
+- Documentation of what "works" means actual execution, not assumptions
+
 ---
 
 ## MCP SERVER INTEGRATION - MANDATORY
