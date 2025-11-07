@@ -1,6 +1,6 @@
 <!--
 Author: PB and Claude
-Date: 2025-01-07
+Date: 2025-11-07
 License: (c) HRDAG, 2025, GPL-2 or newer
 
 ------
