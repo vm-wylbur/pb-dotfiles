@@ -1,3 +1,8 @@
+---
+name: postgres-optimization
+description: PostgreSQL database optimization combining institutional knowledge with live analysis
+---
+
 <!--
 Author: PB and Claude
 Date: 2025-11-04

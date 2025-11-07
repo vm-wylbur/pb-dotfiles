@@ -50,13 +50,9 @@ By PB & Claude
 
 ## SKILLS - PROCEDURAL WORKFLOWS
 
-The following workflows are handled by Claude Code skills in `~/.claude/skills/`:
+Workflows are handled by Claude Code skills in `~/.claude/skills/`.
 
-- **commit** - Git commit workflow with message format enforcement
-- **code-change-approval** - File modification approval and change verification
-- **new-file** - New file creation with proper headers and comment formats
-
-These skills activate automatically when relevant actions are detected.
+Use all available skills as appropriate for the task. Skills activate automatically when relevant actions are detected or can be invoked explicitly.
 
 ---
 

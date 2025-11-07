@@ -1,3 +1,8 @@
+---
+name: refresh
+description: Reload behavioral guidelines and audit recent actions for compliance
+---
+
 # Refresh Context & Audit Workflow
 
 ## Skill Metadata
@@ -35,9 +40,12 @@ Reload behavioral guidelines, report available capabilities, and audit recent ac
 ### Phase 2: Inventory Capabilities (All Modes)
 
 2. List Available Skills
-   - Scan `~/.claude/skills/*/SKILL.md`
+   - Check `<available_skills>` in system prompt (what Claude can actually invoke)
+   - Scan `~/.claude/skills/*/SKILL.md` on filesystem (what exists on disk)
+     * Use `find -L` to follow symlinks (skills directory is symlinked)
+     * Command: `find -L ~/.claude/skills -name 'SKILL.md'`
+   - Report both counts to detect registration issues
    - Format: `skill-name: brief description`
-   - Report total count
 
 3. Check MCP Servers
    - List configured MCP servers
@@ -76,10 +84,10 @@ Reload behavioral guidelines, report available capabilities, and audit recent ac
 ```
 Context loaded
 ├─ meta-CLAUDE.md (2025-11-06)
-├─ Skills: 7 available
-│  ├─ commit, code-change-approval, code-explore
-│  ├─ context7, memory-augmented-dev, new-file
-│  └─ postgres-optimization
+├─ Skills: 6 registered, 8 on disk
+│  ├─ Registered: commit, code-change-approval, code-explore
+│  │              context7, memory-augmented-dev, new-file
+│  └─ On disk only: postgres-optimization, refresh
 ├─ MCPs: 5 connected (tree-sitter, repomix, context7, memory, postgres)
 └─ Working in: ~/docs
 ```
@@ -90,14 +98,17 @@ Context refreshed - Full audit
 
 Guidelines: meta-CLAUDE.md (2025-11-06) ✓
 
-Skills: 7 available
-├─ commit: Git commit workflow
-├─ code-change-approval: File modification approval
-├─ code-explore: Codebase exploration
-├─ context7: Library documentation
-├─ memory-augmented-dev: Persistent memory
-├─ new-file: File creation with headers
-└─ postgres-optimization: Database optimization
+Skills: 6 registered, 8 on disk
+├─ Registered (invokable):
+│  ├─ commit: Git commit workflow
+│  ├─ code-change-approval: File modification approval
+│  ├─ code-explore: Codebase exploration
+│  ├─ context7: Library documentation
+│  ├─ memory-augmented-dev: Persistent memory
+│  └─ new-file: File creation with headers
+└─ On disk only (not loaded):
+   ├─ postgres-optimization
+   └─ refresh
 
 MCPs: 5 connected
 ├─ tree-sitter (26 tools)
@@ -151,6 +162,12 @@ Working in: ~/docs (clean)
 - For commits: Check last 1 commit if made in this session
 - For files: Check files modified in this session
 - Don't audit historical work
+
+**Skill Sources:**
+- `<available_skills>` in system prompt = skills Claude can actually invoke via Skill tool
+- Filesystem `~/.claude/skills/*/SKILL.md` = skill definitions on disk
+- **IMPORTANT**: Use `find -L` when scanning skills directory (it's a symlink to dotfiles)
+- Discrepancies indicate skills that exist but aren't registered (need debugging)
 
 ## Error Handling
 
