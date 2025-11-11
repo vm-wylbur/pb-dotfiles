@@ -89,7 +89,13 @@ To replicate the setup on a new machine:
    ./install.sh
    ```
 
-3. **Copy configuration file** from the original machine:
+3. **Install MCP servers**:
+   ```bash
+   # See MCP-INSTALLATION.md for detailed instructions
+   # Install tree-sitter, repomix, context7, and other MCPs
+   ```
+
+4. **Copy configuration file** from the original machine:
    ```bash
    # On original machine:
    scp ~/.config/claude-mem/claude-mem.toml newmachine:~/.config/claude-mem/
@@ -99,7 +105,7 @@ To replicate the setup on a new machine:
 
    **IMPORTANT**: The `claude-mem.toml` file contains credentials and is NOT version controlled. You must manually copy this file to each new machine.
 
-4. **Verify installation**:
+5. **Verify installation**:
    ```bash
    cd ~/dotfiles/ai/claude-code
    ./install.sh
@@ -278,6 +284,7 @@ cp -r ~/claude-code-backup-YYYYMMDD-HHMMSS/skills ~/.claude/
 
 ## Related Documentation
 
+- **MCP Installation**: `~/dotfiles/ai/claude-code/MCP-INSTALLATION.md` - MCP server installation guide
 - **Meta Guidelines**: `~/dotfiles/ai/docs/meta-CLAUDE.md` - Shared AI agent guidelines
 - **Multi-AI Workflow**: `~/dotfiles/ai/docs/multi-ai-workflow.md`
 - **Installation Log**: `~/dotfiles/ai/claude-code/install.log`
