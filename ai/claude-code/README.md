@@ -34,8 +34,9 @@ This directory contains all Claude Code configuration for easy replication acros
     └── .gitkeep
 
 # Symlinks to expected system locations:
+~/.claude/CLAUDE.md -> ~/dotfiles/ai/docs/meta-CLAUDE.md
 ~/.claude/skills/ -> ~/dotfiles/ai/claude-code/skills/
-~/.claude/command/ -> ~/dotfiles/ai/claude-code/commands/
+~/.claude/commands/ -> ~/dotfiles/ai/claude-code/commands/
 
 # NOT symlinked (manual per-machine):
 ~/.config/claude-mem/claude-mem.toml
@@ -204,14 +205,16 @@ Same process as skills. Add new commands to `commands/` directory.
 
 Verify symlinks are correct:
 ```bash
+ls -la ~/.claude/CLAUDE.md
 ls -la ~/.claude/skills
-ls -la ~/.claude/command
+ls -la ~/.claude/commands
 ```
 
 Should show:
 ```
+~/.claude/CLAUDE.md -> /home/pball/dotfiles/ai/docs/meta-CLAUDE.md
 ~/.claude/skills -> /home/pball/dotfiles/ai/claude-code/skills
-~/.claude/command -> /home/pball/dotfiles/ai/claude-code/commands
+~/.claude/commands -> /home/pball/dotfiles/ai/claude-code/commands
 ```
 
 Re-run installation if needed:
@@ -275,8 +278,9 @@ Backups are created before any destructive operations.
 To restore from backup:
 ```bash
 # Remove symlinks
+rm ~/.claude/CLAUDE.md
 rm ~/.claude/skills
-rm ~/.claude/command
+rm ~/.claude/commands
 
 # Restore from backup
 cp -r ~/claude-code-backup-YYYYMMDD-HHMMSS/skills ~/.claude/
