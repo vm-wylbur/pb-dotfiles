@@ -95,7 +95,7 @@ detect_existing_installation() {
         already_installed=true
     fi
 
-    if [ -L "$HOME/.claude/command" ] && [ "$(readlink -f "$HOME/.claude/command")" = "$HOME/dotfiles/ai/claude-code/commands" ]; then
+    if [ -L "$HOME/.claude/commands" ] && [ "$(readlink -f "$HOME/.claude/commands")" = "$HOME/dotfiles/ai/claude-code/commands" ]; then
         info "✓ Commands symlink already exists and is correct"
         already_installed=true
     fi
@@ -167,14 +167,14 @@ create_symlinks() {
     fi
 
     # Commands symlink
-    if [ -e "$HOME/.claude/command" ] && [ ! -L "$HOME/.claude/command" ]; then
-        info "Removing existing ~/.claude/command/ directory (backed up)"
-        rm -rf "$HOME/.claude/command"
+    if [ -e "$HOME/.claude/commands" ] && [ ! -L "$HOME/.claude/commands" ]; then
+        info "Removing existing ~/.claude/commands/ directory (backed up)"
+        rm -rf "$HOME/.claude/commands"
     fi
 
-    if [ ! -L "$HOME/.claude/command" ]; then
-        ln -sf "$HOME/dotfiles/ai/claude-code/commands" "$HOME/.claude/command"
-        success "Created symlink: ~/.claude/command -> ~/dotfiles/ai/claude-code/commands"
+    if [ ! -L "$HOME/.claude/commands" ]; then
+        ln -sf "$HOME/dotfiles/ai/claude-code/commands" "$HOME/.claude/commands"
+        success "Created symlink: ~/.claude/commands -> ~/dotfiles/ai/claude-code/commands"
     else
         info "Commands symlink already exists"
     fi
@@ -313,10 +313,10 @@ verify_installation() {
     fi
 
     # Check commands symlink
-    if [ -L "$HOME/.claude/command" ]; then
-        local target=$(readlink -f "$HOME/.claude/command")
+    if [ -L "$HOME/.claude/commands" ]; then
+        local target=$(readlink -f "$HOME/.claude/commands")
         if [ "$target" = "$HOME/dotfiles/ai/claude-code/commands" ]; then
-            success "Commands symlink correct: ~/.claude/command -> ~/dotfiles/ai/claude-code/commands"
+            success "Commands symlink correct: ~/.claude/commands -> ~/dotfiles/ai/claude-code/commands"
         else
             error "Commands symlink points to wrong location: $target"
             all_good=false
@@ -367,7 +367,7 @@ print_report() {
     info "  • Migrated skills to ~/dotfiles/ai/claude-code/skills/"
     info "  • Created symlinks:"
     info "      ~/.claude/skills -> ~/dotfiles/ai/claude-code/skills"
-    info "      ~/.claude/command -> ~/dotfiles/ai/claude-code/commands"
+    info "      ~/.claude/commands -> ~/dotfiles/ai/claude-code/commands"
     info "      ~/.claude/CLAUDE.md -> ~/dotfiles/ai/docs/meta-CLAUDE.md"
     info "  • Global CLAUDE.md will be auto-loaded on every session"
 
