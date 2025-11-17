@@ -38,18 +38,21 @@ npx --version
 
 **Purpose**: AST-based code analysis for multi-language support (Python, JS, TS, Go, Rust, C, C++, etc.)
 
-**Installation**:
+**Installation** (Recommended - uses isolated environment):
 ```bash
-# Install globally via pip
-pip install mcp-server-tree-sitter
-
-# Add to Claude Code with user scope (available globally)
-claude mcp add --scope user tree_sitter python -- -m mcp_server_tree_sitter.server
+# Add to Claude Code using uvx (no separate install needed)
+claude mcp add --scope user tree_sitter uvx -- mcp-server-tree-sitter
 
 # Verify installation
 claude mcp list
-# Should show: tree_sitter: python -m mcp_server_tree_sitter.server - ✓ Connected
+# Should show: tree_sitter: uvx mcp-server-tree-sitter - ✓ Connected
 ```
+
+**Why uvx?**
+- Creates isolated environment automatically (no global pip install)
+- Works consistently across all project directories
+- Avoids conflicts with project-specific virtual environments
+- Better practice than installing into system Python
 
 **Key Features**:
 - Multi-language AST analysis
@@ -57,9 +60,15 @@ claude mcp list
 - Context-aware code exploration
 - Pattern search with tree-sitter queries
 
-**Alternative installation** (development version):
+**Alternative installation methods**:
 ```bash
-pip install -e "git+https://github.com/wrale/mcp-server-tree-sitter.git#egg=mcp-server-tree-sitter[dev,languages]"
+# Using dedicated venv (if you prefer manual control)
+python3 -m venv ~/.venv-mcp
+~/.venv-mcp/bin/pip install mcp-server-tree-sitter
+claude mcp add --scope user tree_sitter ~/.venv-mcp/bin/python -- -m mcp_server_tree_sitter.server
+
+# Development version with uvx
+uvx --from git+https://github.com/wrale/mcp-server-tree-sitter.git mcp-server-tree-sitter
 ```
 
 ---
