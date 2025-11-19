@@ -20,9 +20,9 @@ For each insight:
 - Show content, type, tags
 - Show rationale (why this is valuable)
 - Ask: Approve/Edit/Skip/Stop
-  - Approve: Store with mcp__claude-mem__store-dev-memory
-  - Edit: Let user modify content/tags/type, then store
-  - Skip: Move to next insight
+  - Approve: Store with mcp__claude-mem__store-dev-memory, log decision
+  - Edit: Let user modify content/tags/type, then store, log decision with edited_content
+  - Skip: Move to next insight, log decision (optionally ask for skip reason if unclear from context)
   - Stop: End extraction session
 
 **Step 4: Store Approved Insights**
@@ -71,5 +71,13 @@ Insight 2/5:
 2. Show rationale so user understands why agent extracted this
 3. Allow editing before storage (fix tags, refine content)
 4. Track and report approval rate (helps tune agent prompts)
+5. **LOG EVERY DECISION**: After each y/e/n action, use mcp__postgres-mcp__execute_sql to INSERT into extraction_decisions table with:
+   - doc_id, doc_filename from current document
+   - insight_number (1-7 position in batch)
+   - insight_title, insight_content, insight_tags from agent output
+   - action: 'approved', 'edited', or 'skipped'
+   - edited_content: if edited, the new version
+   - skip_reason: infer from context (e.g., "superseded", "duplicative") or NULL
+   - stored_memory_id: the memory ID returned from store-dev-memory (if approved/edited)
 
 Launch the workflow now - ask which document to extract from.
