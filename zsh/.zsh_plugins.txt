@@ -1,6 +1,5 @@
 # list all plugins here
 
-romkatv/powerlevel10k
 # alias tips has probs with egrep
 # djui/alias-tips
 caarlos0/zsh-mkc

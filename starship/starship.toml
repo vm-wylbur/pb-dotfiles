@@ -4,9 +4,11 @@ $hostname\
 $directory\
 $git_branch\
 $git_state\
-$fill$python $cmd_duration\
+$git_status\
+$fill$cmd_duration\
 $line_break\
 $jobs\
+$status\
 $character"""
 
 [username]
@@ -24,7 +26,8 @@ format = "[$hostname]($style)[$ssh_symbol](bold red)"
 [directory]
 style = "blue"
 format = ":[$path]($style) "
-truncation_length = 3
+truncation_length = 5
+truncate_to_repo = false
 
 [character]
 success_symbol = "[❯](green)"
@@ -32,7 +35,7 @@ error_symbol = "[❯](red)"
 vicmd_symbol = "[❮](green)"
 
 [git_branch]
-format = "on [$branch]($style)"
+format = "[<on $branch]($style)"
 style = "bright-black"
 
 [git_state]
@@ -53,7 +56,17 @@ style = "yellow"
 [fill]
 symbol = " "
 
-[python]
-format = "[py-venv:${version}](green)"
-style = "green"
-detect_extensions = ["py"]
+[git_status]
+format = "([: $all_status$ahead_behind](white))>"
+staged = "[${count} staged,](green)"
+modified = "[${count} modified,](yellow)"
+untracked = "[${count} untracked,](blue)"
+ahead = "[${count} ahead,](cyan)"
+behind = "[${count} behind,](red)"
+diverged = "[${ahead_count}↑ ${behind_count}↓,](red)"
+deleted = "[${count} deleted,](red)"
+
+[status]
+disabled = false
+format = "[$status]($style) "
+style = "red"
