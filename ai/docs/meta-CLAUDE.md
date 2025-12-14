@@ -61,6 +61,8 @@ Permission required:
 No permission needed:
 - Read operations (ls, grep, cat, git status/diff)
 
+DO NOT USE `watch` --- the escape sequences are recorded in your settings, break the terminal, and require a complete restart without context.
+
 Before claiming ANYTHING works:
 - Test actual functionality
 - Verify end-to-end
