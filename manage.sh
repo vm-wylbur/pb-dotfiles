@@ -7,7 +7,7 @@
 set -e
 
 # Available packages
-PACKAGES=("zsh" "vim" "p10k")
+PACKAGES=("zsh" "vim" "starship")
 
 # Colors for output
 RED='\033[0;31m'

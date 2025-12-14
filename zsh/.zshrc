@@ -128,7 +128,7 @@ export HRDAGGIT="$LOCALGIT/hrdag"
 export PERSONALGIT="$LOCALGIT/personal"
 
 # starship prompt (with fallback)
-export STARSHIP_CONFIG="$HOME/dotfiles/starship/starship.toml"
+# starship finds ~/.config/starship/starship.toml automatically
 if command -v starship &>/dev/null; then
   eval "$(starship init zsh)"
 else

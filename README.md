@@ -11,10 +11,8 @@ Dotfiles are organized into packages for easy management:
 dotfiles/
 ├── zsh/              # ZSH configuration (.zshrc, .zsh_plugins.txt)
 ├── vim/              # Vim configuration (.gvimrc)
-├── p10k/             # Powerlevel10k theme (.p10k.zsh)
-├── wezterm/          # WezTerm terminal configuration (.wezterm.lua)
+├── starship/         # Starship prompt configuration (.config/starship/)
 ├── scripts/          # Utility scripts
-├── starship/         # Starship prompt configuration
 ├── deprecated/       # Old configs (bash, old vim/nvim setups)
 └── manage.sh         # Management script
 ```
@@ -41,8 +39,6 @@ dotfiles/
 * [`GNU Stow`](https://www.gnu.org/software/stow/) - for symlink management
 * [`Antidote`](https://github.com/mattmc3/antidote) - ZSH plugin manager (replaces antibody)
 * [`Starship`](https://starship.rs/) - cross-shell prompt
-* [`Powerlevel10k`](https://github.com/romkatv/powerlevel10k) - ZSH theme
-* [`WezTerm`](https://wezfurlong.org/wezterm/) - terminal emulator
 
 ## Manual Stow Usage
 
@@ -50,7 +46,7 @@ If you prefer to use stow directly:
 
 ```bash
 # Install all packages
-stow zsh vim p10k wezterm
+stow zsh vim starship
 
 # Install single package
 stow zsh
