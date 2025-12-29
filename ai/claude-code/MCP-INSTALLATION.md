@@ -1,6 +1,6 @@
 <!--
 Author: PB and Claude
-Date: Thu 07 Nov 2025
+Date: 2025-12-29
 License: (c) HRDAG, 2025, GPL-2 or newer
 
 ------
@@ -11,138 +11,134 @@ dotfiles/ai/claude-code/MCP-INSTALLATION.md
 
 Instructions for installing and configuring Model Context Protocol (MCP) servers for Claude Code.
 
-**Note**: This documentation is based on successful installations from memory system. Some sections may need verification on new machines.
+We maintain a minimal set of 3 MCPs that provide unique value not covered by Claude Code's native tools:
+
+| MCP | Purpose | Why Keep |
+|-----|---------|----------|
+| **claude-mem** | Persistent memory with semantic search | Cross-session context, PostgreSQL-backed |
+| **tree_sitter** | AST-based code analysis | Multi-language symbol extraction, precise queries |
+| **repomix** | Codebase packaging for AI | Pack entire repos, grep search, token-aware |
+
+**Removed** (redundant with Claude Code native tools):
+- filesystem → Native Read/Write/Edit/Glob
+- claude-todo → Native TodoWrite
+- sequential-thinking → Native reasoning
+- perplexity → Native WebSearch
+- context7 → Native WebSearch (for library docs)
+- zen → External model calls (adds cost/complexity)
 
 ---
 
 ## Prerequisites
 
 - **Claude Code CLI**: Installed and working
-- **Python 3.10+**: For tree-sitter MCP
-- **Node.js/npm**: For context7 and other npm-based MCPs
-- **npx**: Comes with npm, used for repomix
+- **Python 3.10+**: For tree-sitter MCP (via uv)
+- **Node.js/npm**: For repomix
+- **PostgreSQL with pgvector**: For claude-mem
 
-Verify prerequisites:
 ```bash
-python3 --version  # Should be 3.10 or higher
-node --version     # Should be recent LTS
-npm --version
-npx --version
+python3 --version  # 3.10+
+node --version     # Recent LTS
+uv --version       # For tree-sitter
 ```
 
 ---
 
-## Installation Instructions
+## Installation
 
 ### 1. Tree-sitter MCP
 
-**Purpose**: AST-based code analysis for multi-language support (Python, JS, TS, Go, Rust, C, C++, etc.)
+**Purpose**: AST-based code analysis for multi-language support
 
-**Installation** (Recommended - uses isolated environment):
 ```bash
-# Add to Claude Code using uvx (no separate install needed)
-claude mcp add --scope user tree_sitter uvx -- mcp-server-tree-sitter
-
-# Verify installation
-claude mcp list
-# Should show: tree_sitter: uvx mcp-server-tree-sitter - ✓ Connected
+# Uses uv tool run (isolated, no global install)
+claude mcp add --scope user tree_sitter uv -- tool run mcp-server-tree-sitter
 ```
-
-**Why uvx?**
-- Creates isolated environment automatically (no global pip install)
-- Works consistently across all project directories
-- Avoids conflicts with project-specific virtual environments
-- Better practice than installing into system Python
 
 **Key Features**:
-- Multi-language AST analysis
-- Parse tree caching for performance
-- Context-aware code exploration
+- Multi-language AST analysis (Python, JS, TS, Go, Rust, etc.)
+- Symbol extraction (functions, classes, imports)
 - Pattern search with tree-sitter queries
-
-**Alternative installation methods**:
-```bash
-# Using dedicated venv (if you prefer manual control)
-python3 -m venv ~/.venv-mcp
-~/.venv-mcp/bin/pip install mcp-server-tree-sitter
-claude mcp add --scope user tree_sitter ~/.venv-mcp/bin/python -- -m mcp_server_tree_sitter.server
-
-# Development version with uvx
-uvx --from git+https://github.com/wrale/mcp-server-tree-sitter.git mcp-server-tree-sitter
-```
+- Parse tree caching for performance
 
 ---
 
 ### 2. Repomix MCP
 
-**Purpose**: Codebase analysis and consolidation for AI-optimized code understanding
+**Purpose**: Codebase consolidation for AI-optimized analysis
 
-**Installation**:
 ```bash
-# Add to Claude Code (npx will handle installation automatically)
 claude mcp add --scope user repomix npx repomix -- --mcp
-
-# Verify installation
-claude mcp list
-# Should show: repomix: npx repomix --mcp - ✓ Connected
 ```
-
-**Important Notes**:
-- The `--` separator is crucial: it passes `--mcp` to repomix, not to claude command
-- Use `--scope user` for global availability across all projects
-- No separate `npm install` needed - npx handles it
 
 **Key Features**:
 - Pack entire codebases into single AI-optimized files
-- Support for multiple output formats (XML, Markdown, JSON, Plain)
+- Multiple output formats (XML, Markdown, JSON)
 - Security scanning for credentials
 - Tree-sitter compression for token efficiency
-- GitHub repository analysis
 
 ---
 
-### 3. Context7 MCP
+### 3. Claude-mem MCP
 
-**Purpose**: Documentation search for current framework/library docs
+**Purpose**: Persistent memory storage with semantic search
 
-**Installation** (needs verification):
+**Prerequisites**:
+- PostgreSQL database with pgvector extension
+- Config file at `~/.config/claude-mem/claude-mem.toml`
+
 ```bash
-# Install globally via npm
-npm install -g @modelcontextprotocol/server-context7
+# Build from source (custom MCP)
+cd ~/projects/personal/claude-mem
+npm install && npm run build
 
 # Add to Claude Code
-claude mcp add --scope user context7 npx -- @modelcontextprotocol/server-context7
-
-# Verify installation
-claude mcp list
-# Should show: context7: npx @modelcontextprotocol/server-context7 - ✓ Connected
+claude mcp add --scope user claude-mem node -- ~/projects/personal/claude-mem/dist/index.js
 ```
 
-**Note**: This approach is based on older documentation and may need adjustment. If it fails, check:
-- Latest context7 installation instructions
-- Whether package name or command has changed
-- Alternative installation methods
+**Configuration** (`~/.config/claude-mem/claude-mem.toml`):
+```toml
+[database]
+type = "postgresql"
 
-**Key Features**:
-- Resolve library IDs for documentation lookup
-- Fetch up-to-date library documentation
-- Version-specific documentation support
+[database.postgresql]
+hosts = ["localhost"]
+port = 5432
+database = "claude_mem"
+user = "your_user"
+password = "your_password"
+sslmode = "prefer"
+
+[ollama]
+host = "http://localhost:11434"
+model = "nomic-embed-text"
+
+[server]
+name = "claude-mem"
+version = "1.0.0"
+
+[logging]
+level = "info"
+file = "/tmp/claude-mem.log"
+
+[features]
+```
+
+**Note**: This config file contains credentials and is NOT version controlled.
 
 ---
 
 ## Verification
 
-After installing all MCPs, verify they're connected:
-
 ```bash
 claude mcp list
 ```
 
-Expected output should show all servers with ✓ Connected status:
+Expected output:
 ```
-tree_sitter: python -m mcp_server_tree_sitter.server - ✓ Connected
 repomix: npx repomix --mcp - ✓ Connected
-context7: npx @modelcontextprotocol/server-context7 - ✓ Connected
+tree_sitter: uv tool run mcp-server-tree-sitter - ✓ Connected
+claude-mem: node ~/projects/personal/claude-mem/dist/index.js - ✓ Connected
 ```
 
 ---
@@ -151,80 +147,14 @@ context7: npx @modelcontextprotocol/server-context7 - ✓ Connected
 
 ### MCP Not Showing as Connected
 
-1. **Check installation scope**:
-   ```bash
-   claude mcp list
-   ```
-   If not listed, reinstall with `--scope user`
+1. Check scope: `claude mcp list`
+2. Remove and re-add: `claude mcp remove <name> -s user && claude mcp add --scope user ...`
 
-2. **Verify prerequisites installed**:
-   - tree-sitter: `python3 -c "import mcp_server_tree_sitter"`
-   - context7: `npm list -g @modelcontextprotocol/server-context7`
+### Claude-mem Database Connection
 
-3. **Remove and re-add**:
-   ```bash
-   claude mcp remove <server-name> -s user
-   claude mcp add --scope user <server-name> <command>
-   ```
-
-### Local Settings Override Global
-
-If MCPs work in some directories but not others:
-- Local `.claude/settings.local.json` files may override user scope
-- Solution: Use `--scope user` to ensure global availability
-- Configuration hierarchy: local > project > user scope
-
-### Python Module Not Found (tree-sitter)
-
-```bash
-# Verify pip installation
-pip list | grep mcp-server-tree-sitter
-
-# If missing, reinstall
-pip install --upgrade mcp-server-tree-sitter
-```
-
----
-
-## Additional MCPs (Documentation Needed)
-
-The following MCPs are configured on the current machine but installation instructions need to be documented:
-
-### Postgres-mcp
-- **Status**: Connected and working
-- **Purpose**: PostgreSQL database analysis and optimization
-- **Documentation needed**: Installation steps, configuration requirements
-
-### Claude-mem (Memory MCP)
-- **Status**: Connected and working
-- **Purpose**: Persistent memory storage across Claude sessions
-- **Location**: Custom MCP from `~/projects/claude-mem`
-- **Configuration**: `~/.config/claude-mem/claude-mem.toml` (not version controlled)
-- **Backend**: PostgreSQL with pgvector for semantic search
-- **Documentation needed**:
-  - Installation steps
-  - Configuration file setup
-  - Database requirements (PostgreSQL with pgvector)
-
----
-
-## Scope Explanation
-
-**User Scope** (`--scope user`):
-- Available globally across all projects
-- Recommended for most MCPs
-- Overrides local directory-specific settings
-
-**Local Scope** (`--scope local`):
-- Directory-specific
-- Can override user scope
-- Useful for project-specific configurations
-
-**Project Scope** (`--scope project`):
-- Project-level configuration
-- Middle ground between user and local
-
-**Recommendation**: Use `--scope user` for all general-purpose MCPs unless you have specific project-level needs.
+1. Verify PostgreSQL is running: `pg_isready`
+2. Check config permissions: `chmod 600 ~/.config/claude-mem/claude-mem.toml`
+3. Test connection manually with psql
 
 ---
 
@@ -233,9 +163,3 @@ The following MCPs are configured on the current machine but installation instru
 - **Skills Installation**: `~/dotfiles/ai/claude-code/README.md`
 - **Skills Overview**: `~/.claude/skills/README.md`
 - **Meta Guidelines**: `~/dotfiles/ai/docs/meta-CLAUDE.md`
-
----
-
-## Contributing
-
-If you discover installation steps for postgres-mcp or claude-mem, or if you find issues with the context7 installation, please update this document and commit to the dotfiles repository.
