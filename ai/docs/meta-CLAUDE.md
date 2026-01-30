@@ -18,7 +18,7 @@ BEFORE writing ANY code:
 
 Available tools YOU MUST USE:
 - memory: Store/retrieve key decisions and patterns
-- repomix: Analyze codebase BEFORE proposing changes
+- repomix and treesitter: Analyze codebase BEFORE proposing changes
 - Skills in ~/.claude/skills/: Use these workflows, don't recreate
 
 If you write code that reimplements existing functionality = CRITICAL FAILURE
@@ -55,6 +55,12 @@ State explicitly: "I need [specific information] before proceeding"
 - Generate a query for a web-native claude instance when you need more information
 ```
 
+## RUNNING CODE
+```
+- we use `uv` in python, do NOT use naked python
+- look for a Makefile that encodes what we've learned about running, paths, users. read. do NOT reinvent.
+```
+
 ## CODE CHANGES
 ```
 Permission required:
@@ -75,16 +81,16 @@ Before claiming ANYTHING works:
 
 ## FILE HEADERS
 ```markdown
-<!--
+```
 Author: PB and Claude
 Date: 2025-11-16
 License: (c) HRDAG, 2025, GPL-2 or newer
 
 ---
 project-root/relative/path/to/file.md
--->
 ```
-(Adjust comment style per language)
+```
+Adjust comment style per language; markdown does not need to be in comment.
 
 ## CRITICAL DON'TS
 ```

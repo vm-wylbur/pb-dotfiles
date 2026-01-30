@@ -50,16 +50,48 @@ uv --version       # For tree-sitter
 
 **Purpose**: AST-based code analysis for multi-language support
 
+<<<<<<< HEAD
 ```bash
 # Uses uv tool run (isolated, no global install)
 claude mcp add --scope user tree_sitter uv -- tool run mcp-server-tree-sitter
 ```
 
+=======
+**Installation** (Recommended - uses isolated venv):
+```bash
+# Create isolated venv for MCP
+python3 -m venv ~/.venv-mcp
+
+# Install tree-sitter MCP in venv
+~/.venv-mcp/bin/pip install mcp-server-tree-sitter
+
+# Add to Claude Code
+claude mcp add --scope user tree_sitter ~/.venv-mcp/bin/python -- -m mcp_server_tree_sitter.server
+
+# Verify installation
+claude mcp list
+# Should show: tree_sitter: /home/pball/.venv-mcp/bin/python -m mcp_server_tree_sitter.server - ✓ Connected
+```
+
+**Why venv?**
+- Creates isolated environment (no global pip install)
+- Works consistently across all project directories
+- Avoids conflicts with project-specific virtual environments
+- Better practice than installing into system Python
+- More reliable than uvx for Python 3.12+
+
+>>>>>>> c17b49b (Update MCP installation docs: remove context7, add claude-mem)
 **Key Features**:
 - Multi-language AST analysis (Python, JS, TS, Go, Rust, etc.)
 - Symbol extraction (functions, classes, imports)
 - Pattern search with tree-sitter queries
+<<<<<<< HEAD
 - Parse tree caching for performance
+=======
+
+**Note on uvx**:
+The documentation originally recommended `uvx` but it has compatibility issues with Python 3.14+. The venv approach above is more reliable.
+>>>>>>> c17b49b (Update MCP installation docs: remove context7, add claude-mem)
 
 ---
 
@@ -79,6 +111,7 @@ claude mcp add --scope user repomix npx repomix -- --mcp
 
 ---
 
+<<<<<<< HEAD
 ### 3. Claude-mem MCP
 
 **Purpose**: Persistent memory storage with semantic search
@@ -125,6 +158,42 @@ file = "/tmp/claude-mem.log"
 ```
 
 **Note**: This config file contains credentials and is NOT version controlled.
+=======
+### 3. Claude-mem (Memory MCP)
+
+**Purpose**: Persistent memory storage across Claude sessions with PostgreSQL backend and semantic search
+
+**Prerequisites**:
+- PostgreSQL database with pgvector extension
+- Configuration file at `~/.config/claude-mem/claude-mem.toml`
+
+**Installation**:
+```bash
+# Clone/access the project
+cd ~/projects/claude-mem
+
+# Build the project
+npm run build
+
+# Add to Claude Code
+claude mcp add --scope user claude-mem node /home/pball/projects/claude-mem/dist/index.js
+
+# Verify installation
+claude mcp list
+# Should show: claude-mem: node /home/pball/projects/claude-mem/dist/index.js - ✓ Connected
+```
+
+**Configuration**:
+- Create `~/.config/claude-mem/claude-mem.toml` based on `claude-mem.toml.example` in the project
+- Configure PostgreSQL connection details
+- See `~/projects/claude-mem/DATABASE_CONFIG.md` for database setup
+
+**Key Features**:
+- Persistent memory across sessions
+- Semantic search using pgvector
+- Long-term context storage for LLMs
+- MCP protocol integration
+>>>>>>> c17b49b (Update MCP installation docs: remove context7, add claude-mem)
 
 ---
 
@@ -136,9 +205,15 @@ claude mcp list
 
 Expected output:
 ```
+<<<<<<< HEAD
 repomix: npx repomix --mcp - ✓ Connected
 tree_sitter: uv tool run mcp-server-tree-sitter - ✓ Connected
 claude-mem: node ~/projects/personal/claude-mem/dist/index.js - ✓ Connected
+=======
+tree_sitter: /home/pball/.venv-mcp/bin/python -m mcp_server_tree_sitter.server - ✓ Connected
+repomix: npx repomix --mcp - ✓ Connected
+claude-mem: node /home/pball/projects/claude-mem/dist/index.js - ✓ Connected
+>>>>>>> c17b49b (Update MCP installation docs: remove context7, add claude-mem)
 ```
 
 ---
@@ -150,11 +225,69 @@ claude-mem: node ~/projects/personal/claude-mem/dist/index.js - ✓ Connected
 1. Check scope: `claude mcp list`
 2. Remove and re-add: `claude mcp remove <name> -s user && claude mcp add --scope user ...`
 
+<<<<<<< HEAD
 ### Claude-mem Database Connection
 
 1. Verify PostgreSQL is running: `pg_isready`
 2. Check config permissions: `chmod 600 ~/.config/claude-mem/claude-mem.toml`
 3. Test connection manually with psql
+=======
+2. **Verify prerequisites installed**:
+   - tree-sitter: `~/.venv-mcp/bin/python -c "import mcp_server_tree_sitter"`
+   - claude-mem: Check `~/projects/claude-mem/dist/index.js` exists
+
+3. **Remove and re-add**:
+   ```bash
+   claude mcp remove <server-name> -s user
+   claude mcp add --scope user <server-name> <command>
+   ```
+
+### Local Settings Override Global
+
+If MCPs work in some directories but not others:
+- Local `.claude/settings.local.json` files may override user scope
+- Solution: Use `--scope user` to ensure global availability
+- Configuration hierarchy: local > project > user scope
+
+### Python Module Not Found (tree-sitter)
+
+```bash
+# Verify pip installation
+pip list | grep mcp-server-tree-sitter
+
+# If missing, reinstall
+pip install --upgrade mcp-server-tree-sitter
+```
+
+---
+
+## Additional MCPs (Optional)
+
+### Postgres-mcp
+- **Status**: Available but not documented in this guide
+- **Purpose**: PostgreSQL database analysis and optimization
+- **Note**: Installation instructions to be added if needed
+
+---
+
+## Scope Explanation
+
+**User Scope** (`--scope user`):
+- Available globally across all projects
+- Recommended for most MCPs
+- Overrides local directory-specific settings
+
+**Local Scope** (`--scope local`):
+- Directory-specific
+- Can override user scope
+- Useful for project-specific configurations
+
+**Project Scope** (`--scope project`):
+- Project-level configuration
+- Middle ground between user and local
+
+**Recommendation**: Use `--scope user` for all general-purpose MCPs unless you have specific project-level needs.
+>>>>>>> c17b49b (Update MCP installation docs: remove context7, add claude-mem)
 
 ---
 
@@ -163,3 +296,12 @@ claude-mem: node ~/projects/personal/claude-mem/dist/index.js - ✓ Connected
 - **Skills Installation**: `~/dotfiles/ai/claude-code/README.md`
 - **Skills Overview**: `~/.claude/skills/README.md`
 - **Meta Guidelines**: `~/dotfiles/ai/docs/meta-CLAUDE.md`
+<<<<<<< HEAD
+=======
+
+---
+
+## Contributing
+
+If you discover installation steps for postgres-mcp or encounter issues with any MCP installation, please update this document and commit to the dotfiles repository.
+>>>>>>> c17b49b (Update MCP installation docs: remove context7, add claude-mem)
