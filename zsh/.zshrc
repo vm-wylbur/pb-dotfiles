@@ -168,3 +168,4 @@ export NVM_DIR="$HOME/.nvm"
 umask 027
 
 # done.
+export GPG_TTY=$(tty)

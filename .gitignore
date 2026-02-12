@@ -16,3 +16,4 @@ lazy-lock.json
 .nvim.huez.lua
 .config
 ai/claude-code/install.log
+.omc/
