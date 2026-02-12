@@ -101,47 +101,9 @@ Adjust comment style per language; markdown does not need to be in comment.
   When you need external research, formulate a question for a web-claude instance
 ```
 
-<!-- OMC trimmed 2026-02-12: kept ralph, ralplan, cancel, agent routing. Removed ~440 lines. -->
-## Multi-Agent Orchestration (OMC subset)
-
-### Model Routing
-Always pass `model` parameter when spawning agents via Task tool.
-
-| Complexity | Model | When |
-|------------|-------|------|
-| Simple | `haiku` | Lookups, simple fixes, file searches |
-| Standard | `sonnet` | Feature implementation, role creation |
-| Complex | `opus` | Architecture review, complex debugging |
-
-### Agent Tier Matrix
-Use `oh-my-claudecode:` prefix when calling via Task tool.
-
-| Domain | LOW (Haiku) | MEDIUM (Sonnet) | HIGH (Opus) |
-|--------|-------------|-----------------|-------------|
-| Analysis | `architect-low` | `architect-medium` | `architect` |
-| Execution | `executor-low` | `executor` | `executor-high` |
-| Search | `explore` | `explore-medium` | `explore-high` |
-| Research | `researcher-low` | `researcher` | - |
-| Planning | - | - | `planner` |
-| Critique | - | - | `critic` |
-
-### Skills (active)
-
-| Skill | Trigger | Description |
-|-------|---------|-------------|
-| `ralph` | "ralph", "don't stop" | Persistent loop until task completion with architect verification |
-| `ralplan` | "ralplan" | Iterative planning: Planner + Architect + Critic consensus |
-| `cancel` | "cancelomc", "stopomc" | Cancel active OMC mode, clear state files |
-
-### Cancellation
-Use `/oh-my-claudecode:cancel` (or `--force`) to end execution modes and clear state.
-
-### Parallelization
-- **Independent tasks:** Fire multiple `Task()` calls in one message
-- **Long operations:** Use `run_in_background: true` for builds, tests, installs
-- **Sequential:** Chain dependent tasks with `&&` or sequential tool calls
-
-### State & Memory
-- State files: `{worktree}/.omc/state/` (use `state_read`/`state_write`/`state_clear`)
-- Notepad: `{worktree}/.omc/notepad.md` (use `notepad_read`/`notepad_write_*`)
-- Plans: `{worktree}/.omc/plans/`
+## Multi-Agent (OMC)
+```
+- OMC plugin injects its own instructions; do NOT duplicate them here
+- Key skills: ralph (persistent loop), ralplan (planning consensus), cancel
+- Route by complexity: haiku=simple, sonnet=standard, opus=complex
+```
