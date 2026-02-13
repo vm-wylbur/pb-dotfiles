@@ -170,5 +170,7 @@ export NVM_DIR="$HOME/.nvm"
 umask 027
 
 # done.
+
 export GPG_TTY=$(tty)
+
 for f in ~/.zshrc.d/*.zsh(N); do source "$f"; done
