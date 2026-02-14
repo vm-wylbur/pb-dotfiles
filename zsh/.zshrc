@@ -127,8 +127,14 @@ export LOCALGIT="$HOME/projects"
 export HRDAGGIT="$LOCALGIT/hrdag"
 export PERSONALGIT="$LOCALGIT/personal"
 
-# Fallback prompt (overridden by hrdag.zsh on managed hosts)
-PROMPT='%n@%m:%~ %# '
+# starship prompt (with fallback)
+# starship finds ~/.config/starship/starship.toml automatically
+if command -v starship &>/dev/null; then
+  eval "$(starship init zsh)"
+else
+  # Simple fallback prompt when starship not installed
+  PROMPT='%n@%m:%~ %# '
+fi
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
 
