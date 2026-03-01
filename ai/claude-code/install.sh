@@ -48,7 +48,7 @@ fi
 
 # Read secret from ~/.zshenv (where it's exported on interactive machines)
 MEM_SECRET=$(grep '^export CLAUDE_MEM_SECRET=' "$HOME/.zshenv" 2>/dev/null \
-    | head -1 | cut -d'=' -f2 | tr -d "'\"")
+    | head -1 | cut -d'=' -f2 | tr -d "'\"" || true)
 
 HOOKS_DIR="$CLAUDE_DIR/hooks"
 TMP=$(mktemp)
