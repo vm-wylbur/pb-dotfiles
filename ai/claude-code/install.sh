@@ -38,6 +38,35 @@ link_file() {
 echo "Creating symlinks..."
 link_file "$DOTFILES/ai/docs/meta-CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
 link_file "$DOTFILES/ai/claude-code/skills"  "$CLAUDE_DIR/skills"
+link_file "$DOTFILES/ai/claude-code/hooks"   "$CLAUDE_DIR/hooks"
+
+# ── settings.json: inject hooks + CLAUDE_MEM_SECRET ──────────────────────────
+SETTINGS="$CLAUDE_DIR/settings.json"
+if [ ! -f "$SETTINGS" ]; then
+    echo '{}' > "$SETTINGS"
+fi
+
+# Read secret from ~/.zshenv (where it's exported on interactive machines)
+MEM_SECRET=$(grep '^export CLAUDE_MEM_SECRET=' "$HOME/.zshenv" 2>/dev/null \
+    | head -1 | cut -d'=' -f2 | tr -d "'\"")
+
+HOOKS_DIR="$CLAUDE_DIR/hooks"
+TMP=$(mktemp)
+jq \
+    --arg secret  "$MEM_SECRET" \
+    --arg capture "bash ${HOOKS_DIR}/mem-capture.sh" \
+    --arg compact "bash ${HOOKS_DIR}/mem-precompact.sh" \
+    --arg inject  "bash ${HOOKS_DIR}/mem-inject.sh" \
+    --arg degrade "bash ${HOOKS_DIR}/mem-degradation.sh" \
+    '
+    .env.CLAUDE_MEM_SECRET = $secret |
+    .hooks.Stop         = [{"hooks": [{"type": "command", "command": $capture}]}] |
+    .hooks.PreCompact   = [{"hooks": [{"type": "command", "command": $compact}]}] |
+    .hooks.SessionStart = [{"hooks": [{"type": "command", "command": $inject}]}] |
+    .hooks.PostToolUse  = [{"matcher": "Bash|Edit|Write", "hooks": [
+        {"type": "command", "timeout": 5, "command": $degrade}]}]
+    ' "$SETTINGS" > "$TMP" && mv "$TMP" "$SETTINGS"
+echo "  updated: $SETTINGS (hooks + CLAUDE_MEM_SECRET)"
 
 echo ""
 echo "Next steps:"
