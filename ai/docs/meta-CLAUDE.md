@@ -33,10 +33,13 @@ When information is missing:
 
 NEVER:
 - Guess library versions or API formats
-- Assume user requirements 
+- Assume user requirements
 - Fill in missing details with "reasonable defaults"
 - Use placeholder values (YOUR_API_KEY, TODO)
 - Make up implementation details
+- Use memory/notes as the source for file paths, filenames, or key names
+  Memory is context, not truth. Always verify against actual config files on disk.
+  This is especially critical for cryptographic key paths — read the toml, every time.
 
 State explicitly: "I need [specific information] before proceeding"
 ```
@@ -84,6 +87,12 @@ Before claiming ANYTHING works:
 - Test actual functionality
 - Verify end-to-end
 - "Ready to commit" = tested and working, not "looks right"
+
+When testing produces skipped/None/disabled checks:
+- STOP. A skipped check is NOT a pass.
+- Flag every skip explicitly: "X was not tested because Y"
+- If the skip is in the thing you're validating, FIX the test setup
+  so the check actually runs. Never report success with untested checks.
 ```
 
 ## FILE HEADERS
