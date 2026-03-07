@@ -23,34 +23,21 @@ Quick context reload: re-read guidelines, verify tools are available, report env
    - Report last modified date
    - Confirm loaded
 
-### Phase 2: Check Environment
+### Phase 2: Check MCPs
 
-2. MCP Servers
-   - List connected servers with tool counts
-   - Flag any expected servers that are missing (expected: tree-sitter, repomix, claude-mem, omc)
-
-3. Skills
-   - Scan `~/.claude/skills/*/SKILL.md` (use `find -L`, directory is symlinked)
-   - Count registered vs on-disk
-   - List by name only
-
-### Phase 3: Repo Status
-
-4. If in a git repo:
-   - Branch name, clean/dirty
-   - Commits ahead/behind remote
-   - Last commit hash + subject
-   - If dirty: list changed files (short format)
+2. List connected MCP servers with tool counts.
+   Flag any expected servers that are missing (expected: tree-sitter, repomix, claude-mem, omc)
 
 ### Output Format
 
 ```
-Context loaded
+Context refreshed
 ├─ meta-CLAUDE.md (date) ✓
-├─ MCPs: N connected (list names)
-├─ Skills: N on disk (list names)
-└─ Repo: branch (clean|dirty, N ahead)
+└─ MCPs: N connected (list names) [MISSING: x, y if any]
 ```
+
+Note: host, arch, git status, and skills are injected automatically at session start
+by the session-env.sh hook. Only use /refresh mid-session after corrective feedback.
 
 ## Communication Style
 
