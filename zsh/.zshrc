@@ -94,6 +94,8 @@ alias ccat="pygmentize $1"
 alias ll="ls -ltrFG --color"
 alias la="ls -laFG  --color"
 
+alias ccc="claude --permission-mode bypassPermissions 'run refresh skill then use repomix to understand this project and come back to me for today'\''s task'"
+
 # j command now handled by zoxide (z/zi)
 alias h='print -z $(fc -l 1 | fzf +s --tac | $SED -re "s/^\s*[0-9]+\s*//")'
 

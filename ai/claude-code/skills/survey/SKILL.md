@@ -18,6 +18,9 @@ Understand what a project does, find outstanding work, assess documentation fres
 ## Prerequisites
 
 - Must be in a git repo (if not, say so and stop)
+- **Run `git pull` before anything else.** Survey must reflect current remote state,
+  not stale local state. If pull fails, note it and proceed but flag all findings as
+  potentially stale.
 
 ## Workflow
 
@@ -59,9 +62,23 @@ Understand what a project does, find outstanding work, assess documentation fres
    - Is it superseded? (does a newer doc cover the same ground?)
    - Last modified date vs last commit date
 
-8. Categorize each item:
-   - **Active**: still relevant, not done
-   - **Completed**: codebase shows this is done, doc should be archived/removed
+8. **Git log check (mandatory for any item marked "pending" or "blocked"):**
+   For each pending item that references a path, role, or dependency, run:
+   ```
+   git log --oneline -20 -- <relevant path>
+   ```
+   Examples:
+   - Ansible role item → `git log --oneline -20 -- roles/tfcs/`
+   - Source item → `git log --oneline -20 -- src/<module>/`
+   - Config item → `git log --oneline -20 -- inventory/`
+
+   Scan the output for: `closes #N`, `fixes #N`, `deploys`, `merged`, `enable`, `re-enable`.
+   If found in the last 20 commits: reclassify as **Completed** or **Verify** — NOT Active.
+   **Do not report a TODO as "pending" or "blocked" if git log shows it was recently closed.**
+
+9. Categorize each item:
+   - **Active**: still relevant, not done — confirmed by git log showing no close commit
+   - **Completed**: git log or codebase shows this is done; doc should be archived/removed
    - **Superseded**: newer doc exists, this one is stale
    - **Unknown**: can't determine, flag for user
 
