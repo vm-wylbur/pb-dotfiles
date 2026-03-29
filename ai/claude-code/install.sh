@@ -75,7 +75,7 @@ if [ -x "$VENV_MCP/bin/python" ] && "$VENV_MCP/bin/python" -c "import mcp_server
 else
     echo "  creating $VENV_MCP with mcp-server-tree-sitter..."
     uv venv "$VENV_MCP"
-    "$VENV_MCP/bin/pip" install --quiet mcp-server-tree-sitter
+    VIRTUAL_ENV="$VENV_MCP" uv pip install mcp-server-tree-sitter
     echo "  installed: mcp-server-tree-sitter into $VENV_MCP"
 fi
 
