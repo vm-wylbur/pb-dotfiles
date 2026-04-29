@@ -17,9 +17,29 @@ BEFORE writing ANY code:
 4. ONLY write new code if nothing exists
 
 Available tools YOU MUST USE:
-- OMC notepad/project-memory: Store/retrieve key decisions and patterns
 - repomix and treesitter: Analyze codebase BEFORE proposing changes
 - Skills in ~/.claude/skills/: Use these workflows, don't recreate
+- claude-mem MCP (mcp__claude-mem__mem-store / mem-search): debugging lessons, session insights
+- IaC drift queue (ansible-only): queue-fix-store / queue-fix-list /
+  queue-fix-mark. For protocol: mem-search "queue-fix howto"
+  cc-hrdag-ansible drains queue-fix-list at session start.
+  Other repos (tfcs/ntx/hmon/filelister/sysadmin) get GH issues, not
+  queue entries.
+
+  Filing shorthand — when user says "qfix that" / "queue this" /
+  "log this fix" (or similar), call queue-fix-store with
+  target_repo="hrdag-ansible" and these fields extracted from
+  preceding context:
+  - host (default: current shell host), path, before_state,
+    after_state, why (one line)
+  - who="PB" trust="PB" (defaults)
+  If host/path/states can't be determined, ASK — never guess.
+
+  Proactive offer: when the session helps PB make a host change
+  likely to need IaC encoding (sudo on /etc/, /usr/local/, /var/lib/,
+  systemd unit files; new files in system paths), offer once at end
+  of turn: "qfix that?" Skip for /tmp, $HOME, and files inside a git
+  repo (those go through git or are transient).
 
 If you write code that reimplements existing functionality = CRITICAL FAILURE
 ```
@@ -207,9 +227,3 @@ If your concern is already open, comment on it rather than filing a duplicate.
 - Partial fixes: close with a note on what's deferred, open a new issue for
   the remainder.
 
-## Multi-Agent (OMC)
-```
-- OMC plugin injects its own instructions; do NOT duplicate them here
-- Key skills: ralph (persistent loop), ralplan (planning consensus), cancel
-- Route by complexity: haiku=simple, sonnet=standard, opus=complex
-```
