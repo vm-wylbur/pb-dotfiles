@@ -73,8 +73,9 @@ State explicitly: "I need [specific information] before proceeding"
 - NEVER commit without asking "Should we commit this?"
 - Use git mv, NOT bash mv (preserve history)
 - Use git rm, NOT bash rm (track deletions)
-- Commit format: Brief title, then "By PB & Claude" (no Co-authored-by)
-- No emojis in commits
+- Commit format: Brief title, then "By PB & {emoji} {claude-id}" (e.g. "By PB & 🔧 cc-sysadmin").
+  No Co-authored-by lines. Multi-agent attribution (cross-repo author + reviewer) lives in the PR body, not the trailer.
+- No emojis in commit title or body. Emoji belongs only in the agent-id trailer (it is part of the agent's identity).
 ```
 ## DEPLOYMENT & INFRASTRUCTURE
 ```
