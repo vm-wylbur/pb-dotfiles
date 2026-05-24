@@ -52,6 +52,12 @@ Visibility, Determinism, Composability) plus a scope axis we added
 - **cc-dots identity established.** 🧷 "fastens the agent env." In `dotfiles/CLAUDE.md`. Commit trailer: `By PB & cc-dots 🧷`.
 - **Trailer convention restored** to `{claude-id} {emoji}` (cbec5ad had inverted it; superseded by `d423392`).
 - **OMC plugin removed**; stale `enabledPlugins."oh-my-claudecode@omc"` entry cleared from `~/.claude/settings.json` (2026-05-23).
+- **`doc_drift-check` + `doc_sysadmin` converted to runbooks** in server-documentation (2026-05-23):
+  - `server-documentation/scripts/runbooks/drift-check/RUNBOOK.md` (5da7dc5)
+  - `server-documentation/scripts/runbooks/sysadmin-change/RUNBOOK.md` (0b24a7f)
+  - `hrdag-ansible/scripts/coverage-search.sh` (3817b44) — extracted from sysadmin-change Step 3a
+  - `server-documentation/CLAUDE.md` runbook pointer (17e7ce2)
+  - Source dirs removed from dotfiles; minimal `name`/`description` frontmatter retained on RUNBOOK.md for indexing.
 - **Axis 2 (determinism) applied to `refresh` + `survey` + `changelog`.** 14 standalone scripts now in `ai/claude-code/lib/`:
   - From refresh (7): `env.sh`, `git-status.sh`, `gh-issues.sh`, `gh-prs.sh`, `skills-list.sh`, `mcp-status.sh`, `meta-claude-mtime.sh`
   - From survey (3): `git-pull-ff.sh`, `code-todos.sh`, `git-log-recent.sh`
@@ -67,13 +73,12 @@ In rough priority:
 1. **Apply axis 2 + 3 to remaining skills.** Same pattern: identify scriptable steps, push to `lib/`, spot duplicates, extract shared.
    - `coordinate` — mostly judgment; minimal scripting
    - `negotiate` + `facilitator` — share MCP-setup primitive (extract to lib/?)
-2. **Convert `doc_drift-check` + `doc_sysadmin` from skills to runbooks.** Both flagged as runbook-shaped (multi-step, deliberate, high blast radius). Untracked dirs still sitting in `ai/claude-code/skills/` — move to `scripts/runbooks/<name>/` in their home repos (server-documentation or hrdag-ansible — TBD which).
-3. **Reclassify `ansible_inv-first`.** It's a meta-rule ("investigate before implementing"), not a capability. Probably belongs in hrdag-ansible/CLAUDE.md, not as a skill.
-4. **Convert hrdag-ansible procedural docs to `scripts/runbooks/<name>/`.** ~4-5 candidates: `adding-new-host.md`, `decommission-host.md`, `revoke-user-ssh-cert.md`, parts of `pikvm-hardening.md`.
-5. **Axis 1 (visibility / risk gating).** Verify Claude Code's support for `disable-model-invocation` frontmatter. Apply to high-risk skills (`ansible_address`, `doc_sysadmin` if it stays a skill).
-6. **Agents → dotfiles.** 21 stock OMC agents live in `~/.claude/agents/` un-version-controlled. Decide: vendor them into dotfiles, or leave to OMC plugin updates. (OMC plugin itself has been removed — see settings cleanup above; agents survived because they were dropped into `~/.claude/agents/` directly.)
-7. **Stale README cleanup.** `claude-code/skills/README.md` still lists skills that no longer exist (code-explore, postgres-optimization, etc.). Either rewrite or delete.
-8. **MCP → skill conversion (longer-term target).** PB flagged: some MCP behaviors should be skills backed by lib/ scripts for offline reliability + version control. Candidates: claude-mem (file-based store + grep search), possibly claude-negotiate.
+2. **Reclassify `ansible_inv-first`.** It's a meta-rule ("investigate before implementing"), not a capability. Probably belongs in hrdag-ansible/CLAUDE.md, not as a skill.
+3. **Convert hrdag-ansible procedural docs to `scripts/runbooks/<name>/`.** ~4-5 candidates: `adding-new-host.md`, `decommission-host.md`, `revoke-user-ssh-cert.md`, parts of `pikvm-hardening.md`.
+4. **Axis 1 (visibility / risk gating).** Verify Claude Code's support for `disable-model-invocation` frontmatter. Apply to high-risk skills (e.g. `ansible_address`).
+5. **Agents → dotfiles.** 21 stock OMC agents live in `~/.claude/agents/` un-version-controlled. Decide: vendor them into dotfiles, or leave to OMC plugin updates. (OMC plugin itself has been removed — see settings cleanup above; agents survived because they were dropped into `~/.claude/agents/` directly.)
+6. **Stale README cleanup.** `claude-code/skills/README.md` still lists skills that no longer exist (code-explore, postgres-optimization, etc.). Either rewrite or delete.
+7. **MCP → skill conversion (longer-term target).** PB flagged: some MCP behaviors should be skills backed by lib/ scripts for offline reliability + version control. Candidates: claude-mem (file-based store + grep search), possibly claude-negotiate.
 
 ## Open questions / things to verify
 
