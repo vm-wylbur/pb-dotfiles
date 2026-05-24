@@ -7,107 +7,94 @@ description: Understand a project, find todos, assess doc staleness, prioritize 
 
 ## Purpose
 
-Understand what a project does, find outstanding work, assess documentation freshness, and return a prioritized todo list. Run this when starting work on a repo.
+Understand what a project does, find outstanding work, assess documentation
+freshness, and return a prioritized todo list. Run when starting work in a
+repo. Deterministic data gathering is delegated to `~/.claude/lib/` scripts;
+the AI's job is judgment (staleness, categorization, prioritization).
 
 ## When to Use
 
 - User says "survey", "what needs doing", "catch me up"
 - First time working in a project this session
-- User wants to prioritize work
 
 ## Prerequisites
 
-- Must be in a git repo (if not, say so and stop)
-- **Run `git pull` before anything else.** Survey must reflect current remote state,
-  not stale local state. If pull fails, note it and proceed but flag all findings as
-  potentially stale.
+- Must be in a git repo (silent scripts exit cleanly if not — say so and stop)
 
 ## Workflow
 
-### Phase 1: Understand the Project
+### Phase 1: Re-sync from remote
 
-1. Read project context files (in order, skip if missing):
-   - `CLAUDE.md` (project-specific instructions)
-   - `README.md`
-   - `AGENTS.md`
-   - `TODAY.md`, `FIXME.md`
+```
+bash ~/.claude/lib/git-pull-ff.sh
+```
 
-2. Understand project structure:
-   - Use tree-sitter `analyze_project` if available
-   - Fallback: `ls` top-level, read key config files (package.json, pyproject.toml, Makefile, etc.)
-   - Identify: language, build system, test framework, deployment method
+Silent on no-op. Prints one line if commits were pulled, or "skipped (dirty
+tree)" / "FAILED — <reason>" if it didn't pull. Note any failure in the
+output — findings may reflect stale local state.
 
-3. Summarize in 3-5 sentences: what this project is, what it does, how it's built.
+### Phase 2: Understand the project (AI judgment)
 
-### Phase 2: Gather Outstanding Work
+Read these in order, skip if missing:
+- `CLAUDE.md`, `README.md`, `AGENTS.md`, `TODAY.md`, `FIXME.md`
 
-4. GitHub Issues (if `gh` CLI available):
-   - `gh issue list --limit 20 --state open`
-   - Note labels, assignees, staleness
+Identify: language, build system, test framework, deployment method. Use
+`tree-sitter analyze_project` on large repos; otherwise `ls` top-level +
+read key config (package.json, pyproject.toml, Makefile).
 
-5. Scan for TODO/task documents:
-   - Project root: `TODO.md`, `FIXME.md`, `ROADMAP.md`, `CHANGELOG.md`
-   - `docs/` directory: all `.md` files
-   - In-code TODOs: `grep -r 'TODO\|FIXME\|HACK\|XXX' --include='*.py' --include='*.js' --include='*.ts' --include='*.sh' -c` (counts only)
+Summarize in 3-5 sentences: what this project is, does, how it's built.
 
-6. Check claude-mem for project context:
-   - Search claude-mem for this project name
-   - Note any stored decisions or patterns
+### Phase 3: Gather outstanding work
 
-### Phase 3: Assess Staleness
+Deterministic data — compose lib/ scripts:
 
-7. For each TODO/doc found:
-   - Is it still relevant? (grep for referenced files/functions — do they exist?)
-   - Is it completed? (does the codebase already implement what's described?)
-   - Is it superseded? (does a newer doc cover the same ground?)
-   - Last modified date vs last commit date
+```
+bash ~/.claude/lib/gh-issues.sh         # open issues, top 10
+bash ~/.claude/lib/code-todos.sh        # TODO/FIXME/HACK/XXX in source
+```
 
-8. **Git log check (mandatory for any item marked "pending" or "blocked"):**
-   For each pending item that references a path, role, or dependency, run:
-   ```
-   git log --oneline -20 -- <relevant path>
-   ```
-   Examples:
-   - Ansible role item → `git log --oneline -20 -- roles/tfcs/`
-   - Source item → `git log --oneline -20 -- src/<module>/`
-   - Config item → `git log --oneline -20 -- inventory/`
+Then read TODO/roadmap docs the AI can find via `ls` + Read:
+- Root: `TODO.md`, `FIXME.md`, `ROADMAP.md`, `CHANGELOG.md`
+- `docs/`: all `.md` files
 
-   Scan the output for: `closes #N`, `fixes #N`, `deploys`, `merged`, `enable`, `re-enable`.
-   If found in the last 20 commits: reclassify as **Completed** or **Verify** — NOT Active.
-   **Do not report a TODO as "pending" or "blocked" if git log shows it was recently closed.**
+Optional: claude-mem search for project name (skip if MCP unavailable).
 
-9. Categorize each item:
-   - **Active**: still relevant, not done — confirmed by git log showing no close commit
-   - **Completed**: git log or codebase shows this is done; doc should be archived/removed
-   - **Superseded**: newer doc exists, this one is stale
-   - **Unknown**: can't determine, flag for user
+### Phase 4: Assess staleness (per item)
 
-### Phase 4: Recommend Doc Cleanup
+For each pending item — issue, TODO entry, doc — run:
 
-9. For completed/superseded docs:
-   - Suggest: remove, archive to `docs/completed/`, or merge into another doc
-   - Show evidence (what file/function proves completion)
+```
+bash ~/.claude/lib/git-log-recent.sh <path-or-area> 20
+```
 
-### Phase 5: Prioritized Todo List
+Script prints commits + flags closure markers (`closes #`, `fixes #`,
+`deploys`, `merged`, `re-enable`). **Demote any TODO to Completed/Verify
+if git log shows it was closed.** Don't report stale "blocked" items.
 
-10. Return a single prioritized list:
-    - **Doc cleanup first** (low-risk, high-value tidying)
-    - Then active todos grouped by source (issues, docs, in-code)
-    - Note dependencies between items if obvious
-    - Format:
+Categorize each:
+- **Active** — relevant, not done (no closure commit)
+- **Completed** — git log or code shows done; archive/remove the doc entry
+- **Superseded** — newer doc covers same ground
+- **Unknown** — can't determine, flag for user
+
+### Phase 5: Recommend doc cleanup
+
+For completed/superseded: suggest remove, archive to `docs/completed/`, or
+merge into the newer doc. Cite the file/function/commit that proves completion.
+
+### Phase 6: Prioritized output
 
 ```
 ## Project: <name>
 <3-5 sentence summary>
 
-## Doc Cleanup (do first)
-1. Remove TODO.md items 3,5,7 — implemented in src/foo.py
+## Doc Cleanup (do first — low risk, high tidying value)
+1. Remove TODO.md items 3,5,7 — implemented in src/foo.py (commit abc123)
 2. Archive docs/old-plan.md — superseded by docs/v2-plan.md
 
 ## Outstanding Work
 ### From GitHub Issues
 - #42: <title> (P1, stale 30d)
-- #38: <title> (P2)
 
 ### From Docs
 - ROADMAP.md item 2: <description>
@@ -118,8 +105,18 @@ Understand what a project does, find outstanding work, assess documentation fres
 
 ## Guardrails
 
-- Read-only: do NOT modify any files during survey
-- If codebase is large (>500 files), use tree-sitter compression or sample key directories
-- If `gh` fails (no remote, no auth), skip issues and note it
-- If claude-mem unavailable, skip memory search and note it
-- Time budget: aim for 30 seconds, not 5 minutes
+- **Read-only.** Survey does not modify files.
+- Large repos (>500 files): use tree-sitter compression or sample key dirs.
+- All lib/ scripts are silent on no-data — absent output ≠ error.
+- `code-todos.sh` may match its own regex strings when scanning tooling
+  repos (the literal "TODO|FIXME" in the patterns). Discount obvious
+  self-matches.
+- Time budget: aim for 30 seconds, not 5 minutes.
+
+## Notes
+
+- The session-start banner already emitted env / git-status / open issues /
+  meta-CLAUDE mtime / MCP status — don't re-run those. Survey adds the
+  remaining gathering + judgment work.
+- If you wrote new lib/ primitives during a survey, add them here as a new
+  composition step rather than inlining shell in the workflow.
