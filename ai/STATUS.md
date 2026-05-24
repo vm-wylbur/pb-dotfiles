@@ -63,6 +63,11 @@ Visibility, Determinism, Composability) plus a scope axis we added
   - `hrdag-ansible/CLAUDE.md` runbook pointer added (mirrors server-doc pattern).
   - Reclassification: STATUS.md called this a "meta-rule for CLAUDE.md" but reading the content showed it's runbook-shaped (6 phases, connectivity map, classification rubric). Converted to runbook instead — preserves the procedural value.
   - Side fixes: stale `mcp__claude-mem__search` → `mcp__claude-mem__mem-search`; `.omc/plans/` annotated as read-only archive (OMC plugin removed).
+- **hrdag-ansible procedural docs → runbooks, phase 1** (2026-05-24, b1d4fa4):
+  - `docs/decommission-host.md` → `scripts/runbooks/decommission-host/RUNBOOK.md`
+  - `docs/revoke-user-ssh-cert.md` → `scripts/runbooks/revoke-user-cert/RUNBOOK.md`
+  - Both tracked as renames (87% / 96% similarity); only edits were YAML frontmatter, "When to Run" framing, and prelude. CLAUDE.md Runbooks pointer expanded to list all three.
+  - Phase 2 (deferred): `adding-new-host.md` (mixed; bulk-move procedure, leave SSH-CA explainer + per-class role notes in `docs/`) and `pikvm-hardening.md` (split 3 ways: `harden-pikvm` runbook + `recover-pikvm` runbook + residual `docs/pikvm-reference.md`).
 - **`negotiate` + `facilitator` + `coordinate` axis-2 pass** (2026-05-23, a47126b):
   - 2 new `lib/` primitives: `negotiate-mcp-setup.sh` (idempotent `claude mcp add`) and `negotiate-agent-id.sh` (resolves agent_id from CLAUDE.md). Total `lib/` count: 16.
   - Both skills' install blocks collapse from prose + duplicated `claude mcp add` to one-liners calling the scripts.
@@ -81,7 +86,9 @@ Visibility, Determinism, Composability) plus a scope axis we added
 
 In rough priority:
 
-1. **Convert hrdag-ansible procedural docs to `scripts/runbooks/<name>/`.** ~4-5 candidates: `adding-new-host.md`, `decommission-host.md`, `revoke-user-ssh-cert.md`, parts of `pikvm-hardening.md`. The `scripts/runbooks/` dir now exists (created by inv-first conversion).
+1. **hrdag-ansible procedural docs → runbooks, phase 2.** Phase 1 landed 2026-05-24 (`decommission-host`, `revoke-user-cert`). Remaining:
+   - `docs/adding-new-host.md` (755 lines, mixed) → `scripts/runbooks/add-host/RUNBOOK.md` for the procedure (Phases 1-3, checklist, anchor-class three-pass sequence as Phase 3b or sibling runbook). SSH-CA explainer + per-class role notes + IP allocation reference stay in `docs/`.
+   - `docs/pikvm-hardening.md` (522 lines, reference-heavy) → splits 3 ways: `scripts/runbooks/harden-pikvm/RUNBOOK.md` (first-host hardening) + `scripts/runbooks/recover-pikvm/RUNBOOK.md` (recovery procedure) + residual `docs/pikvm-reference.md` (overview, technical findings, role design, lessons learned).
 2. **Axis 1 (visibility / risk gating).** Verify Claude Code's support for `disable-model-invocation` frontmatter. Apply to high-risk skills (e.g. `ansible_address`).
 3. **Agents → dotfiles.** 21 stock OMC agents live in `~/.claude/agents/` un-version-controlled. Decide: vendor them into dotfiles, or leave to OMC plugin updates. (OMC plugin itself has been removed — see settings cleanup above; agents survived because they were dropped into `~/.claude/agents/` directly.)
 4. **Stale README cleanup.** `claude-code/skills/README.md` still lists skills that no longer exist (code-explore, postgres-optimization, etc.). Either rewrite or delete.
