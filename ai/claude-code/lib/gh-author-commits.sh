@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Author: PB and cc-dots 🧷
+# Date: 2026-05-23
+# License: (c) HRDAG, 2026, GPL-2 or newer
+#
+# dotfiles/ai/claude-code/lib/gh-author-commits.sh
+#
+# Search all GitHub commits by @me since DATE across all repos. Emits TSV:
+#   repo<TAB>sha<TAB>iso-date<TAB>first-line-of-message
+# Silent if gh CLI missing. Used by changelog skill to discover which repos
+# saw activity in the reporting window.
+#
+# Usage: bash lib/gh-author-commits.sh YYYY-MM-DD
+#        LIMIT=500 bash lib/gh-author-commits.sh 2026-05-01
+
+DATE=${1:-}
+[ -z "$DATE" ] && { echo "usage: gh-author-commits.sh YYYY-MM-DD" >&2; exit 1; }
+command -v gh &>/dev/null || exit 0
+
+LIMIT=${LIMIT:-1000}
+
+GH_PAGER=cat gh search commits \
+    --author="@me" \
+    --committer-date=">=${DATE}" \
+    --sort=committer-date \
+    --order=desc \
+    --limit "$LIMIT" \
+    --json repository,sha,commit \
+    --jq '.[] | "\(.repository.fullName)\t\(.sha[0:7])\t\(.commit.committer.date)\t\(.commit.message | split("\n")[0])"' \
+    2>/dev/null
