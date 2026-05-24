@@ -51,27 +51,27 @@ Visibility, Determinism, Composability) plus a scope axis we added
 - **Scope phase complete.** 4 ansible skills removed from dotfiles (`rm -rf`); now only in hrdag-ansible repo. PR #543 renames `investigate-first` → `ansible_inv-first` (awaiting cc-ansible-merger merge).
 - **cc-dots identity established.** 🧷 "fastens the agent env." In `dotfiles/CLAUDE.md`. Commit trailer: `By PB & cc-dots 🧷`.
 - **Trailer convention restored** to `{claude-id} {emoji}` (cbec5ad had inverted it; superseded by `d423392`).
-- **Axis 2 (determinism) applied to `refresh`.** 7 standalone scripts in `ai/claude-code/lib/`:
-  - `env.sh`, `git-status.sh`, `gh-issues.sh`, `gh-prs.sh`, `skills-list.sh`, `mcp-status.sh`, `meta-claude-mtime.sh`
-  - `session-env.sh` hook refactored to compose them (behavior-preserving)
-  - `refresh/SKILL.md` is now a composition recipe documenting 4 mid-session use cases
-  - `install.sh` adds `~/.claude/lib` symlink for new-machine setup
-  - `~/.claude/lib` symlink created on porky
+- **OMC plugin removed**; stale `enabledPlugins."oh-my-claudecode@omc"` entry cleared from `~/.claude/settings.json` (2026-05-23).
+- **Axis 2 (determinism) applied to `refresh` + `survey` + `changelog`.** 14 standalone scripts now in `ai/claude-code/lib/`:
+  - From refresh (7): `env.sh`, `git-status.sh`, `gh-issues.sh`, `gh-prs.sh`, `skills-list.sh`, `mcp-status.sh`, `meta-claude-mtime.sh`
+  - From survey (3): `git-pull-ff.sh`, `code-todos.sh`, `git-log-recent.sh`
+  - From changelog (4): `gh-author-commits.sh`, `gh-author-issues.sh`, `repo-diff-since.sh`, `git-version-tags-since.sh`
+  - `session-env.sh` hook composes mtime + MCP primitives (grounds every session start on guideline freshness + MCP gaps); `claude-negotiate` added to expected-MCP list.
+  - All three SKILL.md files rewritten as composition recipes: deterministic data gathering delegated to lib/ scripts; AI focuses on judgment (refresh: 4 mid-session use cases; survey: staleness + categorization + prioritization; changelog: voice, theme selection, narrative synthesis).
+  - `install.sh` adds `~/.claude/lib` symlink; symlink created on porky.
 
 ## Pending — pick up here
 
 In rough priority:
 
 1. **Apply axis 2 + 3 to remaining skills.** Same pattern: identify scriptable steps, push to `lib/`, spot duplicates, extract shared.
-   - `survey` — likely wants `lib/git-log.sh`, reuses `lib/gh-issues.sh`
-   - `changelog` — reuses `lib/git-log.sh`, `lib/gh-prs.sh`
    - `coordinate` — mostly judgment; minimal scripting
    - `negotiate` + `facilitator` — share MCP-setup primitive (extract to lib/?)
-2. **Convert `doc_drift-check` + `doc_sysadmin` from skills to runbooks.** Both flagged as runbook-shaped (multi-step, deliberate, high blast radius). Move to `scripts/runbooks/<name>/` in their home repos (server-documentation or hrdag-ansible — TBD which).
+2. **Convert `doc_drift-check` + `doc_sysadmin` from skills to runbooks.** Both flagged as runbook-shaped (multi-step, deliberate, high blast radius). Untracked dirs still sitting in `ai/claude-code/skills/` — move to `scripts/runbooks/<name>/` in their home repos (server-documentation or hrdag-ansible — TBD which).
 3. **Reclassify `ansible_inv-first`.** It's a meta-rule ("investigate before implementing"), not a capability. Probably belongs in hrdag-ansible/CLAUDE.md, not as a skill.
 4. **Convert hrdag-ansible procedural docs to `scripts/runbooks/<name>/`.** ~4-5 candidates: `adding-new-host.md`, `decommission-host.md`, `revoke-user-ssh-cert.md`, parts of `pikvm-hardening.md`.
 5. **Axis 1 (visibility / risk gating).** Verify Claude Code's support for `disable-model-invocation` frontmatter. Apply to high-risk skills (`ansible_address`, `doc_sysadmin` if it stays a skill).
-6. **Agents → dotfiles.** 21 stock OMC agents live in `~/.claude/agents/` un-version-controlled. Decide: vendor them into dotfiles, or leave to OMC plugin updates.
+6. **Agents → dotfiles.** 21 stock OMC agents live in `~/.claude/agents/` un-version-controlled. Decide: vendor them into dotfiles, or leave to OMC plugin updates. (OMC plugin itself has been removed — see settings cleanup above; agents survived because they were dropped into `~/.claude/agents/` directly.)
 7. **Stale README cleanup.** `claude-code/skills/README.md` still lists skills that no longer exist (code-explore, postgres-optimization, etc.). Either rewrite or delete.
 8. **MCP → skill conversion (longer-term target).** PB flagged: some MCP behaviors should be skills backed by lib/ scripts for offline reliability + version control. Candidates: claude-mem (file-based store + grep search), possibly claude-negotiate.
 
@@ -84,9 +84,13 @@ In rough priority:
 ## Recent commits (dotfiles)
 
 ```
+919709a changelog: decompose into lib/ scripts + voice-focused skill
+4651c57 survey: decompose into lib/ scripts + judgment-focused skill
+cca4300 session-env: emit mtime + MCP status; refresh skill simplified
+f1aeec6 ai/STATUS.md: skills+agents audit handoff
+bdb2bce refresh: decompose into lib/ scripts + thin orchestrator hook
 d423392 meta-CLAUDE: trailer format is "claude-id then emoji"
 e188026 CLAUDE.md: cc-dots agent identity + repo tagline
-b165582 ai/claude-code/hooks: pre-bash-guard.sh from kill-cascade incident
 ```
 
 ## Related PRs
