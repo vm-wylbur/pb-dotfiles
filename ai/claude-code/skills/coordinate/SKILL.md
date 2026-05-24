@@ -18,14 +18,6 @@ One CC session, multiple subagent roles, real adversarial critique.
 
 ## Prerequisites
 
-**Disable oh-my-claudecode before using this skill.** OMC's agent
-orchestration (executor, architect, etc.) intercepts subagent spawns
-and overrides the role prompts defined here. Run:
-```
-/plugin disable oh-my-claudecode
-```
-Re-enable after the coordination is complete.
-
 **repomix** must be installed (`npm install -g repomix`).
 
 ## When to use

@@ -1,38 +1,33 @@
-Author: PB and Claude
-Date: 2026-02-28
-License: (c) Patrick Ball, 2026, GPL-2 or newer
-
 ---
-claude-negotiate/skills/negotiate/SKILL.md
+name: negotiate
+description: Coordinate across repos via the claude-negotiate MCP server. Use when peer agents on other hosts need to converge on a shared decision (filesystem layout, schema, ownership, deployment order). Also for staff meetings and design sessions led by cc-manager.
+---
 
 # claude-negotiate skill
 
-MCP server at `http://snowball:7832/mcp`. Register once per machine:
-```
-claude mcp add --transport http --scope user claude-negotiate http://snowball:7832/mcp
-```
+## Install (per machine)
 
-Install this skill user-wide (all projects on this machine see it):
-```
-cp -r /path/to/claude-negotiate/skills/negotiate ~/.claude/skills/
-```
+Register the MCP server and add your agent identity to this repo's CLAUDE.md:
 
-Then add your agent identity to **this repo's** `CLAUDE.md` (one line):
 ```
+~/.claude/lib/negotiate-mcp-setup.sh
 echo "My negotiate agent_id is: cc-$(basename $PWD)" >> CLAUDE.md
 ```
 
-Or from claude-negotiate: `make install-negotiate-id HOST=snowball REPO=/path/to/repo`
+(Idempotent — `negotiate-mcp-setup.sh` skips if already registered.)
 
 ## Your agent_id
 
-**Your agent_id is in your `CLAUDE.md`.** Look for the line:
+Resolve it from this repo's CLAUDE.md:
+
 ```
-My negotiate agent_id is: cc-ntx
+~/.claude/lib/negotiate-agent-id.sh
 ```
-Use that exact string everywhere — `open_negotiation`, `post_position`,
-`list_negotiations`. Do not invent or abbreviate it. If the line is missing,
-stop and tell the human to run the install step above.
+
+The script reads the `My negotiate agent_id is: cc-<repo>` line and prints the
+agent_id (e.g. `cc-ntx`). Use that exact string everywhere — `open_negotiation`,
+`post_position`, `list_negotiations`. Do not invent or abbreviate it. If the
+script errors, follow its instructions to add the missing line.
 
 ## Session start
 

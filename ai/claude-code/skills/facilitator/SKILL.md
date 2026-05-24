@@ -1,9 +1,7 @@
-Author: PB and Claude
-Date: 2026-03-02
-License: (c) Patrick Ball, 2026, GPL-2 or newer
-
 ---
-claude-negotiate/skills/facilitator/SKILL.md
+name: facilitator
+description: Facilitate a multi-party negotiation as cc-facilitator — intake → historian → open → adversarial review (5-advisor panel) → close. Use only from a clean session in the claude-negotiate repo (refuses if loaded with repo-specific context). Trigger words "facilitate", "run a negotiation".
+---
 
 # claude-negotiate facilitator skill
 
@@ -44,9 +42,9 @@ You do not own any codebase. You do not defend any system's current state.
 
 **Your agent_id is `cc-facilitator`.**
 
-MCP server at `http://snowball:7832/mcp`. Register once per machine:
+Register the MCP server (idempotent — skips if already registered):
 ```
-claude mcp add --transport http --scope user claude-negotiate http://snowball:7832/mcp
+~/.claude/lib/negotiate-mcp-setup.sh
 ```
 
 Your role:
@@ -295,11 +293,11 @@ Transcript:
 """
 
 # Spawn in parallel (single message, multiple Agent calls):
-critic    = Agent("oh-my-claudecode:critic",            base_prompt + "\nRole: logical consistency, contradictions, missing edge cases, unstated assumptions")
-architect = Agent("oh-my-claudecode:architect",         base_prompt + "\nRole: architectural soundness — wrong abstraction level, better existing patterns, long-term maintenance risk")
-security  = Agent("oh-my-claudecode:security-reviewer", base_prompt + "\nRole: permissions, ACLs, credentials, attack surface, privilege escalation, secrets in config")
-dry       = Agent("oh-my-claudecode:code-reviewer",     base_prompt + "\nRole: DRY-guardian — is this config/script duplicating something that already exists? missed shared abstraction?")
-tdd       = Agent("oh-my-claudecode:tdd-guide",         base_prompt + "\nRole: TDD-guardian — is the agreed outcome verifiable? what single command proves it worked? is that in the artifact?")
+critic    = Agent("critic",            base_prompt + "\nRole: logical consistency, contradictions, missing edge cases, unstated assumptions")
+architect = Agent("architect",         base_prompt + "\nRole: architectural soundness — wrong abstraction level, better existing patterns, long-term maintenance risk")
+security  = Agent("security-reviewer", base_prompt + "\nRole: permissions, ACLs, credentials, attack surface, privilege escalation, secrets in config")
+dry       = Agent("code-reviewer",     base_prompt + "\nRole: DRY-guardian — is this config/script duplicating something that already exists? missed shared abstraction?")
+verifier  = Agent("verifier",          base_prompt + "\nRole: verification-guardian — is the agreed outcome verifiable? what single command proves it worked? is that in the artifact?")
 ```
 
 Collect all five responses. Filter out `no_issue` ones. Post a counter
@@ -316,7 +314,7 @@ Advisor panel before I accept — questions for specific participants:
 [ARCHITECT → cc-{agent}] "<question>"
 [SECURITY → cc-{agent}] "<question>" (prior: neg-XXXXXXXX if applicable)
 [DRY → cc-{agent}] "<question>"
-[TDD → all] "<verification question>"
+[VERIFIER → all] "<verification question>"
 
 I will accept once each question is answered with file:line evidence.
 """,
