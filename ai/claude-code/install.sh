@@ -85,6 +85,7 @@ echo "Creating symlinks..."
 link_file "$DOTFILES/ai/docs/meta-CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
 link_file "$DOTFILES/ai/claude-code/skills"  "$CLAUDE_DIR/skills"
 link_file "$DOTFILES/ai/claude-code/hooks"   "$CLAUDE_DIR/hooks"
+link_file "$DOTFILES/ai/claude-code/lib"     "$CLAUDE_DIR/lib"
 
 # ── 4. CLAUDE_MEM_SECRET in .zshenv ─────────────────────────────────────────
 
