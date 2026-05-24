@@ -63,11 +63,11 @@ Visibility, Determinism, Composability) plus a scope axis we added
   - `hrdag-ansible/CLAUDE.md` runbook pointer added (mirrors server-doc pattern).
   - Reclassification: STATUS.md called this a "meta-rule for CLAUDE.md" but reading the content showed it's runbook-shaped (6 phases, connectivity map, classification rubric). Converted to runbook instead — preserves the procedural value.
   - Side fixes: stale `mcp__claude-mem__search` → `mcp__claude-mem__mem-search`; `.omc/plans/` annotated as read-only archive (OMC plugin removed).
-- **hrdag-ansible procedural docs → runbooks, phase 1** (2026-05-24, b1d4fa4):
-  - `docs/decommission-host.md` → `scripts/runbooks/decommission-host/RUNBOOK.md`
-  - `docs/revoke-user-ssh-cert.md` → `scripts/runbooks/revoke-user-cert/RUNBOOK.md`
-  - Both tracked as renames (87% / 96% similarity); only edits were YAML frontmatter, "When to Run" framing, and prelude. CLAUDE.md Runbooks pointer expanded to list all three.
-  - Phase 2 (deferred): `adding-new-host.md` (mixed; bulk-move procedure, leave SSH-CA explainer + per-class role notes in `docs/`) and `pikvm-hardening.md` (split 3 ways: `harden-pikvm` runbook + `recover-pikvm` runbook + residual `docs/pikvm-reference.md`).
+- **hrdag-ansible procedural docs → runbooks, complete** (2026-05-24):
+  - Phase 1 (b1d4fa4): `docs/decommission-host.md` → `scripts/runbooks/decommission-host/`; `docs/revoke-user-ssh-cert.md` → `scripts/runbooks/revoke-user-cert/`. Both pure runbooks, lifted via `git mv` (87% / 96% rename similarity).
+  - Phase 2a (f5a270d): `docs/adding-new-host.md` (755 lines) split — procedure → `scripts/runbooks/add-host/RUNBOOK.md` (rename, 91% similarity); SSH CA explainer → new `docs/ssh-ca-overview.md`. Per-class notes + anchor-class three-pass sequence kept inline (discovery cost not yet worth a sibling runbook).
+  - Phase 2b (d4beb49): `docs/pikvm-hardening.md` (522 lines) 3-way split — `harden-pikvm/RUNBOOK.md` (manual bringup, chllkvm worked example), `recover-pikvm/RUNBOOK.md` (recovery checklist + 2026-02-14 bootstrap/recovery procedures), and renamed `docs/pikvm-reference.md` (platform model, role design, operational rules; 54% similarity from rename + delete).
+  - hrdag-ansible/CLAUDE.md Runbooks list now contains 6 entries: `add-host`, `decommission-host`, `harden-pikvm`, `inv-first`, `recover-pikvm`, `revoke-user-cert`. README.md doc index updated to point at the runbook index + reference docs.
 - **`negotiate` + `facilitator` + `coordinate` axis-2 pass** (2026-05-23, a47126b):
   - 2 new `lib/` primitives: `negotiate-mcp-setup.sh` (idempotent `claude mcp add`) and `negotiate-agent-id.sh` (resolves agent_id from CLAUDE.md). Total `lib/` count: 16.
   - Both skills' install blocks collapse from prose + duplicated `claude mcp add` to one-liners calling the scripts.
@@ -86,14 +86,11 @@ Visibility, Determinism, Composability) plus a scope axis we added
 
 In rough priority:
 
-1. **hrdag-ansible procedural docs → runbooks, phase 2.** Phase 1 landed 2026-05-24 (`decommission-host`, `revoke-user-cert`). Remaining:
-   - `docs/adding-new-host.md` (755 lines, mixed) → `scripts/runbooks/add-host/RUNBOOK.md` for the procedure (Phases 1-3, checklist, anchor-class three-pass sequence as Phase 3b or sibling runbook). SSH-CA explainer + per-class role notes + IP allocation reference stay in `docs/`.
-   - `docs/pikvm-hardening.md` (522 lines, reference-heavy) → splits 3 ways: `scripts/runbooks/harden-pikvm/RUNBOOK.md` (first-host hardening) + `scripts/runbooks/recover-pikvm/RUNBOOK.md` (recovery procedure) + residual `docs/pikvm-reference.md` (overview, technical findings, role design, lessons learned).
-2. **Axis 1 (visibility / risk gating).** Verify Claude Code's support for `disable-model-invocation` frontmatter. Apply to high-risk skills (e.g. `ansible_address`).
-3. **Agents → dotfiles.** 21 stock OMC agents live in `~/.claude/agents/` un-version-controlled. Decide: vendor them into dotfiles, or leave to OMC plugin updates. (OMC plugin itself has been removed — see settings cleanup above; agents survived because they were dropped into `~/.claude/agents/` directly.)
-4. **Stale README cleanup.** `claude-code/skills/README.md` still lists skills that no longer exist (code-explore, postgres-optimization, etc.). Either rewrite or delete.
-5. **MCP → skill conversion (longer-term target).** PB flagged: some MCP behaviors should be skills backed by lib/ scripts for offline reliability + version control. Candidates: claude-mem (file-based store + grep search), possibly claude-negotiate.
-6. **Branch cleanup (hrdag-ansible):** `cc-dots/rename-investigate-first` branch (PR #543, merged 2026-05-24) still exists locally + remote. Safe to delete.
+1. **Axis 1 (visibility / risk gating).** Verify Claude Code's support for `disable-model-invocation` frontmatter. Apply to high-risk skills (e.g. `ansible_address`).
+2. **Agents → dotfiles.** 21 stock OMC agents live in `~/.claude/agents/` un-version-controlled. Decide: vendor them into dotfiles, or leave to OMC plugin updates. (OMC plugin itself has been removed — see settings cleanup above; agents survived because they were dropped into `~/.claude/agents/` directly.)
+3. **Stale README cleanup.** `claude-code/skills/README.md` still lists skills that no longer exist (code-explore, postgres-optimization, etc.). Either rewrite or delete.
+4. **MCP → skill conversion (longer-term target).** PB flagged: some MCP behaviors should be skills backed by lib/ scripts for offline reliability + version control. Candidates: claude-mem (file-based store + grep search), possibly claude-negotiate.
+5. **Branch cleanup (hrdag-ansible):** `cc-dots/rename-investigate-first` branch (PR #543, merged 2026-05-24) still exists locally + remote. Safe to delete.
 
 ## Open questions / things to verify
 
