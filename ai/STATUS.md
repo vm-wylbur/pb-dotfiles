@@ -58,6 +58,11 @@ Visibility, Determinism, Composability) plus a scope axis we added
   - `hrdag-ansible/scripts/coverage-search.sh` (3817b44) — extracted from sysadmin-change Step 3a
   - `server-documentation/CLAUDE.md` runbook pointer (17e7ce2)
   - Source dirs removed from dotfiles; minimal `name`/`description` frontmatter retained on RUNBOOK.md for indexing.
+- **`ansible_inv-first` converted to runbook** in hrdag-ansible (2026-05-24, 3b1dd6a):
+  - `hrdag-ansible/scripts/runbooks/inv-first/RUNBOOK.md` (git tracked as rename from `.claude/skills/ansible_inv-first/SKILL.md`, history preserved).
+  - `hrdag-ansible/CLAUDE.md` runbook pointer added (mirrors server-doc pattern).
+  - Reclassification: STATUS.md called this a "meta-rule for CLAUDE.md" but reading the content showed it's runbook-shaped (6 phases, connectivity map, classification rubric). Converted to runbook instead — preserves the procedural value.
+  - Side fixes: stale `mcp__claude-mem__search` → `mcp__claude-mem__mem-search`; `.omc/plans/` annotated as read-only archive (OMC plugin removed).
 - **`negotiate` + `facilitator` + `coordinate` axis-2 pass** (2026-05-23, a47126b):
   - 2 new `lib/` primitives: `negotiate-mcp-setup.sh` (idempotent `claude mcp add`) and `negotiate-agent-id.sh` (resolves agent_id from CLAUDE.md). Total `lib/` count: 16.
   - Both skills' install blocks collapse from prose + duplicated `claude mcp add` to one-liners calling the scripts.
@@ -76,12 +81,12 @@ Visibility, Determinism, Composability) plus a scope axis we added
 
 In rough priority:
 
-1. **Reclassify `ansible_inv-first`.** It's a meta-rule ("investigate before implementing"), not a capability. Probably belongs in hrdag-ansible/CLAUDE.md, not as a skill.
-2. **Convert hrdag-ansible procedural docs to `scripts/runbooks/<name>/`.** ~4-5 candidates: `adding-new-host.md`, `decommission-host.md`, `revoke-user-ssh-cert.md`, parts of `pikvm-hardening.md`.
-3. **Axis 1 (visibility / risk gating).** Verify Claude Code's support for `disable-model-invocation` frontmatter. Apply to high-risk skills (e.g. `ansible_address`).
-4. **Agents → dotfiles.** 21 stock OMC agents live in `~/.claude/agents/` un-version-controlled. Decide: vendor them into dotfiles, or leave to OMC plugin updates. (OMC plugin itself has been removed — see settings cleanup above; agents survived because they were dropped into `~/.claude/agents/` directly.)
-5. **Stale README cleanup.** `claude-code/skills/README.md` still lists skills that no longer exist (code-explore, postgres-optimization, etc.). Either rewrite or delete.
-6. **MCP → skill conversion (longer-term target).** PB flagged: some MCP behaviors should be skills backed by lib/ scripts for offline reliability + version control. Candidates: claude-mem (file-based store + grep search), possibly claude-negotiate.
+1. **Convert hrdag-ansible procedural docs to `scripts/runbooks/<name>/`.** ~4-5 candidates: `adding-new-host.md`, `decommission-host.md`, `revoke-user-ssh-cert.md`, parts of `pikvm-hardening.md`. The `scripts/runbooks/` dir now exists (created by inv-first conversion).
+2. **Axis 1 (visibility / risk gating).** Verify Claude Code's support for `disable-model-invocation` frontmatter. Apply to high-risk skills (e.g. `ansible_address`).
+3. **Agents → dotfiles.** 21 stock OMC agents live in `~/.claude/agents/` un-version-controlled. Decide: vendor them into dotfiles, or leave to OMC plugin updates. (OMC plugin itself has been removed — see settings cleanup above; agents survived because they were dropped into `~/.claude/agents/` directly.)
+4. **Stale README cleanup.** `claude-code/skills/README.md` still lists skills that no longer exist (code-explore, postgres-optimization, etc.). Either rewrite or delete.
+5. **MCP → skill conversion (longer-term target).** PB flagged: some MCP behaviors should be skills backed by lib/ scripts for offline reliability + version control. Candidates: claude-mem (file-based store + grep search), possibly claude-negotiate.
+6. **Branch cleanup (hrdag-ansible):** `cc-dots/rename-investigate-first` branch (PR #543, merged 2026-05-24) still exists locally + remote. Safe to delete.
 
 ## Open questions / things to verify
 
