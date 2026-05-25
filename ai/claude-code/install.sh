@@ -175,7 +175,28 @@ jq \
     ' "$CLAUDE_JSON" > "$TMP" && mv "$TMP" "$CLAUDE_JSON"
 echo "  updated: $CLAUDE_JSON (claude-mem, repomix, tree_sitter, claude-negotiate)"
 
+# ── 7. Reminder: per-machine CLAUDE.local.md files ─────────────────────────
+
+cat <<'EOF'
+
+────────────────────────────────────────────────────────────────────────────
+PER-MACHINE files NOT installed by this script (gitignored, machine-local):
+
+The hrdag-ansible worktrees (merger / impl / ops) each use a CLAUDE.local.md
+file that declares identity and renders a per-role module. These files are
+NOT in dotfiles. On a fresh machine, re-render them via:
+
+  claude-md render ~/projects/hrdag/hrdag-ansible/CLAUDE.local.md
+  claude-md render ~/projects/hrdag/hrdag-ansible-impl/CLAUDE.local.md
+  claude-md render ~/projects/hrdag/hrdag-ansible-ops/CLAUDE.local.md
+
+The CLAUDE.local.md "shell" (identity + manifest declaring roles-merger /
+roles-impl / roles-ops) must exist first; copy from the source machine or
+hand-author per the templates in dotfiles/ai/modules/roles-*.md.
+────────────────────────────────────────────────────────────────────────────
+
+EOF
+
 # ── Done ─────────────────────────────────────────────────────────────────────
 
-echo ""
 echo "Setup complete. Verify with: claude mcp list"
