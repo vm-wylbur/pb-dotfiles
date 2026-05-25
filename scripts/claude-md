@@ -1,0 +1,189 @@
+#!/usr/bin/env bash
+# claude-md — render and check composable CLAUDE.md files.
+#
+# Reads a manifest comment in CLAUDE.md, concatenates the named module files
+# between BEGIN/END markers. Implicit modules ("base") always render first.
+#
+# Author: PB and cc-dots
+# Date: 2026-05-25
+# License: (c) HRDAG, 2026, GPL-2 or newer
+#
+# ---
+# scripts/claude-md
+
+set -euo pipefail
+
+MODULES_DIR="${CLAUDE_MD_MODULES_DIR:-${HOME}/dotfiles/ai/modules}"
+IMPLICIT=("base")
+BEGIN_MARKER="<!-- BEGIN GENERATED -->"
+END_MARKER="<!-- END GENERATED -->"
+MANIFEST_PREFIX='<!-- claude-md: '
+
+usage() {
+    cat <<EOF
+Usage: claude-md <verb> [path]
+
+Verbs:
+  render [PATH]  Rewrite CLAUDE.md in PATH (default: cwd), populating the
+                 generated section from declared modules.
+  check  [PATH]  Exit non-zero if CLAUDE.md is stale; auto-skip if no
+                 manifest comment present (not a managed file).
+
+The manifest must appear as a single-line HTML comment, e.g.:
+  <!-- claude-md: {"modules": ["git-basics", "python-uv"]} -->
+
+The generated block lives between:
+  <!-- BEGIN GENERATED -->
+  <!-- END GENERATED -->
+
+Modules are read from \$CLAUDE_MD_MODULES_DIR
+(default ~/dotfiles/ai/modules). The implicit module "base" is always
+prepended; the manifest declares only opt-in modules.
+EOF
+}
+
+has_manifest() {
+    grep -q "^${MANIFEST_PREFIX}" "$1"
+}
+
+read_manifest_modules() {
+    # Extract the modules array from the manifest comment. One ID per line.
+    local file=$1
+    grep -m1 "^${MANIFEST_PREFIX}" "$file" \
+        | sed -E "s|^${MANIFEST_PREFIX}(.*) -->\$|\1|" \
+        | jq -r '.modules[]'
+}
+
+build_module_list() {
+    # Print the effective module list (implicit + manifest, deduped, order
+    # preserved) one per line.
+    local file=$1
+    local seen=" "
+    local mod
+
+    for mod in "${IMPLICIT[@]}"; do
+        if [[ "$seen" != *" $mod "* ]]; then
+            echo "$mod"
+            seen="$seen$mod "
+        fi
+    done
+
+    while IFS= read -r mod; do
+        [[ -z "$mod" ]] && continue
+        if [[ "$seen" != *" $mod "* ]]; then
+            echo "$mod"
+            seen="$seen$mod "
+        fi
+    done < <(read_manifest_modules "$file")
+}
+
+build_generated_block() {
+    # Emit the concatenated module bodies to stdout, blank line between.
+    local file=$1
+    local first=1
+    local mod mod_file
+
+    while IFS= read -r mod; do
+        mod_file="${MODULES_DIR}/${mod}.md"
+        if [[ ! -f "$mod_file" ]]; then
+            echo "error: module '$mod' not found at $mod_file" >&2
+            return 1
+        fi
+        if [[ $first -eq 0 ]]; then
+            echo
+        fi
+        first=0
+        cat "$mod_file"
+    done < <(build_module_list "$file")
+}
+
+render_to_stdout() {
+    # Read CLAUDE.md, emit the rendered version to stdout.
+    local file=$1
+
+    if ! has_manifest "$file"; then
+        cat "$file"
+        return 0
+    fi
+
+    if ! grep -qF "$BEGIN_MARKER" "$file" || ! grep -qF "$END_MARKER" "$file"; then
+        echo "error: $file has manifest but missing BEGIN/END markers" >&2
+        echo "  expected lines: '$BEGIN_MARKER' and '$END_MARKER'" >&2
+        return 1
+    fi
+
+    # Prefix: through (and including) the BEGIN line
+    awk -v marker="$BEGIN_MARKER" '
+        { print }
+        $0 == marker { exit }
+    ' "$file"
+
+    echo  # blank line after BEGIN
+    build_generated_block "$file"
+    echo  # blank line before END
+
+    # Suffix: from (and including) the END line to EOF
+    awk -v marker="$END_MARKER" '
+        $0 == marker { found = 1 }
+        found { print }
+    ' "$file"
+}
+
+cmd_render() {
+    local path=${1:-.}
+    local file="${path%/}/CLAUDE.md"
+
+    if [[ ! -f "$file" ]]; then
+        echo "error: $file not found" >&2
+        exit 1
+    fi
+
+    local tmp
+    tmp=$(mktemp)
+    # shellcheck disable=SC2064
+    trap "rm -f '$tmp'" EXIT
+
+    render_to_stdout "$file" > "$tmp"
+
+    if diff -q "$file" "$tmp" >/dev/null 2>&1; then
+        echo "clean: $file (no change)"
+    else
+        cp "$tmp" "$file"
+        echo "rendered: $file"
+    fi
+}
+
+cmd_check() {
+    local path=${1:-.}
+    local file="${path%/}/CLAUDE.md"
+
+    # No CLAUDE.md → not managed → silent no-op
+    [[ -f "$file" ]] || exit 0
+
+    # No manifest → not managed → silent no-op
+    has_manifest "$file" || exit 0
+
+    local tmp
+    tmp=$(mktemp)
+    # shellcheck disable=SC2064
+    trap "rm -f '$tmp'" EXIT
+
+    render_to_stdout "$file" > "$tmp"
+
+    if diff -q "$file" "$tmp" >/dev/null 2>&1; then
+        exit 0
+    else
+        echo "stale: $file — run 'claude-md render' in $(dirname "$file")" >&2
+        exit 1
+    fi
+}
+
+verb=${1:-}
+[[ $# -gt 0 ]] && shift || true
+
+case "$verb" in
+    render) cmd_render "$@" ;;
+    check)  cmd_check  "$@" ;;
+    -h|--help|help|"") usage; [[ -z "$verb" ]] && exit 2 || exit 0 ;;
+    *) echo "error: unknown verb '$verb'" >&2; usage >&2; exit 2 ;;
+esac
