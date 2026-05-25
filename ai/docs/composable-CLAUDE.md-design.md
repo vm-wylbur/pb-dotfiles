@@ -214,12 +214,15 @@ directory; all module files exist and render cleanly.
 
 ### Phase 1 — staleness hook
 
-- [ ] **1.1** Write `~/dotfiles/ai/claude-code/hooks/claude-md-check.sh`
-- [ ] **1.2** Add hook to `~/.claude/settings.json` SessionStart array
-- [ ] **1.3** Verify in a fresh session in a non-managed repo (no manifest):
-      hook is silent
-- [ ] **1.4** Verify in a fresh session in a (test) managed repo with stale
+- [x] **1.1** Write `~/dotfiles/ai/claude-code/hooks/claude-md-check.sh`
+- [x] **1.2** Add hook to `~/.claude/settings.json` SessionStart array
+- [x] **1.3** Verify in a fresh session in a non-managed repo (no manifest):
+      hook is silent (verified by direct hook invocation with
+      CLAUDE_PROJECT_DIR; fresh-session confirmation will happen naturally)
+- [x] **1.4** Verify in a fresh session in a (test) managed repo with stale
       CLAUDE.md: hook emits a single-line warning into context
+      (verified by direct invocation; first fresh session in a managed repo
+      will exercise it for real)
 
 **Success condition for Phase 1:** Hook runs at every session start, warns
 only on actual drift, never modifies files, never emits module content.
