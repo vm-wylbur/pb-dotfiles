@@ -14,7 +14,7 @@
 set -euo pipefail
 
 MODULES_DIR="${CLAUDE_MD_MODULES_DIR:-${HOME}/dotfiles/ai/modules}"
-IMPLICIT=("base")
+IMPLICIT=()
 BEGIN_MARKER="<!-- BEGIN GENERATED -->"
 END_MARKER="<!-- END GENERATED -->"
 MANIFEST_PREFIX='<!-- claude-md: '
@@ -52,23 +52,54 @@ has_manifest() {
     grep -q "^${MANIFEST_PREFIX}" "$1"
 }
 
-read_manifest_modules() {
-    # Extract the modules array from the manifest comment. One ID per line.
+extract_manifest_json() {
     local file=$1
     grep -m1 "^${MANIFEST_PREFIX}" "$file" \
-        | sed -E "s|^${MANIFEST_PREFIX}(.*) -->\$|\1|" \
-        | jq -r '.modules[]'
+        | sed -E "s|^${MANIFEST_PREFIX}(.*) -->\$|\1|"
+}
+
+read_manifest_modules() {
+    # Extract the modules array from the manifest comment. One ID per line.
+    extract_manifest_json "$1" | jq -r '.modules[]'
+}
+
+read_manifest_implicit() {
+    # Extract the implicit override array (if present). Outputs nothing if
+    # the manifest doesn't specify `implicit` — caller falls back to the
+    # script's IMPLICIT default.
+    extract_manifest_json "$1" \
+        | jq -r 'if has("implicit") then .implicit[] else empty end'
 }
 
 build_module_list() {
     # Print the effective module list (implicit + manifest, deduped, order
-    # preserved) one per line.
+    # preserved) one per line. If the manifest declares an `implicit` array,
+    # it overrides the script default (use `"implicit": []` to skip base).
     local file=$1
     local seen=" "
     local mod
+    local -a implicit_list
+    local implicit_override
 
-    for mod in "${IMPLICIT[@]}"; do
-        if [[ "$seen" != *" $mod "* ]]; then
+    implicit_override=$(read_manifest_implicit "$file")
+    if [[ -n "$implicit_override" ]]; then
+        while IFS= read -r mod; do
+            implicit_list+=("$mod")
+        done <<< "$implicit_override"
+    else
+        # The trailing | true ensures we don't fail if jq output is empty
+        # (which is the "no implicit key" case handled above).
+        implicit_list=("${IMPLICIT[@]}")
+    fi
+
+    # Special case: jq emits empty string for `"implicit": []` since the
+    # array has no elements. Detect this and use empty list.
+    if [[ "$implicit_override" == "" ]] && extract_manifest_json "$file" | jq -e 'has("implicit")' >/dev/null 2>&1; then
+        implicit_list=()
+    fi
+
+    for mod in "${implicit_list[@]}"; do
+        if [[ -n "$mod" && "$seen" != *" $mod "* ]]; then
             echo "$mod"
             seen="$seen$mod "
         fi

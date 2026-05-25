@@ -82,7 +82,7 @@ fi
 # ── 3. Symlinks ─────────────────────────────────────────────────────────────
 
 echo "Creating symlinks..."
-link_file "$DOTFILES/ai/docs/meta-CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
+link_file "$DOTFILES/ai/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
 link_file "$DOTFILES/ai/claude-code/skills"  "$CLAUDE_DIR/skills"
 link_file "$DOTFILES/ai/claude-code/hooks"   "$CLAUDE_DIR/hooks"
 link_file "$DOTFILES/ai/claude-code/lib"     "$CLAUDE_DIR/lib"
@@ -120,6 +120,7 @@ jq \
     --arg secret  "$MEM_SECRET" \
     --arg inject  "bash ${HOOKS_DIR}/mem-inject.sh" \
     --arg sessenv "bash ${HOOKS_DIR}/session-env.sh" \
+    --arg cmcheck "bash ${HOOKS_DIR}/claude-md-check.sh" \
     --arg yamlval "bash ${HOOKS_DIR}/yaml-validate.sh" \
     '
     .env.CLAUDE_MEM_SECRET = $secret |
@@ -127,7 +128,8 @@ jq \
     .permissions.deny = ["AskUserQuestion"] |
     .hooks.SessionStart = [{"hooks": [
         {"type": "command", "command": $inject},
-        {"type": "command", "command": $sessenv}
+        {"type": "command", "command": $sessenv},
+        {"type": "command", "command": $cmcheck}
     ]}] |
     .hooks.PostToolUse = [{"matcher": "Edit|Write", "hooks": [
         {"type": "command", "command": $yamlval}

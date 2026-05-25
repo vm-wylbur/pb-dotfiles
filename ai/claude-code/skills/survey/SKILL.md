@@ -116,7 +116,7 @@ merge into the newer doc. Cite the file/function/commit that proves completion.
 ## Notes
 
 - The session-start banner already emitted env / git-status / open issues /
-  meta-CLAUDE mtime / MCP status — don't re-run those. Survey adds the
-  remaining gathering + judgment work.
+  user-wide CLAUDE.md mtime / MCP status — don't re-run those. Survey adds
+  the remaining gathering + judgment work.
 - If you wrote new lib/ primitives during a survey, add them here as a new
   composition step rather than inlining shell in the workflow.

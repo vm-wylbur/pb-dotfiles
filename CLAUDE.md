@@ -15,9 +15,9 @@ agent environment in one consistent shape across machines and repos.
 
 ---
 
-**ESSENTIAL**: Go read `ai/docs/meta-CLAUDE.md` for all guidelines.
+**ESSENTIAL**: Go read `ai/CLAUDE.md` for all guidelines.
 
-**All general guidelines (communication, git workflow, approval, security, etc.) are in `ai/docs/meta-CLAUDE.md`**
+**All general guidelines (communication, git workflow, approval, security, etc.) are in `ai/CLAUDE.md`** — composed from `ai/modules/` via `claude-md render`.
 
 ## Agent identity
 

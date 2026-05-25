@@ -34,7 +34,7 @@ This directory contains all Claude Code configuration for easy replication acros
     └── .gitkeep
 
 # Symlinks to expected system locations:
-~/.claude/CLAUDE.md -> ~/dotfiles/ai/docs/meta-CLAUDE.md
+~/.claude/CLAUDE.md -> ~/dotfiles/ai/CLAUDE.md
 ~/.claude/skills/ -> ~/dotfiles/ai/claude-code/skills/
 ~/.claude/commands/ -> ~/dotfiles/ai/claude-code/commands/
 
@@ -45,7 +45,7 @@ This directory contains all Claude Code configuration for easy replication acros
 ## Shared Documentation
 
 Meta development guidelines are shared across all AI tools:
-- **Location**: `~/dotfiles/ai/docs/meta-CLAUDE.md`
+- **Location**: `~/dotfiles/ai/CLAUDE.md`
 - **Purpose**: Common behavioral instructions for all AI agents
 
 ## Installation
@@ -212,7 +212,7 @@ ls -la ~/.claude/commands
 
 Should show:
 ```
-~/.claude/CLAUDE.md -> /home/pball/dotfiles/ai/docs/meta-CLAUDE.md
+~/.claude/CLAUDE.md -> /home/pball/dotfiles/ai/CLAUDE.md
 ~/.claude/skills -> /home/pball/dotfiles/ai/claude-code/skills
 ~/.claude/commands -> /home/pball/dotfiles/ai/claude-code/commands
 ```
@@ -289,7 +289,7 @@ cp -r ~/claude-code-backup-YYYYMMDD-HHMMSS/skills ~/.claude/
 ## Related Documentation
 
 - **MCP Installation**: `~/dotfiles/ai/claude-code/MCP-INSTALLATION.md` - MCP server installation guide
-- **Meta Guidelines**: `~/dotfiles/ai/docs/meta-CLAUDE.md` - Shared AI agent guidelines
+- **Meta Guidelines**: `~/dotfiles/ai/CLAUDE.md` - Shared AI agent guidelines
 - **Multi-AI Workflow**: `~/dotfiles/ai/docs/multi-ai-workflow.md`
 - **Installation Log**: `~/dotfiles/ai/claude-code/install.log`
 
