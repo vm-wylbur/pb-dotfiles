@@ -25,11 +25,18 @@ RENDERER="${HOME}/dotfiles/scripts/claude-md"
 # If the renderer isn't present, do nothing — this hook must never break a session.
 [[ -x "$RENDERER" ]] || exit 0
 
-# Run check; capture combined output so we can relay the stale message.
-output=$("$RENDERER" check "$PROJECT_DIR" 2>&1) && exit 0
+# Check CLAUDE.md and CLAUDE.local.md (each silently skipped by `claude-md
+# check` if absent or unmanaged). Collect stale messages from either.
+warnings=""
+for f in "$PROJECT_DIR/CLAUDE.md" "$PROJECT_DIR/CLAUDE.local.md"; do
+    if out=$("$RENDERER" check "$f" 2>&1); then
+        continue  # clean or skipped
+    fi
+    warnings+="${out}"$'\n'
+done
 
-# Non-zero from claude-md check means stale (or some structural issue like
-# missing markers). Surface to the agent's startup context.
+[[ -z "$warnings" ]] && exit 0
+
 echo "=== claude-md ==="
-echo "$output"
-echo "Refresh: \`claude-md render\` in ${PROJECT_DIR}"
+printf '%s' "$warnings"
+echo "Refresh stale files via \`claude-md render <path>\`"

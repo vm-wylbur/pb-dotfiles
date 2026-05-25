@@ -24,10 +24,16 @@ usage() {
 Usage: claude-md <verb> [path]
 
 Verbs:
-  render [PATH]  Rewrite CLAUDE.md in PATH (default: cwd), populating the
-                 generated section from declared modules.
-  check  [PATH]  Exit non-zero if CLAUDE.md is stale; auto-skip if no
-                 manifest comment present (not a managed file).
+  render [PATH]  Rewrite the target file, populating the generated
+                 section from declared modules.
+  check  [PATH]  Exit non-zero if the target file is stale; auto-skip
+                 if no manifest comment present (not a managed file).
+
+PATH semantics:
+  - If PATH is a directory, the target is PATH/CLAUDE.md.
+  - If PATH is a file, that file is the target (use to manage
+    CLAUDE.local.md or other variants).
+  - PATH defaults to the current working directory.
 
 The manifest must appear as a single-line HTML comment, e.g.:
   <!-- claude-md: {"modules": ["git-basics", "python-uv"]} -->
@@ -129,9 +135,22 @@ render_to_stdout() {
     ' "$file"
 }
 
+resolve_file() {
+    # Resolve a CLI arg into a file path. If the arg is a directory, default
+    # to <dir>/CLAUDE.md. If it's a file, use it directly. If it doesn't
+    # exist, treat as a directory path (caller handles the "not found" error).
+    local arg=$1
+    if [[ -d "$arg" ]]; then
+        echo "${arg%/}/CLAUDE.md"
+    else
+        echo "$arg"
+    fi
+}
+
 cmd_render() {
     local path=${1:-.}
-    local file="${path%/}/CLAUDE.md"
+    local file
+    file=$(resolve_file "$path")
 
     if [[ ! -f "$file" ]]; then
         echo "error: $file not found" >&2
@@ -155,9 +174,10 @@ cmd_render() {
 
 cmd_check() {
     local path=${1:-.}
-    local file="${path%/}/CLAUDE.md"
+    local file
+    file=$(resolve_file "$path")
 
-    # No CLAUDE.md → not managed → silent no-op
+    # No file → not managed → silent no-op
     [[ -f "$file" ]] || exit 0
 
     # No manifest → not managed → silent no-op
