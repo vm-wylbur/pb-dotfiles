@@ -42,4 +42,18 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# Advisory ansible-lint pass when the edited file lives in an ansible repo.
+# Detect by walking the file's directory up to $HOME looking for ansible.cfg
+# or a playbooks/ dir. Output is informational only — never blocks.
+if command -v ansible-lint >/dev/null 2>&1; then
+    dir=$(dirname "$FILE_PATH")
+    while [[ "$dir" == "$HOME"/* ]]; do
+        if [[ -f "$dir/ansible.cfg" || -d "$dir/playbooks" ]]; then
+            ansible-lint --nocolor "$FILE_PATH" 2>&1 | head -20 >&2
+            break
+        fi
+        dir=$(dirname "$dir")
+    done
+fi
+
 exit 0
