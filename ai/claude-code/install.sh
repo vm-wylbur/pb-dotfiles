@@ -9,6 +9,13 @@
 # Claude Code configuration installer
 # Sets up symlinks, settings, MCP servers, and dependencies.
 # Idempotent — safe to re-run.
+#
+# First install on a fresh host: pass the claude-mem secret via env:
+#
+#     CLAUDE_MEM_SECRET=<secret> bash ~/dotfiles/ai/claude-code/install.sh
+#
+# Subsequent runs need no env var — the secret is re-read from
+# ~/.claude/settings.json (mode 600). See section 4.
 
 set -euo pipefail
 
