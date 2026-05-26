@@ -19,7 +19,7 @@ Design + module catalog: ai/docs/composable-CLAUDE.md-design.md.
 
 # User-wide Claude rules for PB
 
-<!-- compose: {"modules": ["base", "git-basics", "python-uv", "file-headers", "shotgun-surgery", "gh-signature", "tri-home", "qfix"], "output": "~/.claude/CLAUDE.md"} -->
+<!-- compose: {"modules": ["base", "git-basics", "python-uv", "file-headers", "shotgun-surgery", "gh-signature", "tri-home", "qfix", "code-review", "goal-lock", "multi-agent"], "output": "~/.claude/CLAUDE.md"} -->
 
 <!-- BEGIN GENERATED -->
 

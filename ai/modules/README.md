@@ -41,6 +41,9 @@ Design + implementation plan: `~/dotfiles/ai/docs/composable-CLAUDE.md-design.md
 | roles-impl | `roles-impl.md` | hrdag-ansible-impl. Pointer to §cc-ansible-impl. |
 | roles-ops | `roles-ops.md` | hrdag-ansible-ops. Pointer to §cc-ansible-ops. |
 | pb-voice | `pb-voice.md` | Skills/agents that produce prose for humans (changelog, README writers, issue/PR composers). Operational subset of `~/docs/pb-voice-guide.md`. |
+| code-review | `code-review.md` | When to invoke the built-in `/code-review` skill and at which effort level. Routing rule for specialized reviewers. |
+| goal-lock | `goal-lock.md` | When to invoke `/goal` (session anchor) and how it composes with `TaskCreate` (in-session ledger). Goal-condition format. |
+| multi-agent | `multi-agent.md` | Decision tree for picking among `Task`, `/coordinate`, `/negotiate`, `/facilitator`, Agent Teams. |
 
 ## How to use
 
