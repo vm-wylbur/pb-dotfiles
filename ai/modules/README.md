@@ -40,6 +40,7 @@ Design + implementation plan: `~/dotfiles/ai/docs/composable-CLAUDE.md-design.md
 | roles-merger | `roles-merger.md` | hrdag-ansible (cc-ansible-merger worktree). Pointer to §cc-ansible-merger of workflow doc. |
 | roles-impl | `roles-impl.md` | hrdag-ansible-impl. Pointer to §cc-ansible-impl. |
 | roles-ops | `roles-ops.md` | hrdag-ansible-ops. Pointer to §cc-ansible-ops. |
+| pb-voice | `pb-voice.md` | Skills/agents that produce prose for humans (changelog, README writers, issue/PR composers). Operational subset of `~/docs/pb-voice-guide.md`. |
 
 ## How to use
 

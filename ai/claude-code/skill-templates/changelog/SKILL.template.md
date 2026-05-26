@@ -3,6 +3,8 @@ name: changelog
 description: Generate narrative changelog organized by themes, not repos
 ---
 
+<!-- compose: {"modules": ["pb-voice"]} -->
+
 # Changelog
 
 ## Purpose
@@ -100,13 +102,12 @@ Common themes: challenges overcome, security holes closed, failure prep,
 new capabilities, documentation brought up to date, infrastructure improvements.
 Let the evidence determine the themes — don't force categories that aren't there.
 
-**Writing rules:**
+**Changelog-specific rules** (general voice rules live in the pb-voice
+module, rendered into the Voice section below):
+
 - Tell stories, not diffs. Commits are evidence for the story.
-- Specific details: performance numbers, error counts, version tags. Vagueness is the enemy.
 - Version tags are navigation aids — readers use them to find the work in git history.
 - Cross-reference freely when work in one repo enabled or depended on another.
-- Include the wrong turns. A debugging dead end is part of the story if it shaped what came next.
-- No bullets. Prose paragraphs. Tables only for data.
 - Scale length to significance, not to commit count.
 - Do NOT recite commits. Synthesize.
 - Spelling: "DataCívica" (not "Data Civica" or "Datacivica").
@@ -125,8 +126,5 @@ Let the evidence determine the themes — don't force categories that aren't the
 - The diff files in `/tmp/changelog-diff-*.txt` can be large — read selectively
   with the Read tool's `limit` and `offset`, not all at once.
 
-## Communication Style
-
-- The changelog itself uses the blog voice from `~/docs/pb-voice-guide.md`
-- Status messages during execution are terse: "Found 8 repos", "Gathering diffs...", "Writing..."
-- Don't narrate your own process in the output document.
+<!-- BEGIN module:pb-voice -->
+<!-- END module:pb-voice -->
