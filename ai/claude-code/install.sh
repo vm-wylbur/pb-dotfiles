@@ -79,13 +79,47 @@ else
     echo "  installed: mcp-server-tree-sitter into $VENV_MCP"
 fi
 
-# ── 3. Symlinks ─────────────────────────────────────────────────────────────
+# ── 3. Symlinks + rendered trees ────────────────────────────────────────────
+#
+# hooks/ and lib/ are plain shell scripts — symlinked for live editing.
+# CLAUDE.md, skills/, agents/ are RENDERED outputs of composable templates;
+# install.sh removes any prior symlink at the target and runs the renderer
+# to materialize real files.
 
-echo "Creating symlinks..."
-link_file "$DOTFILES/ai/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
-link_file "$DOTFILES/ai/claude-code/skills"  "$CLAUDE_DIR/skills"
+echo "Linking hooks and lib..."
 link_file "$DOTFILES/ai/claude-code/hooks"   "$CLAUDE_DIR/hooks"
 link_file "$DOTFILES/ai/claude-code/lib"     "$CLAUDE_DIR/lib"
+
+RENDERER="$DOTFILES/scripts/claude-md"
+if [[ ! -x "$RENDERER" ]]; then
+    echo "ERROR: renderer not found at $RENDERER"
+    exit 1
+fi
+
+echo "Rendering CLAUDE.md..."
+if [ -L "$CLAUDE_DIR/CLAUDE.md" ]; then
+    rm "$CLAUDE_DIR/CLAUDE.md"
+    echo "  removed stale symlink"
+fi
+"$RENDERER" render "$DOTFILES/ai/CLAUDE.template.md"
+
+echo "Rendering skills/..."
+if [ -L "$CLAUDE_DIR/skills" ]; then
+    rm "$CLAUDE_DIR/skills"
+    echo "  removed stale symlink"
+fi
+mkdir -p "$CLAUDE_DIR/skills"
+# Copy non-template files (e.g. README.md, full-mode-prompt.md) verbatim,
+# then render templates over the top.
+rsync -a --delete --exclude='*.template.md' \
+    "$DOTFILES/ai/claude-code/skill-templates/" "$CLAUDE_DIR/skills/"
+"$RENDERER" render-tree \
+    "$DOTFILES/ai/claude-code/skill-templates" --to "$CLAUDE_DIR/skills"
+
+echo "Rendering agents/..."
+mkdir -p "$CLAUDE_DIR/agents"
+"$RENDERER" render-tree \
+    "$DOTFILES/ai/claude-code/agent-templates" --to "$CLAUDE_DIR/agents"
 
 # ── 4. CLAUDE_MEM_SECRET in .zshenv ─────────────────────────────────────────
 

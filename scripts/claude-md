@@ -1,8 +1,17 @@
 #!/usr/bin/env bash
-# claude-md — render and check composable CLAUDE.md files.
+# claude-md — render and check composable artifact files.
 #
-# Reads a manifest comment in CLAUDE.md, concatenates the named module files
-# between BEGIN/END markers. Implicit modules ("base") always render first.
+# Reads a manifest comment, splices module bodies into marker regions,
+# writes the result to the declared output (or sibling .md by convention).
+#
+# Supports three artifact kinds with one grammar:
+#   - CLAUDE.md / CLAUDE.local.md (user-wide and project)
+#   - SKILL.md (under skills/)
+#   - agent files (under agents/)
+#
+# Source files use .template.md suffix. Outputs are rendered .md files.
+# Legacy in-place rendering (CLAUDE.md as both source and output) still
+# works for files with a manifest but no .template.md sibling.
 #
 # Author: PB and cc-dots
 # Date: 2026-05-25
@@ -15,66 +24,104 @@ set -euo pipefail
 
 MODULES_DIR="${CLAUDE_MD_MODULES_DIR:-${HOME}/dotfiles/ai/modules}"
 IMPLICIT=()
-BEGIN_MARKER="<!-- BEGIN GENERATED -->"
-END_MARKER="<!-- END GENERATED -->"
-MANIFEST_PREFIX='<!-- claude-md: '
+LEGACY_BEGIN="<!-- BEGIN GENERATED -->"
+LEGACY_END="<!-- END GENERATED -->"
+# Manifest prefixes (both accepted; `compose` is preferred for new files).
+MANIFEST_PREFIXES=('<!-- compose: ' '<!-- claude-md: ')
 
 usage() {
     cat <<EOF
-Usage: claude-md <verb> [path]
+Usage: claude-md <verb> [args]
 
 Verbs:
-  render [PATH]  Rewrite the target file, populating the generated
-                 section from declared modules.
-  check  [PATH]  Exit non-zero if the target file is stale; auto-skip
-                 if no manifest comment present (not a managed file).
+  render PATH                Render one file. PATH can be:
+                                - a .template.md file (source) — output
+                                  determined by manifest 'output' field,
+                                  defaulting to sibling .md
+                                - a .md file with manifest (legacy in-place)
+                                - a directory — prefers DIR/CLAUDE.template.md
+                                  if present, falls back to DIR/CLAUDE.md
+                                - default: current directory
 
-PATH semantics:
-  - If PATH is a directory, the target is PATH/CLAUDE.md.
-  - If PATH is a file, that file is the target (use to manage
-    CLAUDE.local.md or other variants).
-  - PATH defaults to the current working directory.
+  check PATH                 Re-render to tmp; exit non-zero on drift.
+                             Silent on success or unmanaged files.
 
-The manifest must appear as a single-line HTML comment, e.g.:
-  <!-- claude-md: {"modules": ["git-basics", "python-uv"]} -->
+  render-tree SRC --to DST   Walk SRC for *.template.md files. For each,
+                             render to the mirror path under DST with
+                             .template stripped from the filename.
 
-The generated block lives between:
-  <!-- BEGIN GENERATED -->
-  <!-- END GENERATED -->
+  check-tree SRC --to DST    Walk SRC for *.template.md files; exit
+                             non-zero with one consolidated diff report
+                             if any output is stale.
 
-Modules are read from \$CLAUDE_MD_MODULES_DIR
-(default ~/dotfiles/ai/modules). The implicit module "base" is always
-prepended; the manifest declares only opt-in modules.
+Manifest:
+  <!-- compose: {"modules": ["a", "b"]} -->
+  <!-- compose: {"modules": ["a"], "output": "~/.claude/CLAUDE.md"} -->
+  <!-- compose: {"modules": []} -->                     (no modules; pass-through)
+  <!-- compose: {"modules": ["base"], "implicit": []} -->  (no implicit)
+
+Markers (template chooses one style):
+  Per-module:  <!-- BEGIN module:NAME --> ... <!-- END module:NAME -->
+  Single-block: <!-- BEGIN GENERATED --> ... <!-- END GENERATED -->
+
+Modules are read from \$CLAUDE_MD_MODULES_DIR (default ~/dotfiles/ai/modules).
 EOF
 }
 
-has_manifest() {
-    grep -q "^${MANIFEST_PREFIX}" "$1"
+# ──────────────────────────────────────────────────────────────────────────
+# Manifest parsing
+# ──────────────────────────────────────────────────────────────────────────
+
+# Print the manifest line if present (first match wins across known prefixes).
+extract_manifest_line() {
+    local file=$1 prefix
+    for prefix in "${MANIFEST_PREFIXES[@]}"; do
+        if grep -m1 -F "$prefix" "$file" >/dev/null 2>&1; then
+            grep -m1 -F "$prefix" "$file"
+            return 0
+        fi
+    done
+    return 1
 }
 
+has_manifest() {
+    extract_manifest_line "$1" >/dev/null 2>&1
+}
+
+# Extract just the JSON object from the manifest line.
 extract_manifest_json() {
-    local file=$1
-    grep -m1 "^${MANIFEST_PREFIX}" "$file" \
-        | sed -E "s|^${MANIFEST_PREFIX}(.*) -->\$|\1|"
+    local file=$1 line prefix
+    line=$(extract_manifest_line "$file") || return 1
+    for prefix in "${MANIFEST_PREFIXES[@]}"; do
+        if [[ "$line" == ${prefix}* ]]; then
+            # Strip prefix and the trailing " -->"
+            line="${line#${prefix}}"
+            line="${line% -->}"
+            printf '%s' "$line"
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Optional manifest fields.
+read_manifest_output() {
+    extract_manifest_json "$1" \
+        | jq -r 'if has("output") then .output else empty end'
 }
 
 read_manifest_modules() {
-    # Extract the modules array from the manifest comment. One ID per line.
     extract_manifest_json "$1" | jq -r '.modules[]'
 }
 
 read_manifest_implicit() {
-    # Extract the implicit override array (if present). Outputs nothing if
-    # the manifest doesn't specify `implicit` — caller falls back to the
-    # script's IMPLICIT default.
     extract_manifest_json "$1" \
         | jq -r 'if has("implicit") then .implicit[] else empty end'
 }
 
+# Build the effective module list (implicit + manifest, deduped, order
+# preserved). One ID per line.
 build_module_list() {
-    # Print the effective module list (implicit + manifest, deduped, order
-    # preserved) one per line. If the manifest declares an `implicit` array,
-    # it overrides the script default (use `"implicit": []` to skip base).
     local file=$1
     local seen=" "
     local mod
@@ -87,14 +134,12 @@ build_module_list() {
             implicit_list+=("$mod")
         done <<< "$implicit_override"
     else
-        # The trailing | true ensures we don't fail if jq output is empty
-        # (which is the "no implicit key" case handled above).
         implicit_list=("${IMPLICIT[@]}")
     fi
 
-    # Special case: jq emits empty string for `"implicit": []` since the
-    # array has no elements. Detect this and use empty list.
-    if [[ "$implicit_override" == "" ]] && extract_manifest_json "$file" | jq -e 'has("implicit")' >/dev/null 2>&1; then
+    # `"implicit": []` → empty override (caller wants no implicit).
+    if [[ "$implicit_override" == "" ]] && \
+       extract_manifest_json "$file" | jq -e 'has("implicit")' >/dev/null 2>&1; then
         implicit_list=()
     fi
 
@@ -114,28 +159,126 @@ build_module_list() {
     done < <(read_manifest_modules "$file")
 }
 
+# Read a single module's body (raw markdown).
+module_body() {
+    local mod=$1 mod_file
+    mod_file="${MODULES_DIR}/${mod}.md"
+    if [[ ! -f "$mod_file" ]]; then
+        echo "error: module '$mod' not found at $mod_file" >&2
+        return 1
+    fi
+    cat "$mod_file"
+}
+
+# ──────────────────────────────────────────────────────────────────────────
+# Rendering
+# ──────────────────────────────────────────────────────────────────────────
+
+# Concatenate all manifest modules into one block (legacy single-marker style).
 build_generated_block() {
-    # Emit the concatenated module bodies to stdout, blank line between.
     local file=$1
-    local first=1
-    local mod mod_file
+    local first=1 mod
 
     while IFS= read -r mod; do
-        mod_file="${MODULES_DIR}/${mod}.md"
-        if [[ ! -f "$mod_file" ]]; then
-            echo "error: module '$mod' not found at $mod_file" >&2
-            return 1
-        fi
         if [[ $first -eq 0 ]]; then
             echo
         fi
         first=0
-        cat "$mod_file"
+        module_body "$mod"
     done < <(build_module_list "$file")
 }
 
+# True if the file has any per-module markers `<!-- BEGIN module:NAME -->`.
+has_module_markers() {
+    grep -qE '<!-- BEGIN module:[a-zA-Z0-9_.-]+ -->' "$1"
+}
+
+# True if the file has the legacy single-block markers.
+has_legacy_markers() {
+    grep -qF "$LEGACY_BEGIN" "$1" && grep -qF "$LEGACY_END" "$1"
+}
+
+# Render legacy single-block style to stdout.
+render_legacy_to_stdout() {
+    local file=$1
+
+    if ! has_legacy_markers "$file"; then
+        echo "error: $file has manifest but missing BEGIN/END markers" >&2
+        echo "  expected lines: '$LEGACY_BEGIN' and '$LEGACY_END'" >&2
+        return 1
+    fi
+
+    awk -v marker="$LEGACY_BEGIN" '
+        { print }
+        $0 == marker { exit }
+    ' "$file"
+
+    echo
+    build_generated_block "$file"
+    echo
+
+    awk -v marker="$LEGACY_END" '
+        $0 == marker { found = 1 }
+        found { print }
+    ' "$file"
+}
+
+# Render per-module marker style to stdout. Each `<!-- BEGIN module:NAME -->
+# ... <!-- END module:NAME -->` region is replaced with the named module's
+# body. Module must be declared in the manifest's modules list.
+render_per_module_to_stdout() {
+    local file=$1
+    local manifest_modules
+    manifest_modules=$(build_module_list "$file" | tr '\n' ' ')
+
+    # Use awk to walk the file and substitute regions.
+    awk -v modlist=" $manifest_modules " -v moddir="$MODULES_DIR" '
+    BEGIN { in_region = 0; current_mod = ""; }
+    {
+        line = $0
+        if (in_region) {
+            # Look for end of current module region.
+            end_marker = "<!-- END module:" current_mod " -->"
+            if (line == end_marker) {
+                # Emit module body, then the end marker.
+                cmd = "cat \"" moddir "/" current_mod ".md\""
+                while ((cmd | getline mline) > 0) {
+                    print mline
+                }
+                close(cmd)
+                print line
+                in_region = 0
+                current_mod = ""
+            }
+            # Suppress any content inside the region (it gets replaced).
+            next
+        }
+        # Look for start of a module region.
+        if (match(line, /<!-- BEGIN module:[a-zA-Z0-9_.-]+ -->/)) {
+            mod = substr(line, RSTART + 18, RLENGTH - 22)
+            # Verify the module is declared in the manifest.
+            if (index(modlist, " " mod " ") == 0) {
+                print "error: marker for undeclared module: " mod > "/dev/stderr"
+                exit 1
+            }
+            print line
+            in_region = 1
+            current_mod = mod
+            next
+        }
+        print line
+    }
+    END {
+        if (in_region) {
+            print "error: unterminated module region: " current_mod > "/dev/stderr"
+            exit 1
+        }
+    }
+    ' "$file"
+}
+
+# Render any source file to stdout, picking the right marker style.
 render_to_stdout() {
-    # Read CLAUDE.md, emit the rendered version to stdout.
     local file=$1
 
     if ! has_manifest "$file"; then
@@ -143,98 +286,276 @@ render_to_stdout() {
         return 0
     fi
 
-    if ! grep -qF "$BEGIN_MARKER" "$file" || ! grep -qF "$END_MARKER" "$file"; then
-        echo "error: $file has manifest but missing BEGIN/END markers" >&2
-        echo "  expected lines: '$BEGIN_MARKER' and '$END_MARKER'" >&2
-        return 1
+    if has_module_markers "$file"; then
+        render_per_module_to_stdout "$file"
+        return $?
     fi
 
-    # Prefix: through (and including) the BEGIN line
-    awk -v marker="$BEGIN_MARKER" '
-        { print }
-        $0 == marker { exit }
-    ' "$file"
+    if has_legacy_markers "$file"; then
+        render_legacy_to_stdout "$file"
+        return $?
+    fi
 
-    echo  # blank line after BEGIN
-    build_generated_block "$file"
-    echo  # blank line before END
-
-    # Suffix: from (and including) the END line to EOF
-    awk -v marker="$END_MARKER" '
-        $0 == marker { found = 1 }
-        found { print }
-    ' "$file"
+    # Manifest but no markers — pass through. This is the "identity render"
+    # case used during the migration when templates have not yet adopted
+    # composition.
+    cat "$file"
 }
 
-resolve_file() {
-    # Resolve a CLI arg into a file path. If the arg is a directory, default
-    # to <dir>/CLAUDE.md. If it's a file, use it directly. If it doesn't
-    # exist, treat as a directory path (caller handles the "not found" error).
+# ──────────────────────────────────────────────────────────────────────────
+# Path resolution
+# ──────────────────────────────────────────────────────────────────────────
+
+expand_tilde() {
+    local p=$1
+    case "$p" in
+        '~/'*) echo "${HOME}/${p:2}" ;;
+        '~')   echo "$HOME" ;;
+        *)     echo "$p" ;;
+    esac
+}
+
+# Given a source file, determine the output path.
+#   1. If manifest declares `output`, use that (after tilde expansion).
+#   2. Else if filename ends in .template.md, strip .template.
+#   3. Else: source IS the output (legacy in-place).
+resolve_output_path() {
+    local source=$1
+    local output
+
+    if has_manifest "$source"; then
+        output=$(read_manifest_output "$source")
+        if [[ -n "$output" ]]; then
+            expand_tilde "$output"
+            return 0
+        fi
+    fi
+
+    case "$source" in
+        *.template.md)
+            echo "${source%.template.md}.md"
+            ;;
+        *)
+            echo "$source"
+            ;;
+    esac
+}
+
+# Given a CLI arg, resolve to the source file to render.
+#   - If arg is a directory: prefer dir/CLAUDE.template.md, fall back to
+#     dir/CLAUDE.md.
+#   - Else: arg IS the source file.
+resolve_source() {
     local arg=$1
     if [[ -d "$arg" ]]; then
-        echo "${arg%/}/CLAUDE.md"
+        if [[ -f "${arg%/}/CLAUDE.template.md" ]]; then
+            echo "${arg%/}/CLAUDE.template.md"
+        else
+            echo "${arg%/}/CLAUDE.md"
+        fi
     else
         echo "$arg"
     fi
 }
 
-cmd_render() {
-    local path=${1:-.}
-    local file
-    file=$(resolve_file "$path")
+# ──────────────────────────────────────────────────────────────────────────
+# Commands
+# ──────────────────────────────────────────────────────────────────────────
 
-    if [[ ! -f "$file" ]]; then
-        echo "error: $file not found" >&2
-        exit 1
+render_one() {
+    local source=$1
+    local output
+    output=$(resolve_output_path "$source")
+
+    if [[ ! -f "$source" ]]; then
+        echo "error: source $source not found" >&2
+        return 1
+    fi
+
+    mkdir -p "$(dirname "$output")"
+
+    local tmp
+    tmp=$(mktemp)
+    # shellcheck disable=SC2064
+    trap "rm -f '$tmp'" RETURN
+
+    render_to_stdout "$source" > "$tmp"
+
+    if [[ -f "$output" ]] && diff -q "$output" "$tmp" >/dev/null 2>&1; then
+        echo "clean: $output"
+    else
+        cp "$tmp" "$output"
+        echo "rendered: $source → $output"
+    fi
+}
+
+check_one() {
+    local source=$1
+    local output
+    output=$(resolve_output_path "$source")
+
+    # Unmanaged (no manifest) and same-file source/output → silent skip.
+    if [[ "$source" == "$output" ]]; then
+        has_manifest "$source" || return 0
+    fi
+
+    [[ -f "$source" ]] || return 0
+
+    if [[ ! -f "$output" ]]; then
+        echo "stale: $output is missing (re-render $source)" >&2
+        return 1
     fi
 
     local tmp
     tmp=$(mktemp)
     # shellcheck disable=SC2064
-    trap "rm -f '$tmp'" EXIT
+    trap "rm -f '$tmp'" RETURN
 
-    render_to_stdout "$file" > "$tmp"
+    render_to_stdout "$source" > "$tmp"
 
-    if diff -q "$file" "$tmp" >/dev/null 2>&1; then
-        echo "clean: $file (no change)"
+    if diff -q "$output" "$tmp" >/dev/null 2>&1; then
+        return 0
     else
-        cp "$tmp" "$file"
-        echo "rendered: $file"
+        echo "stale: $output (source: $source) — run 'claude-md render $source'" >&2
+        return 1
     fi
+}
+
+cmd_render() {
+    local source
+    source=$(resolve_source "${1:-.}")
+    render_one "$source"
 }
 
 cmd_check() {
-    local path=${1:-.}
-    local file
-    file=$(resolve_file "$path")
-
-    # No file → not managed → silent no-op
-    [[ -f "$file" ]] || exit 0
-
-    # No manifest → not managed → silent no-op
-    has_manifest "$file" || exit 0
-
-    local tmp
-    tmp=$(mktemp)
-    # shellcheck disable=SC2064
-    trap "rm -f '$tmp'" EXIT
-
-    render_to_stdout "$file" > "$tmp"
-
-    if diff -q "$file" "$tmp" >/dev/null 2>&1; then
-        exit 0
-    else
-        echo "stale: $file — run 'claude-md render' in $(dirname "$file")" >&2
-        exit 1
-    fi
+    local source
+    source=$(resolve_source "${1:-.}")
+    check_one "$source"
 }
+
+# Mirror SRC → DST for all *.template.md files. action is "render" or "check".
+walk_tree() {
+    local action=$1 src=$2 dst=$3
+    local src_abs dst_abs rel out_name out_path
+    src_abs=$(cd "$src" && pwd)
+    mkdir -p "$dst"
+    dst_abs=$(cd "$dst" && pwd)
+
+    local any_stale=0
+    while IFS= read -r -d '' tpl; do
+        rel="${tpl#${src_abs}/}"
+        # Strip .template from the filename portion only.
+        local rel_dir="${rel%/*}"
+        local rel_base="${rel##*/}"
+        [[ "$rel_dir" == "$rel" ]] && rel_dir=""
+        out_name="${rel_base%.template.md}.md"
+        if [[ -n "$rel_dir" ]]; then
+            out_path="${dst_abs}/${rel_dir}/${out_name}"
+        else
+            out_path="${dst_abs}/${out_name}"
+        fi
+
+        # If the template's manifest declares an `output`, that takes
+        # precedence over the mirror-path computation.
+        local declared_output=""
+        if has_manifest "$tpl"; then
+            declared_output=$(read_manifest_output "$tpl" || true)
+        fi
+        if [[ -n "$declared_output" ]]; then
+            out_path=$(expand_tilde "$declared_output")
+        fi
+
+        case "$action" in
+            render)
+                mkdir -p "$(dirname "$out_path")"
+                local tmp
+                tmp=$(mktemp)
+                render_to_stdout "$tpl" > "$tmp"
+                if [[ -f "$out_path" ]] && diff -q "$out_path" "$tmp" >/dev/null 2>&1; then
+                    echo "clean: $out_path"
+                else
+                    cp "$tmp" "$out_path"
+                    echo "rendered: $tpl → $out_path"
+                fi
+                rm -f "$tmp"
+                ;;
+            check)
+                if [[ ! -f "$out_path" ]]; then
+                    echo "stale: $out_path missing (source: $tpl)" >&2
+                    any_stale=1
+                    continue
+                fi
+                local tmp
+                tmp=$(mktemp)
+                render_to_stdout "$tpl" > "$tmp"
+                if ! diff -q "$out_path" "$tmp" >/dev/null 2>&1; then
+                    echo "stale: $out_path (source: $tpl)" >&2
+                    any_stale=1
+                fi
+                rm -f "$tmp"
+                ;;
+        esac
+    done < <(find "$src_abs" -type f -name '*.template.md' -print0)
+
+    [[ $any_stale -eq 0 ]] || return 1
+    return 0
+}
+
+parse_tree_args() {
+    local src=$1 dst=""
+    shift
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --to)
+                dst=$2
+                shift 2
+                ;;
+            *)
+                echo "error: unknown arg: $1" >&2
+                return 1
+                ;;
+        esac
+    done
+    if [[ -z "$dst" ]]; then
+        echo "error: --to <output-root> required" >&2
+        return 1
+    fi
+    if [[ ! -d "$src" ]]; then
+        echo "error: source root $src is not a directory" >&2
+        return 1
+    fi
+    echo "$src"
+    echo "$dst"
+}
+
+cmd_render_tree() {
+    local parsed src dst
+    parsed=$(parse_tree_args "$@")
+    src=$(echo "$parsed" | sed -n '1p')
+    dst=$(echo "$parsed" | sed -n '2p')
+    walk_tree render "$src" "$dst"
+}
+
+cmd_check_tree() {
+    local parsed src dst
+    parsed=$(parse_tree_args "$@")
+    src=$(echo "$parsed" | sed -n '1p')
+    dst=$(echo "$parsed" | sed -n '2p')
+    walk_tree check "$src" "$dst"
+}
+
+# ──────────────────────────────────────────────────────────────────────────
+# Dispatch
+# ──────────────────────────────────────────────────────────────────────────
 
 verb=${1:-}
 [[ $# -gt 0 ]] && shift || true
 
 case "$verb" in
-    render) cmd_render "$@" ;;
-    check)  cmd_check  "$@" ;;
+    render)       cmd_render "$@" ;;
+    check)        cmd_check  "$@" ;;
+    render-tree)  cmd_render_tree "$@" ;;
+    check-tree)   cmd_check_tree  "$@" ;;
     -h|--help|help|"") usage; [[ -z "$verb" ]] && exit 2 || exit 0 ;;
     *) echo "error: unknown verb '$verb'" >&2; usage >&2; exit 2 ;;
 esac
