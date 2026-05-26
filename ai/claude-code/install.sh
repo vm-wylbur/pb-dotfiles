@@ -125,29 +125,35 @@ mkdir -p "$CLAUDE_DIR/agents"
 "$RENDERER" render-tree \
     "$DOTFILES/ai/claude-code/agent-templates" --to "$CLAUDE_DIR/agents"
 
-# ── 4. CLAUDE_MEM_SECRET in .zshenv ─────────────────────────────────────────
+# ── 4. CLAUDE_MEM_SECRET ────────────────────────────────────────────────────
+#
+# Resolved in priority order:
+#   1. $CLAUDE_MEM_SECRET in env (first-time install)
+#   2. .env.CLAUDE_MEM_SECRET in ~/.claude/settings.json (subsequent runs)
+# Steady state: secret lives in settings.json (mode 600) and ~/.claude.json.
+# Nothing reads it from the shell env after first install.
 
-echo "Checking CLAUDE_MEM_SECRET..."
-if grep -q '^export CLAUDE_MEM_SECRET=' "$HOME/.zshenv" 2>/dev/null; then
-    echo "  ok: already in ~/.zshenv"
-else
-    if [ -n "${CLAUDE_MEM_SECRET:-}" ]; then
-        echo "export CLAUDE_MEM_SECRET=$CLAUDE_MEM_SECRET" >> "$HOME/.zshenv"
-        echo "  added to ~/.zshenv from environment"
-    else
-        echo "  MISSING: set CLAUDE_MEM_SECRET in env and re-run, or add manually to ~/.zshenv"
-        echo "    echo 'export CLAUDE_MEM_SECRET=<secret>' >> ~/.zshenv"
-    fi
+SETTINGS="$CLAUDE_DIR/settings.json"
+echo "Resolving CLAUDE_MEM_SECRET..."
+MEM_SECRET=""
+if [ -n "${CLAUDE_MEM_SECRET:-}" ]; then
+    MEM_SECRET="$CLAUDE_MEM_SECRET"
+    echo "  source: env"
+elif [ -f "$SETTINGS" ]; then
+    MEM_SECRET=$(jq -r '.env.CLAUDE_MEM_SECRET // empty' "$SETTINGS")
+    [ -n "$MEM_SECRET" ] && echo "  source: settings.json (previous install)"
 fi
 
-# Read it back for use in later steps
-MEM_SECRET=$(grep '^export CLAUDE_MEM_SECRET=' "$HOME/.zshenv" 2>/dev/null \
-    | head -1 | cut -d'=' -f2 | tr -d "'\"" || true)
+if [ -z "$MEM_SECRET" ]; then
+    echo "  MISSING: provide via env on first install:"
+    echo "    CLAUDE_MEM_SECRET=<secret> bash $0"
+    echo "  Subsequent runs re-read from $SETTINGS automatically."
+    exit 1
+fi
 
 # ── 5. settings.json ────────────────────────────────────────────────────────
 
 echo "Configuring settings.json..."
-SETTINGS="$CLAUDE_DIR/settings.json"
 if [ ! -f "$SETTINGS" ]; then
     echo '{}' > "$SETTINGS"
 fi
