@@ -117,6 +117,10 @@ rsync -a --delete --exclude='*.template.md' \
     "$DOTFILES/ai/claude-code/skill-templates" --to "$CLAUDE_DIR/skills"
 
 echo "Rendering agents/..."
+if [ -L "$CLAUDE_DIR/agents" ]; then
+    rm "$CLAUDE_DIR/agents"
+    echo "  removed stale symlink"
+fi
 mkdir -p "$CLAUDE_DIR/agents"
 "$RENDERER" render-tree \
     "$DOTFILES/ai/claude-code/agent-templates" --to "$CLAUDE_DIR/agents"
