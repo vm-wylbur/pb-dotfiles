@@ -44,6 +44,7 @@ Design + implementation plan: `~/dotfiles/ai/docs/composable-CLAUDE.md-design.md
 | code-review | `code-review.md` | When to invoke the built-in `/code-review` skill and at which effort level. Routing rule for specialized reviewers. |
 | goal-lock | `goal-lock.md` | When to invoke `/goal` (session anchor) and how it composes with `TaskCreate` (in-session ledger). Goal-condition format. |
 | multi-agent | `multi-agent.md` | Decision tree for picking among `Task`, `/coordinate`, `/negotiate`, `/facilitator`, Agent Teams. |
+| qfix | `qfix.md` | Sysadmin-flavored sessions likely to touch host state needing IaC encoding (sudo on `/etc/`, `/usr/local/`, systemd units). Ansible-targeted drift queue protocol + proactive offer. |
 
 ## How to use
 
