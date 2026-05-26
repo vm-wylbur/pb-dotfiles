@@ -385,6 +385,18 @@ Agent spawnable via `Agent(subagent_type="lint-fixer", ...)`. Rendered.
 
 #### Step B5 — 5-advisor panel as modules + composable agents
 
+**Deferred 2026-05-26 (cc-dots).** Reading the actual code revealed
+that facilitator has zero co-consumers of the panel pattern: coordinate
+uses a different agent topology (Repo Perspective + Integrator +
+Adversary), and no other skill calls the panel. The "duplication" B5
+would factor is ~75 words of one-liner role appendices in a single
+file. Additionally, post-B2 the named agents (`critic`, `architect`,
+…) now carry sharpened personas that *differ* from the panel's
+transcript-review context — composing the panel one-liners into the
+agent templates would overload them. Revisit when (a) a second skill
+adopts the same 5-agent panel structure, or (b) B6's `/inventory`
+output surfaces real multi-file duplication worth modularizing.
+
 The facilitator skill currently uses an inline 5-advisor panel: `critic`,
 `architect`, `security-reviewer`, `code-reviewer` (as DRY-guardian),
 `verifier`. With the new system:
