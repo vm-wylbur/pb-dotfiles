@@ -22,7 +22,22 @@
 
 set -euo pipefail
 
+# Search path of module directories (`:`-separated, leftmost wins). A repo
+# can prepend its own `ai/modules` so per-repo modules shadow user-wide
+# ones with the same name; the user-wide default remains the fallback.
 MODULES_DIR="${CLAUDE_MD_MODULES_DIR:-${HOME}/dotfiles/ai/modules}"
+
+# Walk MODULES_DIR's `:`-separated entries and print the absolute path of
+# the first `<name>.md` found. Exits non-zero if none match. Used by both
+# module_body() and the per-module awk renderer (via a symlink tmpdir).
+resolve_module() {
+    local name=$1 dir
+    local IFS=:
+    for dir in $MODULES_DIR; do
+        [[ -n "$dir" && -f "$dir/$name.md" ]] && { printf '%s\n' "$dir/$name.md"; return 0; }
+    done
+    return 1
+}
 IMPLICIT=()
 LEGACY_BEGIN="<!-- BEGIN GENERATED -->"
 LEGACY_END="<!-- END GENERATED -->"
@@ -162,9 +177,8 @@ build_module_list() {
 # Read a single module's body (raw markdown).
 module_body() {
     local mod=$1 mod_file
-    mod_file="${MODULES_DIR}/${mod}.md"
-    if [[ ! -f "$mod_file" ]]; then
-        echo "error: module '$mod' not found at $mod_file" >&2
+    if ! mod_file=$(resolve_module "$mod"); then
+        echo "error: module '$mod' not found on \$CLAUDE_MD_MODULES_DIR ($MODULES_DIR)" >&2
         return 1
     fi
     cat "$mod_file"
@@ -231,8 +245,26 @@ render_per_module_to_stdout() {
     local manifest_modules
     manifest_modules=$(build_module_list "$file" | tr '\n' ' ')
 
+    # Pre-resolve every declared module across the MODULES_DIR search path
+    # and stage the hits as a single flat dir of symlinks. The awk pass below
+    # only knows about one `moddir`, so the search-path resolution must
+    # happen up here before awk runs.
+    local stage mod mod_file
+    stage=$(mktemp -d "${TMPDIR:-/tmp}/claude-md-stage.XXXXXX")
+    # Double-quote so $stage expands now (while in scope); the RETURN trap
+    # then runs `rm -rf /tmp/claude-md-stage.XXXXXX` in the caller context
+    # where the local would be unset under `set -u`.
+    trap "rm -rf \"$stage\"" RETURN
+    for mod in $manifest_modules; do
+        if ! mod_file=$(resolve_module "$mod"); then
+            echo "error: module '$mod' not found on \$CLAUDE_MD_MODULES_DIR ($MODULES_DIR)" >&2
+            return 1
+        fi
+        ln -s "$mod_file" "$stage/$mod.md"
+    done
+
     # Use awk to walk the file and substitute regions.
-    awk -v modlist=" $manifest_modules " -v moddir="$MODULES_DIR" '
+    awk -v modlist=" $manifest_modules " -v moddir="$stage" '
     BEGIN { in_region = 0; current_mod = ""; }
     {
         line = $0
