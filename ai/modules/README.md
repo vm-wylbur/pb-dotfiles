@@ -46,6 +46,10 @@ Design + implementation plan: `~/dotfiles/ai/docs/composable-CLAUDE.md-design.md
 | goal-lock | `goal-lock.md` | When to invoke `/goal` (session anchor) and how it composes with `TaskCreate` (in-session ledger). Goal-condition format. |
 | multi-agent | `multi-agent.md` | Decision tree for picking among `Task`, `/coordinate`, `/negotiate`, `/facilitator`, Agent Teams. |
 | qfix | `qfix.md` | Sysadmin-flavored sessions likely to touch host state needing IaC encoding (sudo on `/etc/`, `/usr/local/`, systemd units). Ansible-targeted drift queue protocol + proactive offer. |
+| verify-discipline | `verify-discipline.md` | Universal verification floor. Hosts "Verification" + "Fixing bugs" rules (Rule 6); references `/run` + `/verify` bundled skills for end-to-end exercise. Migrated out of `base.md` in Phase 9. |
+| output-budget | `output-budget.md` | Universal output-length discipline (Rule 11). Keep responses tight; no preambles; no trailing recaps. Floor for the periodic-injection hook planned in Phase 7. |
+| settings-hygiene | `settings-hygiene.md` | Sessions touching `~/.claude/settings.json`. Use `/update-config` and `/fewer-permission-prompts` skills; don't hand-edit from memory. |
+| built-ins-routing | `built-ins-routing.md` | Choosing between built-in slash commands and specialized agents. Pairs `/code-review` vs `code-reviewer`, `/security-review` vs `security-reviewer`, `/verify`/`/run` vs ad-hoc test runs. |
 
 ## How to use
 

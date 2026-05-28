@@ -19,13 +19,22 @@ Design + module catalog: ai/docs/composable-CLAUDE.md-design.md.
 
 # User-wide Claude rules for PB
 
-<!-- compose: {"modules": ["base", "web-access", "git-basics", "python-uv", "file-headers", "shotgun-surgery", "gh-signature", "tri-home", "qfix", "code-review", "goal-lock", "multi-agent"], "output": "~/.claude/CLAUDE.md"} -->
+<!-- compose: {"modules": ["base", "verify-discipline", "output-budget", "web-access", "settings-hygiene", "git-basics", "python-uv", "file-headers", "shotgun-surgery", "gh-signature", "tri-home", "qfix", "code-review", "built-ins-routing", "goal-lock", "multi-agent"], "output": "~/.claude/CLAUDE.md"} -->
 
 <!-- BEGIN module:base -->
 <!-- END module:base -->
 
+<!-- BEGIN module:verify-discipline -->
+<!-- END module:verify-discipline -->
+
+<!-- BEGIN module:output-budget -->
+<!-- END module:output-budget -->
+
 <!-- BEGIN module:web-access -->
 <!-- END module:web-access -->
+
+<!-- BEGIN module:settings-hygiene -->
+<!-- END module:settings-hygiene -->
 
 <!-- BEGIN module:git-basics -->
 <!-- END module:git-basics -->
@@ -50,6 +59,9 @@ Design + module catalog: ai/docs/composable-CLAUDE.md-design.md.
 
 <!-- BEGIN module:code-review -->
 <!-- END module:code-review -->
+
+<!-- BEGIN module:built-ins-routing -->
+<!-- END module:built-ins-routing -->
 
 <!-- BEGIN module:goal-lock -->
 <!-- END module:goal-lock -->
