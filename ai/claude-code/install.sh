@@ -181,10 +181,16 @@ jq \
         "WebSearch",
         "Bash(watch *)"
     ] | unique) |
-    .permissions.allow = ((.permissions.allow // []) + [
-        "WebFetch(domain:code.claude.com)",
-        "WebFetch(domain:docs.anthropic.com)"
-    ] | unique) |
+    .permissions.allow = (
+        ((.permissions.allow // [])
+            | map(select(. != "mcp__repomix__*"
+                         and . != "mcp__tree_sitter__*")))
+        + [
+            "WebFetch(domain:code.claude.com)",
+            "WebFetch(domain:docs.anthropic.com)"
+        ]
+        | unique
+    ) |
     .hooks.SessionStart = [{"hooks": [
         {"type": "command", "command": $inject},
         {"type": "command", "command": $sessenv},
@@ -208,31 +214,19 @@ fi
 TMP=$(mktemp)
 jq \
     --arg secret "$MEM_SECRET" \
-    --arg venv_python "$VENV_MCP/bin/python" \
     '
     .mcpServers."claude-mem" = {
         "type": "http",
         "url": "http://snowball:3456/mcp",
         "headers": {"X-Claude-Mem-Secret": $secret}
     } |
-    .mcpServers.repomix = {
-        "type": "stdio",
-        "command": "npx",
-        "args": ["repomix", "--mcp"],
-        "env": {}
-    } |
-    .mcpServers.tree_sitter = {
-        "type": "stdio",
-        "command": $venv_python,
-        "args": ["-m", "mcp_server_tree_sitter.server"],
-        "env": {}
-    } |
     .mcpServers."claude-negotiate" = {
         "type": "http",
         "url": "http://snowball:7832/mcp"
-    }
+    } |
+    del(.mcpServers.repomix, .mcpServers.tree_sitter)
     ' "$CLAUDE_JSON" > "$TMP" && mv "$TMP" "$CLAUDE_JSON"
-echo "  updated: $CLAUDE_JSON (claude-mem, repomix, tree_sitter, claude-negotiate)"
+echo "  updated: $CLAUDE_JSON (claude-mem, claude-negotiate; repomix + tree_sitter MCPs removed)"
 
 # ── 7. Reminder: per-machine CLAUDE.local.md files ─────────────────────────
 

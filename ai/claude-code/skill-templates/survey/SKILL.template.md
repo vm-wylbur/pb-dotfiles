@@ -39,8 +39,9 @@ Read these in order, skip if missing:
 - `CLAUDE.md`, `README.md`, `AGENTS.md`, `TODAY.md`, `FIXME.md`
 
 Identify: language, build system, test framework, deployment method. Use
-`tree-sitter analyze_project` on large repos; otherwise `ls` top-level +
-read key config (package.json, pyproject.toml, Makefile).
+the `tree-sitter` skill (`bash ~/.claude/lib/tree-sitter.sh analyze
+--path .`) on large repos; otherwise `ls` top-level + read key config
+(package.json, pyproject.toml, Makefile).
 
 Summarize in 3-5 sentences: what this project is, does, how it's built.
 
@@ -106,7 +107,8 @@ merge into the newer doc. Cite the file/function/commit that proves completion.
 ## Guardrails
 
 - **Read-only.** Survey does not modify files.
-- Large repos (>500 files): use tree-sitter compression or sample key dirs.
+- Large repos (>500 files): pack with the `repomix` skill (with
+  `"compress": true` for a structure-only view) or sample key dirs.
 - All lib/ scripts are silent on no-data — absent output ≠ error.
 - `code-todos.sh` may match its own regex strings when scanning tooling
   repos (the literal "TODO|FIXME" in the patterns). Discount obvious
