@@ -720,26 +720,23 @@ Per phase:
 
 ## Open questions
 
+Resolved by PB 2026-05-27:
+
 1. **Commit-vs-gitignore for rendered `<repo>/.claude/CLAUDE.md`** (Phase 8)
-   — preserves git history vs treat as build artifact. Argument for commit:
-   teammates without dotfiles can still read it. Argument for gitignore:
-   never out of sync with template. Suggest: gitignore for now; revisit.
-2. **Whether to also write a facade for `/security-review` vs
-   `security-reviewer` agent** (Phase 9). They're meaningfully different
-   (built-in scans branch diff; agent does OWASP read of specific diff).
-   The module should differentiate; consider whether the differentiation
-   warrants a separate module or fits inside `built-ins-routing.md`.
-3. **claude-mem postgres backend portability** (Phase 4). Postgres lives
-   on snowball. If snowball is down, all mem-* operations fail. Acceptable?
-   Or do we want a local file-based fallback for mem-recent at minimum?
-4. **GitHub allowlist tightening** (Phase 1). Currently dropping all
-   `domain:github.com` patterns. If we later want narrow allows (e.g., for
-   specific repos), how do we express them — `WebFetch(domain:github.com/anthropics/*)`
-   may not be a valid pattern (docs show domain-only, not path). May
-   require PreToolUse hook for URL-path matching. Defer until needed.
-5. **What to do with the `commands` symlink we deleted on scott** during
-   the 2026-05-26 deploy. We removed it as dangling; if any prior tooling
-   relied on `~/.claude/commands`, restore via a similar render.
+   — **Resolved: gitignore.** It's a build artifact; never let it drift from
+   the template.
+2. **Facade for `/security-review` vs `security-reviewer` agent** (Phase 9)
+   — **Resolved: skip.** Neither is in active use; don't spend module
+   real estate differentiating tools we don't reach for.
+3. **claude-mem postgres backend portability** (Phase 4) — **Resolved:
+   accept the snowball dependency.** If snowball is down, mem-* fails. No
+   local fallback.
+4. **GitHub allowlist tightening** (Phase 1) — **Resolved: defer.** Likely
+   direction is to move all WebSearch-style research to web-claude
+   (cleaner, simpler) rather than carve allowlist exceptions in Claude
+   Code itself.
+5. **`commands` symlink deleted on scott** — **Resolved: accept the break.**
+   If something later relies on `~/.claude/commands`, we'll fix it then.
 
 ## Appendix A — Rule placement table
 
