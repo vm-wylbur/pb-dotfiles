@@ -26,7 +26,9 @@ Never:
 
 Before writing ANY code:
 1. Check `~/.claude/skills/` for existing workflows.
-2. Use MCP tools (`claude-mem`, `repomix`, `tree-sitter`) for context.
+2. Use the orientation skills (`repomix` to pack a repo, `tree-sitter`
+   for semantic code search) and prior-session memory
+   (`~/.claude/lib/mem-search.sh`) for context.
 3. Search the codebase for existing implementations.
 4. ONLY write new code if nothing exists.
 
