@@ -1,7 +1,7 @@
 <!--
 Author: PB and cc-dots 🧷
 Date: 2026-05-23
-Updated: 2026-05-26
+Updated: 2026-05-28
 License: (c) HRDAG, 2026, GPL-2 or newer
 
 ---
@@ -10,11 +10,21 @@ dotfiles/ai/STATUS.md
 
 # Skills + Agents Audit — Status
 
-**Last session:** 2026-05-26
+**Last session:** 2026-05-28
 **Active agent:** cc-dots 🧷 (this repo)
 **Audit arc:** composable-artifacts plan executed (Track A + Track B
 B1–B4, B6; B5 deferred). See `ai/docs/composable-artifacts-20260525.md`
 for plan + rationale.
+
+> **Numbering note (2026-05-28):** this file's "Phase 1–4" refer to the
+> *original* Track-A/B audit arc (the `...-20260525.md` design doc). Active
+> execution since 2026-05-27 lives in
+> `ai/docs/composable-artifacts-implementation-plan-20260527.md`, which uses
+> its own **Phase 0–10** numbering and carries the authoritative per-phase
+> status. Current state there: Phases 0,1,3,4,5,6,8,9 shipped; 2 + 7
+> (hook-side) deferred; 10a+10b done 2026-05-28; 10c remains. The "What's
+> done / Pending" sections below are the *Track-A/B* snapshot and are not
+> updated for the implementation-plan phases — defer to the impl plan.
 
 ## What this is
 

@@ -5,10 +5,16 @@
 #
 # dotfiles/scripts/deploy-repos
 #
-# Per-repo composability deployer. Walks ai/repos.txt and, for each
-# target, creates the machine-local .claude/lib symlink and re-renders
-# <repo>/ai/CLAUDE.template.md → <repo>/CLAUDE.md if a template is
-# present. Idempotent.
+# Per-repo composability deployer. Walks ai/repos.txt; for each target,
+# manages a machine-local .claude/lib symlink and/or re-renders the
+# repo's composed CLAUDE.md. Idempotent.
+#
+# Manifest entries are "PATH [MODE]". MODE (default auto-detected):
+#   template  — render <repo>/ai/CLAUDE.template.md → <repo>/CLAUDE.md,
+#               + .claude/lib symlink. (auto when ai/CLAUDE.template.md exists)
+#   inplace   — render <repo>/CLAUDE.md from its embedded manifest, in
+#               place; NO symlink (nothing else in the repo is touched).
+#   symlink   — .claude/lib symlink only, no render. (auto otherwise)
 #
 # Usage:
 #   deploy-repos                    # render + symlink for all targets
@@ -27,7 +33,7 @@ VERIFY_ONLY=0
 FILTER=""
 
 usage() {
-    sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '2,23p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 while [ $# -gt 0 ]; do
@@ -49,14 +55,14 @@ skipped=0
 # Read manifest; trim comments + blanks; expand ~/.
 while IFS= read -r raw; do
     line=${raw%%#*}
-    line=$(echo "$line" | awk '{$1=$1; print}')
-    [ -z "$line" ] && continue
-    [ -n "$FILTER" ] && [[ "$line" != *"$FILTER"* ]] && continue
+    read -r path mode _ <<<"$line"
+    [ -z "${path:-}" ] && continue
+    [ -n "$FILTER" ] && [[ "$path" != *"$FILTER"* ]] && continue
 
-    case "$line" in
-        /*)   repo="$line" ;;
-        '~/'*) repo="${HOME}/${line:2}" ;;
-        *)    repo="$HOME/$line" ;;
+    case "$path" in
+        /*)    repo="$path" ;;
+        '~/'*) repo="${HOME}/${path:2}" ;;
+        *)     repo="$HOME/$path" ;;
     esac
 
     if [ ! -d "$repo" ]; then
@@ -65,9 +71,20 @@ while IFS= read -r raw; do
         continue
     fi
 
-    echo "==> $repo"
+    # Resolve effective mode: explicit wins; else template if a template
+    # file exists, else symlink-only.
+    if [ -z "${mode:-}" ]; then
+        if [ -f "$repo/ai/CLAUDE.template.md" ]; then mode=template; else mode=symlink; fi
+    fi
 
-    # Stage 1: .claude/lib symlink
+    echo "==> $repo [$mode]"
+
+    # Stage 1: .claude/lib symlink (skipped for in-place repos — they
+    # consume only user-wide modules and reference ~/.claude/lib by
+    # absolute path, so nothing in the repo needs the symlink)
+    if [ "$mode" = inplace ]; then
+        echo "  symlink: skipped (in-place mode)"
+    else
     cdir="$repo/.claude"
     mkdir -p "$cdir"
     link="$cdir/lib"
@@ -98,27 +115,45 @@ while IFS= read -r raw; do
             any_acted=1
         fi
     fi
-
-    # Stage 2: render <repo>/ai/CLAUDE.template.md → <repo>/CLAUDE.md
-    tpl="$repo/ai/CLAUDE.template.md"
-    if [ -f "$tpl" ]; then
-        repo_modules="$repo/ai/modules"
-        export CLAUDE_MD_MODULES_DIR="$repo_modules:$USER_MODULES"
-        if [ "$VERIFY_ONLY" -eq 1 ]; then
-            if claude-md check-tree "$repo/ai" --to "$repo" 2>&1; then
-                echo "  render: ok (idempotent)"
-            else
-                echo "  render: STALE"
-                any_stale=1
-            fi
-        else
-            claude-md render-tree "$repo/ai" --to "$repo"
-            any_acted=1
-        fi
-        unset CLAUDE_MD_MODULES_DIR
-    else
-        echo "  render: skipped (no $tpl)"
     fi
+
+    # Stage 2: render the composed CLAUDE.md per mode
+    case "$mode" in
+        template)
+            export CLAUDE_MD_MODULES_DIR="$repo/ai/modules:$USER_MODULES"
+            if [ "$VERIFY_ONLY" -eq 1 ]; then
+                if claude-md check-tree "$repo/ai" --to "$repo" 2>&1; then
+                    echo "  render: ok (template, idempotent)"
+                else
+                    echo "  render: STALE (template)"
+                    any_stale=1
+                fi
+            else
+                claude-md render-tree "$repo/ai" --to "$repo"
+                any_acted=1
+            fi
+            unset CLAUDE_MD_MODULES_DIR
+            ;;
+        inplace)
+            export CLAUDE_MD_MODULES_DIR="$USER_MODULES"
+            if [ "$VERIFY_ONLY" -eq 1 ]; then
+                if claude-md check "$repo/CLAUDE.md" >/dev/null 2>&1; then
+                    echo "  render: ok (in-place, idempotent)"
+                else
+                    echo "  render: STALE (in-place — run: claude-md render $repo/CLAUDE.md)"
+                    any_stale=1
+                fi
+            else
+                claude-md render "$repo/CLAUDE.md" >/dev/null
+                echo "  render: ok (in-place)"
+                any_acted=1
+            fi
+            unset CLAUDE_MD_MODULES_DIR
+            ;;
+        *)
+            echo "  render: skipped (symlink-only)"
+            ;;
+    esac
 done < "$MANIFEST"
 
 echo

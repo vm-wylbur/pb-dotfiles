@@ -1,7 +1,14 @@
 # dotfiles/ai/repos.txt
 #
-# Per-repo deploy manifest for `deploy-repos`. One entry per line — home-
-# relative paths (no leading `~/`). Lines starting with `#` are comments.
+# Per-repo deploy manifest for `deploy-repos`. One entry per line:
+#   PATH [MODE]
+# PATH is home-relative (no leading `~/`). MODE is optional:
+#   template  render <repo>/ai/CLAUDE.template.md + .claude/lib symlink
+#             (auto-selected when that template file exists)
+#   inplace   render <repo>/CLAUDE.md from its embedded manifest, in place;
+#             no symlink (repo is touched only when its modules change)
+#   symlink   .claude/lib symlink only, no render (auto otherwise)
+# Lines starting with `#` are comments.
 #
 # deploy-repos creates the `.claude/lib → ~/.claude/lib` symlink in each
 # target, and re-renders <target>/ai/CLAUDE.template.md → <target>/CLAUDE.md
@@ -17,3 +24,15 @@
 projects/hrdag/hrdag-ansible
 projects/hrdag/hrdag-ansible-impl
 projects/hrdag/hrdag-ansible-ops
+
+# In-place composable repos (Phase 10c). Each CLAUDE.md carries a legacy
+# single-block manifest (`<!-- claude-md: {...} -->`) + BEGIN/END GENERATED
+# region and composes only user-wide modules — no ai/ template, no repo-
+# local modules. `inplace` keeps them auto-rendered by deploy-repos so the
+# repo-pack (and peers) can never silently drift again (the bug behind
+# server-documentation#28).
+projects/hrdag/filelister             inplace
+projects/hrdag/hrdag-monitor          inplace
+projects/hrdag/ntx                    inplace
+projects/hrdag/server-documentation   inplace
+projects/hrdag/tfcs                   inplace

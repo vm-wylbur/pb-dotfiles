@@ -9,7 +9,12 @@ dotfiles/ai/docs/composable-artifacts-implementation-plan-20260527.md
 
 # Composable Artifacts — Implementation Plan
 
-**Status:** Phase 0 complete; Phases 1–10 not started.
+**Status (2026-05-28):** Phases 0, 1, 3, 4, 5, 6, 8, 9 shipped. Phase 2
+deferred (prompt-hook transcript gap); Phase 7 hook-side deferred with it.
+Phase 10 done 2026-05-28: **10a** (cross-machine parity), **10b**
+(stale-repomix-ref re-renders, 4 repos), **10c** (drift-proof in-place
+composable repos via `deploy-repos` MODE column — Option B, not template
+adoption; 5 repos in `repos.txt`).
 **Design doc:** [composable-artifacts-20260525.md](./composable-artifacts-20260525.md) (framework + cell taxonomy).
 **This doc:** operational plan with success conditions per phase.
 
@@ -675,6 +680,43 @@ existing).
 ---
 
 ## Phase 10 — Cross-repo + cross-machine deploy
+
+**Status (2026-05-28):** split into 10a/10b/10c.
+- **10a — cross-machine parity. ✅ DONE.** `deploy-repos --verify-only`
+  exit 0 on porky and scott; scott at `17cb8a8`, clean working tree.
+  hrdag-ansible targets correctly absent on scott (no checkout there).
+  Nothing to deploy — `main` unchanged since scott's 05-26 sync.
+- **10b — stale `mcp__repomix__pack_codebase` ref fixes. ✅ DONE.** Fixed
+  in filelister, hrdag-monitor, ntx, server-documentation via
+  `claude-md render` (NOT hand-edit). Commits: filelister `646803a`,
+  hrdag-monitor `700adad`, ntx `22b318f`, server-documentation `665de3c`
+  (closed issue #28).
+- **10c — drift-proof the in-place composable repos. ✅ SHIPPED (Option B), 2026-05-28.**
+
+  **Decision: B, not template adoption.** The legacy repos compose *only*
+  user-wide modules (no repo-local modules), so the Phase-8b template
+  pattern buys nothing for them. Instead of converting, we made the
+  existing in-place render *automatic*: extended `deploy-repos` with a
+  per-entry `MODE` column (`template` / `inplace` / `symlink`). `inplace`
+  runs `claude-md render <repo>/CLAUDE.md` against the embedded manifest and
+  **skips** the `.claude/lib` symlink (these repos use absolute
+  `~/.claude/lib`, so 10c touched zero files inside them). Added filelister,
+  hrdag-monitor, ntx, server-documentation, **tfcs** to `repos.txt` as
+  `inplace`. Since `install.sh` runs `deploy-repos`, these `CLAUDE.md` files
+  can no longer silently drift — closes the #28 class structurally. All five
+  idempotent on porky verify.
+
+  **Trade-off accepted:** two manifest formats now coexist (`claude-md:`
+  in-place vs `compose:`+template). Operational standardization (one deploy
+  mechanism for every composable repo) was the load-bearing goal; format
+  unification is deferred until a repo actually needs repo-local modules —
+  *that* is the trigger to convert it to the Phase-8b template pattern.
+  `claude-md:` is the older verb; if it's ever deprecated, the in-place
+  repos need conversion then.
+
+  Caveat banked: never hand-edit a `BEGIN GENERATED` region — `claude-md
+  render` only (the 10b mistake; initial hand-edits were superseded by
+  re-render commits).
 
 **Goal:** Generalize Phase 8's pilot to all repos that need per-repo
 composability. Build the deploy script. Verify on porky; replicate to
