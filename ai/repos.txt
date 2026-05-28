@@ -1,0 +1,19 @@
+# dotfiles/ai/repos.txt
+#
+# Per-repo deploy manifest for `deploy-repos`. One entry per line — home-
+# relative paths (no leading `~/`). Lines starting with `#` are comments.
+#
+# deploy-repos creates the `.claude/lib → ~/.claude/lib` symlink in each
+# target, and re-renders <target>/ai/CLAUDE.template.md → <target>/CLAUDE.md
+# if a template is present (worktrees on branches without the template yet
+# get the symlink only — once they rebase onto a branch that has the
+# template, the next deploy-repos run will render it).
+#
+# Targets that don't exist on this machine are skipped silently.
+
+# hrdag-ansible — Phase 8 pilot. Main worktree carries the template +
+# repo-local modules; the impl/ops worktrees pick up the rendered CLAUDE.md
+# once their branches rebase onto main.
+projects/hrdag/hrdag-ansible
+projects/hrdag/hrdag-ansible-impl
+projects/hrdag/hrdag-ansible-ops

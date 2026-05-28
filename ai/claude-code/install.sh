@@ -224,7 +224,20 @@ jq '
     ' "$CLAUDE_JSON" > "$TMP" && mv "$TMP" "$CLAUDE_JSON"
 echo "  updated: $CLAUDE_JSON (claude-negotiate only; repomix, tree_sitter, claude-mem MCPs removed — now served by lib/ shims)"
 
-# ── 7. Reminder: per-machine CLAUDE.local.md files ─────────────────────────
+# ── 7. Per-repo deploy (Phase 8 substrate) ─────────────────────────────────
+# Walks ai/repos.txt; for each target that exists, creates the .claude/lib
+# symlink and re-renders <repo>/ai/CLAUDE.template.md → <repo>/CLAUDE.md.
+# Targets absent on this machine are skipped silently. Non-fatal if a
+# template hasn't been authored yet (symlink-only).
+
+echo "Per-repo deploy..."
+if [ -x "$DOTFILES/scripts/deploy-repos" ] && [ -f "$DOTFILES/ai/repos.txt" ]; then
+    "$DOTFILES/scripts/deploy-repos" || echo "  (deploy-repos reported issues; continuing)"
+else
+    echo "  skipped: deploy-repos or repos.txt missing"
+fi
+
+# ── 8. Reminder: per-machine CLAUDE.local.md files ─────────────────────────
 
 cat <<'EOF'
 

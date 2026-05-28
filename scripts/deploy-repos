@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+# Author: PB and cc-dots 🧷
+# Date: 2026-05-28
+# License: (c) HRDAG, 2026, GPL-2 or newer
+#
+# dotfiles/scripts/deploy-repos
+#
+# Per-repo composability deployer. Walks ai/repos.txt and, for each
+# target, creates the machine-local .claude/lib symlink and re-renders
+# <repo>/ai/CLAUDE.template.md → <repo>/CLAUDE.md if a template is
+# present. Idempotent.
+#
+# Usage:
+#   deploy-repos                    # render + symlink for all targets
+#   deploy-repos --verify-only      # check for drift, exit non-zero if any
+#   deploy-repos --filter PATTERN   # only targets whose path matches
+#   deploy-repos --help
+
+set -euo pipefail
+
+DOTFILES=${DOTFILES:-$HOME/dotfiles}
+MANIFEST=${DEPLOY_REPOS_MANIFEST:-$DOTFILES/ai/repos.txt}
+USER_MODULES=${CLAUDE_MD_USER_MODULES:-$DOTFILES/ai/modules}
+USER_LIB=${USER_LIB:-$HOME/.claude/lib}
+
+VERIFY_ONLY=0
+FILTER=""
+
+usage() {
+    sed -n '2,17p' "$0" | sed 's/^# \{0,1\}//'
+}
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --verify-only) VERIFY_ONLY=1; shift ;;
+        --filter)      FILTER=$2; shift 2 ;;
+        -h|--help)     usage; exit 0 ;;
+        *) echo "unknown flag: $1" >&2; usage >&2; exit 2 ;;
+    esac
+done
+
+[ -f "$MANIFEST" ] || { echo "deploy-repos: manifest not found: $MANIFEST" >&2; exit 1; }
+[ -d "$USER_LIB" ] || { echo "deploy-repos: $USER_LIB does not exist (run install.sh first)" >&2; exit 1; }
+
+any_stale=0
+any_acted=0
+skipped=0
+
+# Read manifest; trim comments + blanks; expand ~/.
+while IFS= read -r raw; do
+    line=${raw%%#*}
+    line=$(echo "$line" | awk '{$1=$1; print}')
+    [ -z "$line" ] && continue
+    [ -n "$FILTER" ] && [[ "$line" != *"$FILTER"* ]] && continue
+
+    case "$line" in
+        /*)   repo="$line" ;;
+        '~/'*) repo="${HOME}/${line:2}" ;;
+        *)    repo="$HOME/$line" ;;
+    esac
+
+    if [ ! -d "$repo" ]; then
+        echo "  skip: $repo (not present on this machine)"
+        skipped=$((skipped + 1))
+        continue
+    fi
+
+    echo "==> $repo"
+
+    # Stage 1: .claude/lib symlink
+    cdir="$repo/.claude"
+    mkdir -p "$cdir"
+    link="$cdir/lib"
+    if [ -L "$link" ]; then
+        cur=$(readlink "$link")
+        if [ "$cur" = "$USER_LIB" ]; then
+            echo "  symlink: ok ($link → $cur)"
+        else
+            if [ "$VERIFY_ONLY" -eq 1 ]; then
+                echo "  symlink: STALE ($link → $cur, want $USER_LIB)"
+                any_stale=1
+            else
+                ln -snf "$USER_LIB" "$link"
+                echo "  symlink: updated ($link → $USER_LIB)"
+                any_acted=1
+            fi
+        fi
+    elif [ -e "$link" ]; then
+        echo "  symlink: ERROR — $link exists and is not a symlink (manual cleanup needed)" >&2
+        any_stale=1
+    else
+        if [ "$VERIFY_ONLY" -eq 1 ]; then
+            echo "  symlink: MISSING ($link)"
+            any_stale=1
+        else
+            ln -s "$USER_LIB" "$link"
+            echo "  symlink: created ($link → $USER_LIB)"
+            any_acted=1
+        fi
+    fi
+
+    # Stage 2: render <repo>/ai/CLAUDE.template.md → <repo>/CLAUDE.md
+    tpl="$repo/ai/CLAUDE.template.md"
+    if [ -f "$tpl" ]; then
+        repo_modules="$repo/ai/modules"
+        export CLAUDE_MD_MODULES_DIR="$repo_modules:$USER_MODULES"
+        if [ "$VERIFY_ONLY" -eq 1 ]; then
+            if claude-md check-tree "$repo/ai" --to "$repo" 2>&1; then
+                echo "  render: ok (idempotent)"
+            else
+                echo "  render: STALE"
+                any_stale=1
+            fi
+        else
+            claude-md render-tree "$repo/ai" --to "$repo"
+            any_acted=1
+        fi
+        unset CLAUDE_MD_MODULES_DIR
+    else
+        echo "  render: skipped (no $tpl)"
+    fi
+done < "$MANIFEST"
+
+echo
+if [ "$VERIFY_ONLY" -eq 1 ]; then
+    if [ "$any_stale" -eq 1 ]; then
+        echo "deploy-repos: DRIFT detected (run without --verify-only to fix)" >&2
+        exit 1
+    fi
+    echo "deploy-repos: all targets clean"
+else
+    echo "deploy-repos: done"
+fi
+if [ "$skipped" -gt 0 ]; then
+    echo "  ($skipped target(s) not present on this machine — expected)"
+fi
+exit 0
