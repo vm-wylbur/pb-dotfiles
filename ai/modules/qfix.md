@@ -4,22 +4,44 @@ The qfix queue is an ansible-targeted drift queue. Use it to record host
 changes that need to be encoded in the role tree but aren't going through
 a normal PR right now.
 
-**Tools** (claude-mem MCP):
-- `mcp__claude-mem__queue-fix-store` — file a new entry
-- `mcp__claude-mem__queue-fix-list` — list open entries
-- `mcp__claude-mem__queue-fix-mark` — mark an entry processed
+**Tools** (REST shims over claude-mem on snowball; replace the
+previous `mcp__claude-mem__queue-fix-*` MCP tools as of 2026-05-27):
 
-For full protocol details: `mem-search "queue-fix howto"`.
+```bash
+# file a new entry
+echo '{"target_repo":"...", "host":"...", "path":"...",
+       "before_state":"...", "after_state":"...", "why":"...",
+       "who":"PB"}' \
+    | bash ~/.claude/lib/qfix-store.sh
+# returns {"id": N}
+
+# list open entries (FIFO)
+bash ~/.claude/lib/qfix-list.sh --target-repo hrdag-ansible --status open
+
+# mark consumed / escalated / superseded
+echo '{"id": N, "status":"consumed",
+       "consumed_by_commit":"abc123",
+       "consumed_in_repo":"hrdag-ansible",
+       "consumed_in_path":"roles/foo/tasks/main.yml"}' \
+    | bash ~/.claude/lib/qfix-mark.sh
+```
+
+For full protocol details, search the memory store:
+
+```bash
+echo '{"query":"queue-fix howto","limit":3}' \
+    | bash ~/.claude/lib/mem-search.sh
+```
 
 **Routing:**
-- `cc-ansible-merger` drains `queue-fix-list` at session start.
-- Other repos (tfcs / ntx / hmon / filelister / sysadmin) file GH issues
-  in `hrdag/hrdag-ansible`, not queue entries.
+- `cc-ansible-merger` drains the qfix list at session start.
+- Other repos (tfcs / ntx / hmon / filelister / sysadmin) file GH
+  issues in `hrdag/hrdag-ansible`, not queue entries.
 
 ## Filing shorthand
 
 When PB says "qfix that" / "queue this" / "log this fix" (or similar
-phrasing), call `queue-fix-store` with `target_repo="hrdag-ansible"` and
+phrasing), call `qfix-store.sh` with `target_repo="hrdag-ansible"` and
 these fields extracted from preceding context:
 
 - `host` (default: current shell host)

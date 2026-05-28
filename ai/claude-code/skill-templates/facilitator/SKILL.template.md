@@ -122,10 +122,13 @@ and **prior negotiation artifacts** (what was formally agreed).
 
 Run these searches in parallel — broad topic + each participant's repo name:
 
-```python
-results_topic = mcp__claude-mem__mem-search(query="<topic keywords from intake>")
-results_p1    = mcp__claude-mem__mem-search(query="<participant1 repo> <topic>")
-results_p2    = mcp__claude-mem__mem-search(query="<participant2 repo> <topic>")
+```bash
+echo '{"query":"<topic keywords from intake>","limit":10}' \
+    | bash ~/.claude/lib/mem-search.sh
+echo '{"query":"<participant1 repo> <topic>","limit":10}' \
+    | bash ~/.claude/lib/mem-search.sh
+echo '{"query":"<participant2 repo> <topic>","limit":10}' \
+    | bash ~/.claude/lib/mem-search.sh
 ```
 
 From the results, **prefer** `type: "reference"` and `type: "decision"`
@@ -410,14 +413,20 @@ Report back to the human:
 Immediately after closing, store a structured memory so future historians
 can find this decision:
 
-```python
-mcp__claude-mem__mem-store(
-    content=f"""
+```bash
+jq -n --arg content "$CONTENT" --argjson tags "$TAGS_JSON" \
+    '{content: $content, tags: $tags}' \
+    | bash ~/.claude/lib/mem-store.sh
+```
+
+Where `$CONTENT` follows this template:
+
+```
 Negotiation {neg_id} closed {date}: {topic}
-Participants: {", ".join(all_participants)}
+Participants: {comma-separated all participants}
 
 AGREED:
-{one_paragraph_summary_of_what_was_agreed}
+{one paragraph summary of what was agreed}
 
 KEY DECISIONS:
 - {specific_decision_1 with paths/commands/ownership}
@@ -425,16 +434,16 @@ KEY DECISIONS:
 ...
 
 CONSTRAINTS ESTABLISHED:
-- {any_constraint_this_negotiation_locked_in}
+- {any constraint this negotiation locked in}
 
 UNRESOLVED / DEFERRED:
-- {anything_explicitly_left_for_a_future_negotiation or "none"}
+- {anything explicitly left for a future negotiation, or "none"}
 
 Artifact: {artifact_path}
-""",
-    tags=["negotiation", "agreement", participant1_repo, participant2_repo, topic_slug]
-)
 ```
+
+And `$TAGS_JSON` is a JSON array, e.g.
+`'["negotiation","agreement","cc-foo-repo","cc-bar-repo","topic-slug"]'`.
 
 **What to include:**
 - Specific paths, commands, uid/gid, permissions — not just "we agreed on ACLs"

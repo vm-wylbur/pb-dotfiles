@@ -184,7 +184,8 @@ jq \
     .permissions.allow = (
         ((.permissions.allow // [])
             | map(select(. != "mcp__repomix__*"
-                         and . != "mcp__tree_sitter__*")))
+                         and . != "mcp__tree_sitter__*"
+                         and . != "mcp__claude-mem__*")))
         + [
             "WebFetch(domain:code.claude.com)",
             "WebFetch(domain:docs.anthropic.com)"
@@ -212,21 +213,16 @@ if [ ! -f "$CLAUDE_JSON" ]; then
 fi
 
 TMP=$(mktemp)
-jq \
-    --arg secret "$MEM_SECRET" \
-    '
-    .mcpServers."claude-mem" = {
-        "type": "http",
-        "url": "http://snowball:3456/mcp",
-        "headers": {"X-Claude-Mem-Secret": $secret}
-    } |
+jq '
     .mcpServers."claude-negotiate" = {
         "type": "http",
         "url": "http://snowball:7832/mcp"
     } |
-    del(.mcpServers.repomix, .mcpServers.tree_sitter)
+    del(.mcpServers.repomix,
+        .mcpServers.tree_sitter,
+        .mcpServers."claude-mem")
     ' "$CLAUDE_JSON" > "$TMP" && mv "$TMP" "$CLAUDE_JSON"
-echo "  updated: $CLAUDE_JSON (claude-mem, claude-negotiate; repomix + tree_sitter MCPs removed)"
+echo "  updated: $CLAUDE_JSON (claude-negotiate only; repomix, tree_sitter, claude-mem MCPs removed — now served by lib/ shims)"
 
 # ── 7. Reminder: per-machine CLAUDE.local.md files ─────────────────────────
 

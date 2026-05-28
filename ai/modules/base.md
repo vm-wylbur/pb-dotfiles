@@ -79,7 +79,8 @@ Skipped/None/disabled checks:
   not after all complete.
 - When the user names a specific file, read THAT exact file — not a
   similarly named one.
-- Debugging lessons and session insights → `claude-mem` (`mcp__claude-mem__mem-store`),
+- Debugging lessons and session insights → `claude-mem` via
+  `echo '{"content":"…","tags":["…"]}' | bash ~/.claude/lib/mem-store.sh`,
   NOT `MEMORY.md`.
 - Never SSH to the host you are already on.
 - No unbounded filesystem scans (`find /`, `du -sb` on large trees,

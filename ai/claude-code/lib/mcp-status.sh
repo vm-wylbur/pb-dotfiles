@@ -14,7 +14,7 @@
 
 command -v claude &>/dev/null || exit 0
 
-EXPECTED=${EXPECTED:-"claude-mem claude-negotiate"}
+EXPECTED=${EXPECTED:-"claude-negotiate"}
 
 OUTPUT=$(claude mcp list 2>&1)
 # Lines look like: "name: url - ✓ Connected" or "name: ... - ✗ Failed to connect"
