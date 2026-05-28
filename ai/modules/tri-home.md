@@ -1,28 +1,34 @@
 ## Session-start: triage your own-repo issues
 
-At every session start:
+The SessionStart hook (`lib/triage-issues.sh`) automatically lists open
+issues in the current repo whose body carries this agent's signature
+(e.g. `cc-dots`). The block appears at session start under
+`Triage queue (...):` with title, body excerpt, and latest comment per
+issue. No manual `gh issue list` is needed — the data is already
+there.
 
-1. **Search known issue numbers.** Look in your memory files and this
-   repo's `.md` files (`TODO.md`, `STATUS.md`, `PLAN.md`, `PROBLEM.md`,
-   etc.) for issue numbers. For each, check:
+For each triaged issue, judge:
 
-       gh issue view {number} --repo hrdag/{repo}
+- **Success condition met?** The body says "resolved when X passes /
+  Y is observed." Verify against the current code/state.
+  - **Met** → comment the closing evidence (commit hash, test output,
+    config change) and close.
+  - **Not met but progressed** → comment what advanced.
+  - **Not met and no progress** → address it this session if related
+    to the user's request, otherwise leave a status note and move on.
+- **Owner already responded?** If the latest comment is from someone
+  other than you, acknowledge their feedback in your next reply — do
+  not repeat the complaint.
+- **Stale issue?** If the body's premise no longer matches reality
+  (refactor obsoleted it), close with a one-line note explaining why.
 
-   - **If closed**: verify the success condition is met. Not met → reopen
-     with specific evidence. Met → update your files and stop mentioning it.
-   - **If still open**: read new comments. If the owner has responded or
-     partially addressed it, acknowledge and update the issue — don't repeat
-     the complaint.
-
-2. **List open issues with your signature.** Catch issues you filed but
-   didn't record locally:
-
-       gh issue list --repo hrdag/{repo} --state open --json number,title,body
-
-   Filter for your `cc-{repo}` signature in the body. Apply step 1 to any
-   found.
+The hook is bounded (default limit 5 issues, 1 most-recent comment
+each) — if there's important context beyond what's shown, fetch it
+explicitly with `gh issue view N`. Do not blindly act on the excerpt
+alone for high-stakes operations.
 
 ## Filing new issues
 
-Before filing, search open issues in this repo. If your concern is already
-open, comment on the existing issue rather than filing a duplicate.
+Before filing, search open issues in this repo. If your concern is
+already open, comment on the existing issue rather than filing a
+duplicate.

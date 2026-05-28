@@ -21,6 +21,26 @@ bash "${LIB}/env.sh"
 echo "CWD: $(pwd)"
 bash "${LIB}/git-status.sh"
 bash "${LIB}/gh-issues.sh"
+bash "${LIB}/triage-issues.sh" </dev/null | jq -r '
+    if (.issues // []) | length == 0 then empty
+    else
+        "Triage queue (\(.signature), \(.issues | length) issue(s) you filed):",
+        (.issues[] |
+            "  #\(.number)  \(.title)",
+            (if .body then
+                "      body: " + (
+                    (.body | gsub("\\s+"; " ") | .[0:140]) +
+                    (if (.body | length) > 140 then "…" else "" end)
+                )
+             else empty end),
+            (if .recent_comment then
+                "      latest (\(.recent_comment.createdAt[0:10])): " + (
+                    (.recent_comment.body | gsub("\\s+"; " ") | .[0:120]) +
+                    (if (.recent_comment.body | length) > 120 then "…" else "" end)
+                )
+             else empty end)
+        )
+    end' 2>/dev/null
 bash "${LIB}/skills-list.sh"
 bash "${LIB}/claude-md-mtime.sh"
 bash "${LIB}/mcp-status.sh"
