@@ -176,7 +176,15 @@ jq \
     '
     .env.CLAUDE_MEM_SECRET = $secret |
     .env.CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION = "false" |
-    .permissions.deny = ["AskUserQuestion"] |
+    .permissions.deny = ((.permissions.deny // []) + [
+        "AskUserQuestion",
+        "WebSearch",
+        "Bash(watch *)"
+    ] | unique) |
+    .permissions.allow = ((.permissions.allow // []) + [
+        "WebFetch(domain:code.claude.com)",
+        "WebFetch(domain:docs.anthropic.com)"
+    ] | unique) |
     .hooks.SessionStart = [{"hooks": [
         {"type": "command", "command": $inject},
         {"type": "command", "command": $sessenv},

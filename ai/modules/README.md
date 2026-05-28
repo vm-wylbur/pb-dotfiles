@@ -25,6 +25,7 @@ Design + implementation plan: `~/dotfiles/ai/docs/composable-CLAUDE.md-design.md
 
 | ID | File | Use when |
 |---|---|---|
+| web-access | `web-access.md` | Any session with web tools. Backs the settings-level WebSearch / `watch` denies and `WebFetch` allowlist (Anthropic docs); routes research to web-claude. |
 | repo-pack | `repo-pack.md` | Working in a code repository (excluded from non-repo dirs like `~/tmp`). Prescribes repomix usage for orientation. |
 | git-basics | `git-basics.md` | Any git-tracked dir. Commit gate, `git mv`/`git rm`, commit trailer. |
 | python-uv | `python-uv.md` | Python repos. `uv` over naked python; Makefile-first. |
