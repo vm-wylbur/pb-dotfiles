@@ -67,6 +67,39 @@ for s in "${SKILLS[@]}"; do
 done
 echo
 
+# --------- runbooks (per-repo skills tagged runbook: true) ---------
+# Walk up from PWD to find the nearest .claude/skills/ dir (repo-local).
+runbook_root=""
+d=$PWD
+while [[ "$d" != "/" && "$d" != "$HOME" ]]; do
+    if [[ -d "$d/.claude/skills" ]]; then
+        runbook_root="$d/.claude/skills"
+        break
+    fi
+    d=$(dirname "$d")
+done
+if [[ -n "$runbook_root" ]]; then
+    RUNBOOKS=()
+    while IFS= read -r f; do
+        # Frontmatter-scan: include only if runbook: true is set in the YAML block.
+        if awk '
+            /^---$/ { fm++; if (fm == 2) exit }
+            fm == 1 && /^runbook: *true *$/ { found = 1 }
+            END { exit !found }
+        ' "$f"; then
+            RUNBOOKS+=("$f")
+        fi
+    done < <(find -L "$runbook_root" -maxdepth 2 -name SKILL.md | sort)
+    if (( ${#RUNBOOKS[@]} > 0 )); then
+        printf 'RUNBOOKS (%s) [%d]\n' "${runbook_root/#$HOME/~}" "${#RUNBOOKS[@]}"
+        for f in "${RUNBOOKS[@]}"; do
+            name=$(basename "$(dirname "$f")")
+            printf '  %-18s %s\n' "$name" "$(get_description "$f")"
+        done
+        echo
+    fi
+fi
+
 # --------- agents ---------
 AGENTS=()
 if [[ -d "$CLAUDE_DIR/agents" ]]; then

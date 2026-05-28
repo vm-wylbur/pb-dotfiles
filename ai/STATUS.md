@@ -29,14 +29,14 @@ Visibility, Determinism, Composability) plus a scope axis we added
 | Decision | Lives at |
 |---|---|
 | Reactive, single-concern skills | `<repo>/.claude/skills/` (user-wide for generic; repo-local for domain) |
-| Deliberate multi-step procedures | `<repo>/scripts/runbooks/<name>/RUNBOOK.md` + co-located scripts |
+| Deliberate multi-step procedures | `<repo>/.claude/skills/<name>/SKILL.md` with `disable-model-invocation: true` + `runbook: true` |
 | Cross-repo shared script primitives | `dotfiles/ai/claude-code/lib/*.sh` → `~/.claude/lib/*.sh` |
 | Repo-specific script primitives | `<repo>/scripts/*.sh` |
 | Session-start state injection | hook (`session-env.sh`) — composes lib/ scripts |
 | Mid-session reload | `refresh` skill — composition recipe for lib/ scripts |
 | Reference docs (knowledge, contracts) | `<repo>/docs/*.md` (flat) |
 | Skills are reactive, AI auto-fires | runbooks are deliberate, human-pulled |
-| One consistent runbook path across all repos | yes — `scripts/runbooks/<name>/RUNBOOK.md` |
+| One consistent runbook path across all repos | yes — `.claude/skills/<name>/SKILL.md` (unified with skill substrate via `disable-model-invocation`) |
 | ansible_* skills | repo-local in hrdag-ansible only (removed from user-wide) |
 | Composable artifacts (CLAUDE.md / SKILL.md / agents) | `.template.md` sources + `claude-md render-tree` → rendered outputs |
 | Source-of-truth separation | templates live in `ai/`; rendered outputs in `~/.claude/` |
