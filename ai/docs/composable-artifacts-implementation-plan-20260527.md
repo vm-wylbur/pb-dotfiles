@@ -773,25 +773,34 @@ Resolved by PB 2026-05-27:
 
 ## Appendix A — Rule placement table
 
-To be filled in during Phase 9. Skeleton:
+Updated 2026-05-28 as part of Phase 9d (validation). Cells reflect the
+post-9 state — Phase 7 hook-side substrate is deferred, so rules 4–8
+and 11 still rely on prose-only enforcement until Phase 7 ships.
 
-| # | Rule | Cell(s) | Substrate | Phase introducing |
+| # | Rule | Cell(s) | Substrate (current) | Status |
 |---|---|---|---|---|
-| 1 | Anti-reinvention (check skills before code) | E1 + 11 (claude-mem) | CLAUDE.md prose + `/mem` skill | 4, 9 |
-| 2 | Never WebSearch | A | settings.json | 1 |
-| 3 | Session-start own-repo triage | 2 (B1) + E1 | `lib/triage-issues.sh` + module | 3, 9 |
-| 4 | Never SSH to current host | 5 (F) | PreToolUse prompt hook on Bash(ssh *) | 2, 7 |
-| 5 | git mv / git rm (not bash mv/rm) | 5 (F) | PreToolUse prompt hook | 2, 7 |
-| 6 | Verify before claiming | E1 + 5 (F) + 3 (B2 Stop) | module + Phase-2 hook + Phase-7 Stop scan | 2, 7, 9 |
-| 7 | qfix proactive offer | 3 (B2 Stop) | `stop-qfix-scan.sh` | 7 |
-| 8 | GitHub PR/issue signature | 4 (B3) | PostToolUse on Bash(gh issue create *) | 9 (or 7) |
-| 9 | Never watch | A | settings.json `Bash(watch *)` deny | 1 |
-| 10 | Plan-to-file means STOP | E1 | module (judgment-shaped) | 9 |
-| 11 | Output budget (~400 tokens) | E1 + 3 (B2 periodic) | module + `user-prompt-periodic.sh` | 7, 9 |
-| 12 | Pull /facilitator for hard design | E1 + 11 (claude-mem) | module + advertising via claude-mem | 9 |
-| **+3** | Verification Discipline (insights doc) | folded into Rule 6 | — | — |
-| **+3** | Autonomy Defaults (insights doc) | E1 | module | 9 |
-| **+3** | Output Budget (insights doc) | folded into Rule 11 | — | — |
+| 1 | Anti-reinvention (check skills before code) | E1 + 11 (claude-mem) | `modules/base.md` "## Anti-reinvention" + `~/.claude/lib/mem-search.sh` | shipped (4 + 9a fix to base.md) |
+| 2 | Never WebSearch | A | `settings.json` `permissions.deny: ["WebSearch"]` | shipped (1) |
+| 3 | Session-start own-repo triage | 2 (B1) + E1 | `lib/triage-issues.sh` + `modules/tri-home.md` (judgment-only) | shipped (3) |
+| 4 | Never SSH to current host | 5 (F) | `modules/base.md` "## Task discipline" prose | hook deferred (Phase 7) |
+| 5 | git mv / git rm (not bash mv/rm) | 5 (F) | `modules/git-basics.md` prose | hook deferred (Phase 7) |
+| 6 | Verify before claiming | E1 + 5 (F) + 3 (B2 Stop) | `modules/verify-discipline.md` (new in 9b) | module shipped; hook + Stop scan deferred (Phase 2, 7) |
+| 7 | qfix proactive offer | 3 (B2 Stop) | `modules/qfix.md` prose | Stop hook deferred (Phase 7) |
+| 8 | GitHub PR/issue signature | 4 (B3) | `modules/gh-signature.md` prose | PostToolUse hook deferred (Phase 7) |
+| 9 | Never watch | A | `settings.json` `Bash(watch *)` deny | shipped (1) |
+| 10 | Plan-to-file means STOP | E1 | `modules/base.md` "## Task discipline" | shipped (prose-only by design) |
+| 11 | Output budget | E1 + 3 (B2 periodic) | `modules/output-budget.md` (new in 9b) | module shipped; periodic hook deferred (Phase 7) |
+| 12 | Pull /facilitator for hard design | E1 + 11 (claude-mem) | `modules/multi-agent.md` (decision tree) + facilitator skill | shipped (no dedicated module needed — covered by multi-agent.md) |
+| **+3** | Verification Discipline (insights doc) | folded into Rule 6 | `modules/verify-discipline.md` | shipped (9b) |
+| **+3** | Autonomy Defaults (insights doc) | E1 | new module | **deferred** — source content in PB's porky-insights HTML; first-draft skipped in 9b |
+| **+3** | Output Budget (insights doc) | folded into Rule 11 | `modules/output-budget.md` | shipped (9b) |
+
+Substrate-facing modules added in 9b that don't map to a numbered rule
+above:
+- `modules/settings-hygiene.md` — routing for `~/.claude/settings.json`
+  edits via `/update-config` and `/fewer-permission-prompts` skills.
+- `modules/built-ins-routing.md` — built-in slash commands vs
+  specialized agents (table form).
 
 ## Appendix B — Bundled CC skills audit
 
