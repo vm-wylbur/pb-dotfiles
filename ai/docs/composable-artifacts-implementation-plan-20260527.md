@@ -39,6 +39,27 @@ In:
 - Cross-repo + cross-machine deploy (porky + scott)
 
 Deferred:
+- **Phase 2 (F-cell prompt hook for gh-comment numerics)** — design gap
+  surfaced 2026-05-27 while picking up the phase. A `type: "prompt"` hook
+  only receives the proposed tool call as `$ARGUMENTS`; it does **not**
+  have access to the session transcript or recent tool output. So it
+  cannot perform the plan's stated check ("flag numeric values that
+  don't appear in recent tool output") — the fast model has no source
+  to compare against. A weaker version (detect quantitative claims and
+  `ask` for verification) was considered but creates friction on every
+  numeric gh comment without actually catching fabrication. Needs a
+  redesign before re-entry: either move the check to a Stop-type
+  `command` hook (which can scan transcript) or accept a friction-only
+  prompt that asks the agent to source each number rather than catches
+  fabrication directly.
+- **Phase 7 partial — `stop-verify-numerics.sh`** — paired with Phase 2;
+  deferred with it. The other two Phase 7 deliverables
+  (`user-prompt-periodic.sh`, `stop-qfix-scan.sh`) use `type: "command"`
+  hooks with transcript access and remain shippable independently.
+- Other F-cell rules routed through prompt hooks (see Appendix A; e.g.
+  Rule 4 "Never SSH to current host") — same redesign needed as
+  Phase 2. Audit the F column in Appendix A when Phase 2's redesign
+  lands and re-classify any rule that needed transcript visibility.
 - Agent Teams integration (experimental, GA-gated)
 - `/pr-drain`, `/deploy` per-repo skills (per-project design)
 - TaskCompleted evidence hook (depends on Agent Teams)
@@ -206,6 +227,12 @@ patterns instead.
 ---
 
 ## Phase 2 — F-cell foundation via Rule 6 prompt hook
+
+**Status:** ⏸ DEFERRED 2026-05-27. See top-level Deferred list for the
+design gap (prompt hooks lack transcript visibility). Re-entry requires
+redesign — likely as a Stop-type command hook, not a PreToolUse prompt
+hook. The section below is preserved as the original intent; do not
+implement as-written.
 
 **Goal:** Establish the prompt-hook substrate pattern by implementing the
 highest-leverage F-cell rule: verification-discipline check on
@@ -473,6 +500,12 @@ machine; verify during deploy. Same rollback path as Phase 4.
 ---
 
 ## Phase 7 — B2 hook infrastructure
+
+**Status:** ⏸ PARTIALLY DEFERRED 2026-05-27. `stop-verify-numerics.sh`
+is paired with Phase 2 and inherits the defer. The other two
+deliverables (`user-prompt-periodic.sh`, `stop-qfix-scan.sh`) use
+`type: "command"` hooks and remain shippable independently — re-scope
+this phase to those two if picked up before Phase 2's redesign.
 
 **Goal:** Build out the second-cell hooks (UserPromptSubmit periodic
 injection + Stop hook for qfix proactive offer + verification-scan).
