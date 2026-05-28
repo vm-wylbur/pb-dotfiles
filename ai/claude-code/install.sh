@@ -173,6 +173,7 @@ jq \
     --arg sessenv "bash ${HOOKS_DIR}/session-env.sh" \
     --arg cmcheck "bash ${HOOKS_DIR}/claude-md-check.sh" \
     --arg yamlval "bash ${HOOKS_DIR}/yaml-validate.sh" \
+    --arg stopoff "bash ${HOOKS_DIR}/stop-session-offers.sh" \
     '
     .env.CLAUDE_MEM_SECRET = $secret |
     .env.CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION = "false" |
@@ -199,6 +200,9 @@ jq \
     ]}] |
     .hooks.PostToolUse = [{"matcher": "Edit|Write", "hooks": [
         {"type": "command", "command": $yamlval}
+    ]}] |
+    .hooks.Stop = [{"hooks": [
+        {"type": "command", "command": $stopoff}
     ]}] |
     .enabledPlugins."oh-my-claudecode@omc" = false |
     .skipDangerousModePermissionPrompt = true
