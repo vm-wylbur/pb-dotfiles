@@ -161,7 +161,7 @@ Use language-specific comment format:
 # ------
 # project-root/path/to/file
 ```
-hint: what's markdown's comment format? Not `#`. 
+hint: what's markdown's comment format? Not `#`.
 
 ---
 

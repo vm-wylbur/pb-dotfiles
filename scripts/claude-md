@@ -110,7 +110,7 @@ extract_manifest_json() {
     for prefix in "${MANIFEST_PREFIXES[@]}"; do
         if [[ "$line" == ${prefix}* ]]; then
             # Strip prefix and the trailing " -->"
-            line="${line#${prefix}}"
+            line="${line#"${prefix}"}"
             line="${line% -->}"
             printf '%s' "$line"
             return 0
@@ -254,6 +254,7 @@ render_per_module_to_stdout() {
     # Double-quote so $stage expands now (while in scope); the RETURN trap
     # then runs `rm -rf /tmp/claude-md-stage.XXXXXX` in the caller context
     # where the local would be unset under `set -u`.
+    # shellcheck disable=SC2064  # expand-now is intentional, see above
     trap "rm -rf \"$stage\"" RETURN
     for mod in $manifest_modules; do
         if ! mod_file=$(resolve_module "$mod"); then
@@ -340,6 +341,7 @@ render_to_stdout() {
 
 expand_tilde() {
     local p=$1
+    # shellcheck disable=SC2088  # '~/' is a literal case-match pattern, not meant to expand
     case "$p" in
         '~/'*) echo "${HOME}/${p:2}" ;;
         '~')   echo "$HOME" ;;
@@ -475,7 +477,7 @@ walk_tree() {
 
     local any_stale=0
     while IFS= read -r -d '' tpl; do
-        rel="${tpl#${src_abs}/}"
+        rel="${tpl#"${src_abs}"/}"
         # Strip .template from the filename portion only.
         local rel_dir="${rel%/*}"
         local rel_base="${rel##*/}"

@@ -71,6 +71,7 @@ detect_agent_id() {
     toplevel=$(git rev-parse --show-toplevel 2>/dev/null) || return 1
     claude_md="${toplevel}/CLAUDE.md"
     if [ -f "$claude_md" ]; then
+        # shellcheck disable=SC2016  # single quotes intentional — this is a regex literal, no expansion wanted
         hit=$(grep -oE '`cc-[a-z][a-z0-9-]*`' "$claude_md" 2>/dev/null \
               | head -1 | tr -d '`')
         [ -n "$hit" ] && { echo "$hit"; return 0; }

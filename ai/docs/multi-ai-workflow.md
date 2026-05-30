@@ -19,7 +19,7 @@ dotfiles/ai/docs/multi-ai-workflow.md
 
 ### Specialized AI Functions
 - **Dev-Claude**: Requirements analysis, human interface, GitHub issue management
-- **Dev-Gemini**: Heavy implementation work, large task execution  
+- **Dev-Gemini**: Heavy implementation work, large task execution
 - **QA-Claude**: Black box testing, CLI tool validation
 - **CI-Claude**: Unit tests, integration tests, automated testing
 

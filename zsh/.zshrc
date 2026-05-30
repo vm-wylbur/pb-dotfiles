@@ -85,7 +85,7 @@ alias gs="git status"
 alias gl='git log --pretty=format:"%h%x09%an%x09%ad%x09%s"'
 alias gc='git commit'
 
-alias gt='glow -t' 
+alias gt='glow -t'
 
 alias '..'='cd ..'
 alias '...'='cd ../..'

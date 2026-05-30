@@ -27,7 +27,6 @@ PROJECT=$(basename "${CLAUDE_PROJECT_DIR:-$(pwd)}")
 
 INPUT=$(cat)
 TRANSCRIPT_PATH=$(echo "$INPUT" | jq -r '.transcript_path // empty')
-SESSION_ID=$(echo "$INPUT" | jq -r '.session_id // empty')
 
 [[ -z "$TRANSCRIPT_PATH" || ! -f "$TRANSCRIPT_PATH" ]] && exit 0
 

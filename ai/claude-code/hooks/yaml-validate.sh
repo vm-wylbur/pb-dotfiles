@@ -28,16 +28,14 @@ except Exception:
 echo "$FILE_PATH" | grep -qE '\.ya?ml$' || exit 0
 [[ -f "$FILE_PATH" ]] || exit 0
 
-python3 -c "
+if ! python3 -c "
 import yaml, sys
 try:
     yaml.safe_load(open(sys.argv[1]))
 except yaml.YAMLError as e:
     print(f'YAML VALIDATION FAILED: {e}', file=sys.stderr)
     sys.exit(1)
-" "$FILE_PATH"
-
-if [ $? -ne 0 ]; then
+" "$FILE_PATH"; then
     echo "Fix YAML syntax in $FILE_PATH before proceeding." >&2
     exit 1
 fi

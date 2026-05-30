@@ -61,7 +61,7 @@ stow_package() {
         log_error "Package directory '$package' not found"
         return 1
     fi
-    
+
     log_info "Installing package: $package"
     stow "$package"
 }
@@ -72,7 +72,7 @@ unstow_package() {
         log_warn "Package directory '$package' not found, skipping"
         return 0
     fi
-    
+
     log_info "Uninstalling package: $package"
     stow -D "$package"
 }
@@ -83,7 +83,7 @@ restow_package() {
         log_error "Package directory '$package' not found"
         return 1
     fi
-    
+
     log_info "Restowing package: $package"
     stow -R "$package"
 }
@@ -172,4 +172,3 @@ case "$command" in
 esac
 
 log_info "Done!"
-

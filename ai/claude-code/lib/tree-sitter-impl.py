@@ -31,8 +31,10 @@ try:
     from mcp_server_tree_sitter.tools.ast_operations import get_file_ast
     from mcp_server_tree_sitter.tools.search import search_text
 except ImportError as e:
-    print(json.dumps({"error": f"mcp_server_tree_sitter not importable: {e}"}),
-          file=sys.stderr)
+    print(
+        json.dumps({"error": f"mcp_server_tree_sitter not importable: {e}"}),
+        file=sys.stderr,
+    )
     sys.exit(1)
 
 
@@ -58,7 +60,10 @@ def _project_for(path: str):
 def cmd_analyze(args):
     project = _project_for(args.path)
     return analyze_project_structure(
-        project, api.get_language_registry(), args.scan_depth, None,
+        project,
+        api.get_language_registry(),
+        args.scan_depth,
+        None,
     )
 
 
@@ -80,7 +85,10 @@ def cmd_get_symbols(args):
     project = _project_for(args.path)
     types = args.symbol_types.split(",") if args.symbol_types else None
     return extract_symbols(
-        project, args.file_path, api.get_language_registry(), types,
+        project,
+        args.file_path,
+        api.get_language_registry(),
+        types,
     )
 
 
@@ -100,7 +108,7 @@ def main():
     p = argparse.ArgumentParser(
         prog="tree-sitter",
         description="Project-aware AST + semantic-search ops "
-                    "(re-uses the mcp_server_tree_sitter analyzers).",
+        "(re-uses the mcp_server_tree_sitter analyzers).",
     )
     sub = p.add_subparsers(dest="cmd", required=True)
 
@@ -120,12 +128,10 @@ def main():
     f.add_argument("--context-lines", type=int, default=2)
     f.set_defaults(fn=cmd_find_text)
 
-    s = sub.add_parser("get-symbols",
-                       help="Extract symbols (functions, classes, etc.) from a file")
+    s = sub.add_parser("get-symbols", help="Extract symbols (functions, classes, etc.) from a file")
     s.add_argument("--path", required=True, help="project root")
     s.add_argument("--file-path", required=True, help="file under project root")
-    s.add_argument("--symbol-types", default=None,
-                   help="comma-separated subset; default = all")
+    s.add_argument("--symbol-types", default=None, help="comma-separated subset; default = all")
     s.set_defaults(fn=cmd_get_symbols)
 
     t = sub.add_parser("get-ast", help="Get AST of a file")

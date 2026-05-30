@@ -4,7 +4,7 @@ gethour="$HOME/dotfiles/scripts/exif-gethour.py"
 # START_NO=1726
 
 # for f in `ls DSC_*.JPG`; do ~/dotfiles/scripts/make-timelapse.sh "$f" ; done
-# find . -iname 'dsc_*.jpg' -exec basename "{}" \; 
+# find . -iname 'dsc_*.jpg' -exec basename "{}" \;
 
 hr=$(exiv2 "$f" | $gethour)
 convert "$f" -pointsize 128 -fill red \

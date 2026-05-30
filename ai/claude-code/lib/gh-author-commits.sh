@@ -19,6 +19,7 @@ command -v gh &>/dev/null || exit 0
 
 LIMIT=${LIMIT:-1000}
 
+# shellcheck disable=SC2209  # GH_PAGER=cat is an env-prefix for gh, not an assignment
 GH_PAGER=cat gh search commits \
     --author="@me" \
     --committer-date=">=${DATE}" \

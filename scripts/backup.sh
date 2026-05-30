@@ -12,12 +12,13 @@ local_machine_name="porky"
 datestr=$(date "+%Y-%m-%dT%H_%M_%S")
 
 backup_home="${HOME}"
-rsync_opts="--archive --one-file-system --hard-links --delete "
-rsync_opts+="--delete-excluded --safe-links --partial --progress "
-rsync_opts+="--relative --stats"
+rsync_opts=(--archive --one-file-system --hard-links --delete
+            --delete-excluded --safe-links --partial --progress
+            --relative --stats)
 
 # check for specific volume mounted anywhere.
-backup_mntd=$(ls -1 /Volumes/ | egrep "${backup_disk_names}")
+# shellcheck disable=SC2010  # listing mount-point names under /Volumes, not filenames
+backup_mntd=$(ls -1 /Volumes/ | grep -E "${backup_disk_names}")
 if [ -z "$backup_mntd" ] ; then
     echo "there is no backup disk mounted"
     exit 1
@@ -28,15 +29,13 @@ if [ ! -d "$backup_path" ]; then
     mkdir -p "$backup_path"
 fi
 
-logfile="$HOME/var/log/backup-${datestr}.log"
 backup_excludes="${backup_home}/dotfiles/share/backup-excludes"
 
 backup_current="${backup_path}/current"
 backup_final="${backup_path}/back-${datestr}"
-dirs_to_backup="${backup_home}"
 
 ## this was a bad idea, looking for the incomplete.
-existing_incompletes=$(find ${backup_path} -maxdepth 1 -name 'incomplete_back-*')
+existing_incompletes=$(find "${backup_path}" -maxdepth 1 -name 'incomplete_back-*')
 if [[ "$existing_incompletes" ]] ; then
     backup_incomplete=$(echo "$existing_incompletes" | gsort | tail -n1)
     echo "using existing incomplete backup: ${backup_incomplete}"
@@ -54,10 +53,10 @@ fi
 
 echo "Backing up to tmp, will be ${backup_final}"
 set -o xtrace
-rsync $rsync_opts \
+rsync "${rsync_opts[@]}" \
       --link-dest="${link_dest}" \
       --exclude-from="${backup_excludes}" \
-      ${HOME} ${backup_incomplete}
+      "${HOME}" "${backup_incomplete}"
 
 exitcode=$?
 set +x

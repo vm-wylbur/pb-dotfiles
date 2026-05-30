@@ -367,13 +367,13 @@ while iteration <= max_iterations:
             integrator_input = repo_perspectives + updated_perspective + adversary_feedback
         else:
             integrator_input = repo_perspectives + adversary_feedback
-    
+
     integrator_output = spawn_integrator(integrator_input)
     adversary_result = spawn_adversary(integrator_output, repo_perspectives)
-    
+
     if adversary_result.startswith("PASS"):
         break
-    
+
     adversary_feedback = adversary_result
     iteration += 1
 

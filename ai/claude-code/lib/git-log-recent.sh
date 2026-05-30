@@ -27,10 +27,10 @@ LOG=$(git log --oneline -"${N}" -- "$PATH_ARG" 2>/dev/null)
 [ -z "$LOG" ] && exit 0
 
 echo "git log -${N} -- ${PATH_ARG}:"
-echo "$LOG" | sed 's/^/  /'
+echo "  ${LOG//$'\n'/$'\n'  }"
 
 CLOSURES=$(echo "$LOG" | grep -iE 'closes #|fixes #|resolves #|deploy|merge|re-enable|enable')
 if [ -n "$CLOSURES" ]; then
     echo "  → closure markers — verify if any tracked TODO is actually done:"
-    echo "$CLOSURES" | sed 's/^/    /'
+    echo "    ${CLOSURES//$'\n'/$'\n'    }"
 fi

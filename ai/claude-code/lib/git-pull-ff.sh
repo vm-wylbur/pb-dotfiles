@@ -12,7 +12,7 @@
 # Usage: bash lib/git-pull-ff.sh
 
 git rev-parse --git-dir &>/dev/null || exit 0
-git rev-parse @{upstream} &>/dev/null || exit 0   # no tracking branch
+git rev-parse '@{upstream}' &>/dev/null || exit 0   # no tracking branch
 
 # Skip silently on dirty tree — that's WIP, not stale state.
 if [ -n "$(git status --porcelain 2>/dev/null)" ]; then
