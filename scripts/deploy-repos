@@ -29,6 +29,12 @@ MANIFEST=${DEPLOY_REPOS_MANIFEST:-$DOTFILES/ai/repos.txt}
 USER_MODULES=${CLAUDE_MD_USER_MODULES:-$DOTFILES/ai/modules}
 USER_LIB=${USER_LIB:-$HOME/.claude/lib}
 
+# Canonical sources for pre-commit seeding (Track 1a). Seeded into every
+# target so lint + the pre-push review nag are consistent across repos.
+PRECOMMIT_SRC=$DOTFILES/ai/templates/pre-commit-config.yaml
+YAMLLINT_SRC=$DOTFILES/.yamllint
+NAG_SRC=$DOTFILES/scripts/pre-push-review-reminder.sh
+
 VERIFY_ONLY=0
 FILTER=""
 
@@ -50,6 +56,46 @@ done
 
 any_stale=0
 skipped=0
+
+# Seed one canonical artifact into a target: copy if absent, report drift if
+# present (never overwrite — a repo may have customized it). Informational
+# only; does not affect the --verify-only exit code (a customized or not-yet-
+# seeded config is not CLAUDE.md drift).
+seed_file() {
+    local src=$1 dst=$2 label=$3
+    if [ ! -e "$dst" ]; then
+        if [ "$VERIFY_ONLY" -eq 1 ]; then
+            echo "  precommit: would seed $label (absent)"
+        else
+            mkdir -p "$(dirname "$dst")"
+            cp "$src" "$dst"
+            echo "  precommit: seeded $label"
+        fi
+    elif ! cmp -s "$src" "$dst"; then
+        echo "  precommit: $label differs from canonical — left as-is"
+    else
+        echo "  precommit: $label ok"
+    fi
+}
+
+# Seed the pre-commit config + yamllint + review nag into a target, and
+# install the git hooks. Runs for every mode (lint is orthogonal to the
+# CLAUDE.md render mode).
+seed_precommit() {
+    local repo=$1
+    seed_file "$PRECOMMIT_SRC" "$repo/.pre-commit-config.yaml" ".pre-commit-config.yaml"
+    seed_file "$YAMLLINT_SRC"  "$repo/.yamllint"               ".yamllint"
+    seed_file "$NAG_SRC"       "$repo/scripts/pre-push-review-reminder.sh" "scripts/pre-push-review-reminder.sh"
+    if [ "$VERIFY_ONLY" -eq 0 ] && [ -f "$repo/scripts/pre-push-review-reminder.sh" ]; then
+        chmod +x "$repo/scripts/pre-push-review-reminder.sh"
+    fi
+    if [ "$VERIFY_ONLY" -eq 0 ] && command -v pre-commit >/dev/null 2>&1; then
+        if (cd "$repo" && pre-commit install >/dev/null 2>&1 \
+                       && pre-commit install --hook-type pre-push >/dev/null 2>&1); then
+            echo "  precommit: hooks installed"
+        fi
+    fi
+}
 
 # Read manifest; trim comments + blanks; expand ~/.
 while IFS= read -r raw; do
@@ -150,6 +196,9 @@ while IFS= read -r raw; do
             echo "  render: skipped (symlink-only)"
             ;;
     esac
+
+    # Stage 3: pre-commit seeding (all modes)
+    seed_precommit "$repo"
 done < "$MANIFEST"
 
 echo
