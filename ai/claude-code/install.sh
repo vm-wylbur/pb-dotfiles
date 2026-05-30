@@ -173,6 +173,7 @@ jq \
     --arg sessenv "bash ${HOOKS_DIR}/session-env.sh" \
     --arg cmcheck "bash ${HOOKS_DIR}/claude-md-check.sh" \
     --arg yamlval "bash ${HOOKS_DIR}/yaml-validate.sh" \
+    --arg memfile "bash ${HOOKS_DIR}/mem-file-capture.sh" \
     --arg stopoff "bash ${HOOKS_DIR}/stop-session-offers.sh" \
     '
     .env.CLAUDE_MEM_SECRET = $secret |
@@ -199,7 +200,8 @@ jq \
         {"type": "command", "command": $cmcheck}
     ]}] |
     .hooks.PostToolUse = [{"matcher": "Edit|Write", "hooks": [
-        {"type": "command", "command": $yamlval}
+        {"type": "command", "command": $yamlval},
+        {"type": "command", "command": $memfile}
     ]}] |
     .hooks.Stop = [{"hooks": [
         {"type": "command", "command": $stopoff}
