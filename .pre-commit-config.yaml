@@ -1,0 +1,76 @@
+# Author: PB and cc-dots 🧷
+# Date: 2026-05-30
+# License: (c) HRDAG, 2026, GPL-2 or newer
+#
+# ---
+# dotfiles/ai/templates/pre-commit-config.yaml
+#
+# Canonical pre-commit config for HRDAG repos. This is a SUPERSET: it
+# self-prunes — any hook whose files/types match nothing in a given repo
+# is skipped, so an ansible-only repo never runs ruff and a bash-only repo
+# never runs ansible-lint. Seed into a repo as its root `.pre-commit-config.yaml`
+# via `scripts/deploy-repos` (precommit column in repos.txt).
+#
+# `rev:` pins are managed by `pre-commit autoupdate -c <this file>` — do NOT
+# hand-edit them to guessed versions.
+#
+# The `pre-push` stage carries the review reminder (Track 1b): a nag, not a
+# blocker — bypass with `git push --no-verify`.
+---
+exclude: '^(deprecated/|.*\.bak$|.*\.lua-bak$)'
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-added-large-files
+      - id: check-json
+      - id: check-toml
+      - id: check-yaml
+
+  # ── Bash / shell (extensionless scripts detected by shebang) ──
+  # shellcheck-py: self-contained binary via pip, no Docker / system dep.
+  # zsh is excluded — shellcheck does not support zsh syntax (glob qualifiers,
+  # etc.); it would emit parse errors on valid zsh.
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1
+    hooks:
+      - id: shellcheck
+        exclude: '(^zsh/|\.zsh$)'
+
+  # ── Python ──
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.15
+    hooks:
+      - id: ruff
+      - id: ruff-format
+
+  # ── YAML (ansible/IaC) — inert where no YAML exists ──
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.38.0
+    hooks:
+      - id: yamllint
+        args: [--strict]
+
+  # ── Ansible — inert where no playbooks/roles exist ──
+  - repo: https://github.com/ansible/ansible-lint
+    rev: v26.4.0
+    hooks:
+      - id: ansible-lint
+
+  # ── pre-push: review reminder (Track 1b) ──
+  # Nag only. The script must be present in the repo root (deploy-repos
+  # seeds it alongside this config).
+  - repo: local
+    hooks:
+      - id: review-reminder
+        name: "review reminder (ran /code-review? /security-review?)"
+        entry: scripts/pre-push-review-reminder.sh
+        language: script
+        stages: [pre-push]
+        pass_filenames: false
+        always_run: true
+        verbose: true

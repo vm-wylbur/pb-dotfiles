@@ -1,0 +1,14 @@
+---
+# Author: PB and cc-dots 🧷
+# Date: 2026-05-30
+# License: (c) HRDAG, 2026, GPL-2 or newer
+#
+# dotfiles/.yamllint
+#
+# yamllint config. line-length 100 matches the house Python style; keep
+# document-start ('---') required, since ansible playbooks expect it.
+extends: default
+rules:
+  line-length:
+    max: 100
+  document-start: enable

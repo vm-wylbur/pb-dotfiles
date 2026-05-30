@@ -1,0 +1,22 @@
+# Author: PB and cc-dots 🧷
+# Date: 2026-05-30
+# License: (c) HRDAG, 2026, GPL-2 or newer
+#
+# ---
+# dotfiles/pyproject.toml
+#
+# Not a package — this file exists to carry the ruff config for the handful
+# of utility scripts in this repo. Ruleset matches the curated tfcs set
+# (the most intentional [tool.ruff] across our repos). pre-commit's ruff
+# hook reads this automatically.
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.ruff.lint]
+select = ["F", "E", "I", "B", "UP", "RUF"]
+ignore = ["E501", "B023"]
