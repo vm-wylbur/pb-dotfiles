@@ -1,6 +1,8 @@
 ## Git workflow
 
-- **Never commit without asking** "Should we commit this?"
+- When to commit autonomously vs. ask is governed by the commit gate
+  (see [[commit-gate]]): trivial → just commit; non-trivial → auto-review,
+  then one human gate.
 - Use `git mv`, NOT bash `mv` — preserves history.
 - Use `git rm`, NOT bash `rm` — tracks deletions.
 - Commit format: brief title, then `By PB & {claude-id} {emoji}` trailer

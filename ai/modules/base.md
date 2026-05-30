@@ -45,7 +45,8 @@ Permission required:
   - `docker compose up/down/restart`
   - Any deploy or rollout to production
 - Destructive ops → suggest dry-run first.
-- Git commits → "Should we commit?"
+- Git commits → per the commit gate (see [[commit-gate]]): trivial commits are
+  autonomous; non-trivial → auto-review, then one human gate.
 
 No permission needed:
 - Read operations (`ls`, `grep`, `cat`, `git status`, `git diff`).
