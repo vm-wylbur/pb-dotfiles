@@ -172,10 +172,20 @@ if [ ! -f "$SETTINGS" ]; then
     chmod 600 "$SETTINGS"          # it will hold the secret; never leave it group-readable
 fi
 
-# Ensure the secret is present; the managed merge below preserves it. Separate
-# statements (not `&& mv`) so set -e aborts if the jq fails on a malformed file.
+# Ensure the secret is present; the managed merge below preserves it. jq exits
+# 0 on a parse error (empty output), so `set -e` alone won't catch a malformed
+# input — guard input and output with `jq -e` and fail closed, or a corrupt
+# pre-existing settings.json would be silently emptied here, destroying the
+# secret. Same pattern as sync-managed-settings.sh.
 TMP=$(mktemp)
+trap 'rm -f "$TMP"' EXIT
+jq -e 'type == "object"' "$SETTINGS" >/dev/null 2>&1 \
+    || { echo "ERROR: $SETTINGS is not a valid JSON object; aborting" >&2; exit 1; }
 jq --arg secret "$MEM_SECRET" '.env.CLAUDE_MEM_SECRET = $secret' "$SETTINGS" > "$TMP"
+if [ ! -s "$TMP" ] || ! jq -e 'type == "object"' "$TMP" >/dev/null 2>&1; then
+    echo "ERROR: secret write produced empty/invalid output; $SETTINGS left unchanged" >&2
+    exit 1
+fi
 mv "$TMP" "$SETTINGS"
 
 # Apply the repo-managed settings subset (hooks, permissions, capability env).
