@@ -25,13 +25,13 @@ On-demand, query-specific recall over the durable memory store. Complements the 
    echo '{"query":"<your query>","limit":10}' | bash ~/.claude/lib/mem-search.sh
    ```
 
-   Returns `{"memories":[{content, content_type, metadata, similarity, source_key, ...}]}`. It's a global semantic search over the whole store — there's no project filter, so cross-project lessons can surface (often useful, occasionally off-topic; the noise gate handles that).
+   Returns `{"memories":[{content, score, similarity, memory_id, metadata, created_at, ...}]}`, ranked by `score` — Reciprocal Rank Fusion over FTS + fuzzy + vector legs (the hybrid retrieval live on snowball as of 2026-05-31). `similarity` is the cosine leg only. It's a global search over the whole store — no project filter, so cross-project lessons can surface (often useful, occasionally off-topic; the noise gate handles that).
 
 3. **Synthesize, two lenses.** Read the returned memories and answer:
-   - **Q1:** which results bear on the current work, and what do they say? Cite each by `source_key` — or a short content gist when `source_key` is absent (legacy and direct-stored memories often have none).
+   - **Q1:** which results bear on the current work, and what do they say? Cite each by a short content gist (and `memory_id` if you need a stable handle) — `/search` returns no human-readable key.
    - **Q2:** do any read like a *correction* or *lesson* that applies here — telltales are the "**Why:** / **How to apply:**" structure, root-cause language, or feedback/bugfix framing? If so, flag it explicitly as a repeat-to-avoid.
 
-4. **Noise gate.** `/search` always returns a top-N — cosine similarity ranks *something* even for an irrelevant query. Judge relevance yourself; treat the `similarity` field as a signal, not a verdict. If nothing genuinely applies, say so plainly: "nothing relevant" / "no prior mistake on this". A recall that manufactures relevance is worse than none.
+4. **Noise gate.** `/search` always returns a top-N — the fused ranker orders *something* even for an irrelevant query. Results come pre-sorted by `score` (trust that relative order), but neither `score` (RRF — a small relative number, not an absolute relevance) nor `similarity` (cosine — absolute, but blind to exact-token matches) is a clean yes/no threshold. Judge relevance from the *content* itself; use the two scores only as supporting signals. Don't dismiss a top-ranked result just because its cosine `similarity` is moderate — exact identifier matches (hostnames, flags, PR numbers, hashes) rank high on `score` with modest cosine. If nothing genuinely applies, say so plainly: "nothing relevant" / "no prior mistake on this". A recall that manufactures relevance is worse than none.
 
 5. **Output tight** (per the output budget): a few bullets, each citing the memory it draws on, or the one-line "nothing relevant." Don't dump raw search results.
 
