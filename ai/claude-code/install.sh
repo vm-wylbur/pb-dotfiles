@@ -159,57 +159,29 @@ if [ -z "$MEM_SECRET" ]; then
 fi
 
 # ── 5. settings.json ────────────────────────────────────────────────────────
+#
+# The secret is the one per-host value that must be written here (it arrives
+# via env on first install). Everything else managed — hooks, permissions,
+# capability env — is applied by sync-managed-settings.sh, which is also
+# runnable standalone to converge a host without re-running this whole
+# installer. That script preserves the secret (and other host-local keys).
 
 echo "Configuring settings.json..."
 if [ ! -f "$SETTINGS" ]; then
     echo '{}' > "$SETTINGS"
+    chmod 600 "$SETTINGS"          # it will hold the secret; never leave it group-readable
 fi
 
-HOOKS_DIR="$CLAUDE_DIR/hooks"
+# Ensure the secret is present; the managed merge below preserves it. Separate
+# statements (not `&& mv`) so set -e aborts if the jq fails on a malformed file.
 TMP=$(mktemp)
-jq \
-    --arg secret  "$MEM_SECRET" \
-    --arg inject  "bash ${HOOKS_DIR}/mem-inject.sh" \
-    --arg sessenv "bash ${HOOKS_DIR}/session-env.sh" \
-    --arg cmcheck "bash ${HOOKS_DIR}/claude-md-check.sh" \
-    --arg yamlval "bash ${HOOKS_DIR}/yaml-validate.sh" \
-    --arg memfile "bash ${HOOKS_DIR}/mem-file-capture.sh" \
-    --arg stopoff "bash ${HOOKS_DIR}/stop-session-offers.sh" \
-    '
-    .env.CLAUDE_MEM_SECRET = $secret |
-    .env.CLAUDE_CODE_ENABLE_PROMPT_SUGGESTION = "false" |
-    .permissions.deny = ((.permissions.deny // []) + [
-        "AskUserQuestion",
-        "WebSearch",
-        "Bash(watch *)"
-    ] | unique) |
-    .permissions.allow = (
-        ((.permissions.allow // [])
-            | map(select(. != "mcp__repomix__*"
-                         and . != "mcp__tree_sitter__*"
-                         and . != "mcp__claude-mem__*")))
-        + [
-            "WebFetch(domain:code.claude.com)",
-            "WebFetch(domain:docs.anthropic.com)"
-        ]
-        | unique
-    ) |
-    .hooks.SessionStart = [{"hooks": [
-        {"type": "command", "command": $inject},
-        {"type": "command", "command": $sessenv},
-        {"type": "command", "command": $cmcheck}
-    ]}] |
-    .hooks.PostToolUse = [{"matcher": "Edit|Write", "hooks": [
-        {"type": "command", "command": $yamlval},
-        {"type": "command", "command": $memfile}
-    ]}] |
-    .hooks.Stop = [{"hooks": [
-        {"type": "command", "command": $stopoff}
-    ]}] |
-    .enabledPlugins."oh-my-claudecode@omc" = false |
-    .skipDangerousModePermissionPrompt = true
-    ' "$SETTINGS" > "$TMP" && mv "$TMP" "$SETTINGS"
-echo "  updated: $SETTINGS"
+jq --arg secret "$MEM_SECRET" '.env.CLAUDE_MEM_SECRET = $secret' "$SETTINGS" > "$TMP"
+mv "$TMP" "$SETTINGS"
+
+# Apply the repo-managed settings subset (hooks, permissions, capability env).
+# Pass CLAUDE_DIR explicitly so the child can't diverge from this install's
+# target; invoke via bash so it doesn't depend on the executable bit.
+CLAUDE_DIR="$CLAUDE_DIR" bash "$DOTFILES/ai/claude-code/sync-managed-settings.sh"
 
 # ── 6. MCP servers in .claude.json ──────────────────────────────────────────
 
