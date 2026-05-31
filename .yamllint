@@ -1,14 +1,28 @@
 ---
 # Author: PB and cc-dots 🧷
-# Date: 2026-05-30
+# Date: 2026-05-31
 # License: (c) HRDAG, 2026, GPL-2 or newer
 #
 # dotfiles/.yamllint
 #
-# yamllint config. line-length 100 matches the house Python style; keep
-# document-start ('---') required, since ansible playbooks expect it.
+# House yamllint config, seeded into every repo by deploy-repos. Tuned to be
+# ansible-lint-compatible so the two linters never contradict in ansible repos
+# (where both run): without this, ansible-lint flags the config "incompatible"
+# and disables its --fix. The comment/brace settings are RELAXATIONS
+# (min-spaces-from-content is a floor, so existing 2-space comments still pass);
+# octal-values:forbid is a safety tightening (unquoted 0644 is a YAML octal
+# footgun). line-length 100 matches house Python style; document-start ('---')
+# required, since ansible playbooks expect it.
 extends: default
 rules:
   line-length:
     max: 100
   document-start: enable
+  comments:
+    min-spaces-from-content: 1
+  comments-indentation: disable
+  braces:
+    max-spaces-inside: 1
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true
