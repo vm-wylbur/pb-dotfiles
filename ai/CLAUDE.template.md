@@ -19,7 +19,7 @@ Design + module catalog: ai/docs/composable-CLAUDE.md-design.md.
 
 # User-wide Claude rules for PB
 
-<!-- compose: {"modules": ["base", "verify-discipline", "output-budget", "web-access", "settings-hygiene", "git-basics", "commit-gate", "python-uv", "file-headers", "shotgun-surgery", "gh-signature", "tri-home", "qfix", "code-review", "built-ins-routing", "goal-lock", "multi-agent"], "output": "~/.claude/CLAUDE.md"} -->
+<!-- compose: {"modules": ["base", "verify-discipline", "output-budget", "web-access", "settings-hygiene", "git-basics", "commit-gate", "python-uv", "file-headers", "markdown-format", "shotgun-surgery", "gh-signature", "tri-home", "qfix", "code-review", "built-ins-routing", "goal-lock", "multi-agent"], "output": "~/.claude/CLAUDE.md"} -->
 
 <!-- BEGIN module:base -->
 <!-- END module:base -->
@@ -47,6 +47,9 @@ Design + module catalog: ai/docs/composable-CLAUDE.md-design.md.
 
 <!-- BEGIN module:file-headers -->
 <!-- END module:file-headers -->
+
+<!-- BEGIN module:markdown-format -->
+<!-- END module:markdown-format -->
 
 <!-- BEGIN module:shotgun-surgery -->
 <!-- END module:shotgun-surgery -->
