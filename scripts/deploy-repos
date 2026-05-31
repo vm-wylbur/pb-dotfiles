@@ -20,6 +20,7 @@
 #   deploy-repos                    # render + symlink for all targets
 #   deploy-repos --verify-only      # check for drift, exit non-zero if any
 #   deploy-repos --filter PATTERN   # only targets whose path matches
+#   deploy-repos --refresh-configs  # overwrite drifted cc-dots seed configs with canonical
 #   deploy-repos --help
 
 set -euo pipefail
@@ -37,16 +38,18 @@ NAG_SRC=$DOTFILES/scripts/pre-push-review-reminder.sh
 
 VERIFY_ONLY=0
 FILTER=""
+REFRESH_CONFIGS=0
 
 usage() {
-    sed -n '2,23p' "$0" | sed 's/^# \{0,1\}//'
+    sed -n '2,24p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 while [ $# -gt 0 ]; do
     case "$1" in
-        --verify-only) VERIFY_ONLY=1; shift ;;
-        --filter)      FILTER=$2; shift 2 ;;
-        -h|--help)     usage; exit 0 ;;
+        --verify-only)     VERIFY_ONLY=1; shift ;;
+        --filter)          FILTER=$2; shift 2 ;;
+        --refresh-configs) REFRESH_CONFIGS=1; shift ;;
+        -h|--help)         usage; exit 0 ;;
         *) echo "unknown flag: $1" >&2; usage >&2; exit 2 ;;
     esac
 done
@@ -57,10 +60,12 @@ done
 any_stale=0
 skipped=0
 
-# Seed one canonical artifact into a target: copy if absent, report drift if
-# present (never overwrite — a repo may have customized it). Informational
-# only; does not affect the --verify-only exit code (a customized or not-yet-
-# seeded config is not CLAUDE.md drift).
+# Seed one canonical artifact into a target: copy if absent. If present and
+# drifted, default is to report and LEAVE AS-IS (a repo may have customized
+# it) — but --refresh-configs overwrites it with canonical, which is how a
+# canonical config CHANGE propagates to already-seeded repos (copy-if-absent
+# can't). Informational only; does not affect the --verify-only exit code
+# (a customized or not-yet-seeded config is not CLAUDE.md drift).
 seed_file() {
     local src=$1 dst=$2 label=$3
     if [ ! -e "$dst" ]; then
@@ -72,7 +77,14 @@ seed_file() {
             echo "  precommit: seeded $label"
         fi
     elif ! cmp -s "$src" "$dst"; then
-        echo "  precommit: $label differs from canonical — left as-is"
+        if [ "$VERIFY_ONLY" -eq 1 ]; then
+            echo "  precommit: $label differs from canonical$([ "$REFRESH_CONFIGS" -eq 1 ] && echo ' — would refresh' || echo ' — left as-is')"
+        elif [ "$REFRESH_CONFIGS" -eq 1 ]; then
+            cp "$src" "$dst"
+            echo "  precommit: $label REFRESHED to canonical (was drifted)"
+        else
+            echo "  precommit: $label differs from canonical — left as-is (use --refresh-configs to overwrite)"
+        fi
     else
         echo "  precommit: $label ok"
     fi
