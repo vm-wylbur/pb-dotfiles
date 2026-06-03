@@ -44,7 +44,7 @@ wheels = [
 
 [[package]]
 name = "harvest-conformance"
-version = "1.0.0"
+version = "1.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "httpx" },

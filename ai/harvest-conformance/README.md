@@ -18,6 +18,15 @@ It tracks claude-mem issue **#5**: the two endpoints retire the last `ssh snowba
 - `GET /docs/:doc_id` → `{doc: {doc_id, filename, filepath, content, file_mtime, doc_hash, metadata}}`, or `404 {error}`. Replaces `eval.py`'s `load_docs` (fetch by `doc_id` — the PK that `extraction_decisions` reference; `doc_hash` is not unique, so id is the key). Returns full **content**, which `/docs/manifest` does not.
 - `GET /docs/backlog?limit=N&offset=M` → `{docs: [{doc_id, doc_hash, filepath, content}], limit, offset, total}`. Replaces `distill.py`'s backlog query. Rows are **distinct by `doc_hash`**, and a `doc_hash` is excluded once **any** of its doc_ids has a decision or a `source_doc_id`-linked memory — exclusion is by `doc_hash`, not by the `DISTINCT ON`-picked `doc_id`. (That correctness point is the HIGH dedup bug in the old client query; moving the corrected query server-side fixes it at the source. The suite pins it in `test_backlog_excludes_decided_content`.)
 
+## Invariants pinned
+
+Beyond endpoint shape, the suite pins the two contract invariants from neg-305c49e5:
+
+- **#1 embed-on-write** (`test_invariant_embed.py`) — a memory stored via `POST /harvest` must be retrievable by vector `POST /search`; a direct SQL insert that skips embedding would leave it invisible. This exercises endpoints that exist today, so it is **green** against a correct service (a regression guard, not red-until-built).
+- **#2 doc_hash byte-exactness** (`test_invariant_doc_hash.py`) — `doc_hash` is sha256 over the EXACT ingested bytes; a `strip != raw` fixture keeps the equality non-vacuous.
+
+Both are seed-gated (they write), so run them with `ALLOW_WRITES=1` against a disposable instance.
+
 ## Run it
 
 ```
