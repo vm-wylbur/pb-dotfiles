@@ -47,6 +47,7 @@ jq -e 'type == "object"' "$SETTINGS" >/dev/null 2>&1 \
 
 jq \
     --arg guard   "bash ${HOOKS_DIR}/pre-bash-guard.sh" \
+    --arg numcheck "bash ${HOOKS_DIR}/flag-unbacked-numerics.sh" \
     --arg inject  "bash ${HOOKS_DIR}/mem-inject.sh" \
     --arg sessenv "bash ${HOOKS_DIR}/session-env.sh" \
     --arg cmcheck "bash ${HOOKS_DIR}/claude-md-check.sh" \
@@ -73,7 +74,8 @@ jq \
         | unique
     ) |
     .hooks.PreToolUse = [{"matcher": "Bash", "hooks": [
-        {"type": "command", "command": $guard}
+        {"type": "command", "command": $guard},
+        {"type": "command", "command": $numcheck}
     ]}] |
     .hooks.SessionStart = [{"hooks": [
         {"type": "command", "command": $inject},
