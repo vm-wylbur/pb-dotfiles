@@ -13,7 +13,7 @@ Captured 2026-06-01 from the `2026-05-15 → 2026-06-01` changelog run (cc-logwo
 
 Recommended order: do 1–5 first (1–4 fix an actual correctness failure; 5 codifies voice while fresh). 6–7 can follow.
 
-**Status (2026-06-02, cc-dots):** items 1–5 implemented and verified; the source-of-record open question (below) is **resolved**. Item 1 also surfaced — and fixed — a defect in its own prescription: `git rev-parse --abbrev-ref origin/HEAD` reads the *stale local* symref (dotfiles' `origin/HEAD` still pointed at the long-dead `master`), so resolution now goes through `git ls-remote --symref` (authoritative) with a cache→main→master fallback, factored into a shared `resolve-origin-default.sh`. Items 6–7 (parallel-digest scaling; auto-suggest start date) remain deferred.
+**Status (2026-06-02, cc-dots):** items 1–5 implemented and verified; the source-of-record open question (below) is **resolved**. Item 1 also surfaced — and fixed — a defect in its own prescription: `git rev-parse --abbrev-ref origin/HEAD` reads the *stale local* symref (dotfiles' `origin/HEAD` still pointed at the long-dead `master`), so resolution now goes through `git ls-remote --symref` (authoritative) with a cache→main→master fallback, factored into a shared `resolve-origin-default.sh`. **Items 6–7 done 2026-06-02:** item 6 = parallel-digest scaling guidance added to Phase 5; item 7 = `lib/suggest-changelog-start.sh` + a new Phase 0 (auto-suggests the last report's end − 1 day; verified it picks 2026-05-31 from the live `~/docs` set). All seven items now landed.
 
 ## 1. Diff `origin`, not local HEAD (highest impact)
 
@@ -66,6 +66,8 @@ Files: SKILL.md (Changelog-specific rules; reconcile with the pb-voice module).
 
 ## 6. Codify the scale approach
 
+**Done 2026-06-02** — parallel-digest pattern added to Phase 5 (fan-out ≤3 concurrent, structured evidence incl. cc-\* agent identities, skip/down-weight generated blobs and report what was skipped).
+
 21 MB of diff across 13 repos this run; one repo's diff was ~91% generated audit JSON. Solo reading is impossible and the generated blob nearly dominated the budget.
 
 Change: in Phase 5, document the parallel-digest pattern — fan out digest sub-agents (≤3 concurrent per the user-wide rule) that return structured evidence (themes, concrete numbers, version tags, agent identities, issue/PR refs), then synthesize from those. Instruct the gather/digest to skip or down-weight generated/vendored/lockfile blobs and to **report what was skipped** (no silent truncation). Capture cc-* agent identities from commit trailers and branch names as first-class evidence (PB wants the fleet credited), not an afterthought.
@@ -73,6 +75,8 @@ Change: in Phase 5, document the parallel-digest pattern — fan out digest sub-
 Files: SKILL.md Phase 5.
 
 ## 7. Auto-suggest the start date
+
+**Done 2026-06-02** — `lib/suggest-changelog-start.sh` + a new Phase 0; suggests the latest report's end − 1 day (verified = 2026-05-31), falls back to asking when no prior changelog exists.
 
 The skill takes a start-date arg cold. This run, the wanted start was "1–2 days before the end of the last report."
 

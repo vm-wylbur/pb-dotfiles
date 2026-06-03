@@ -25,9 +25,25 @@ AI's job is voice, theme selection, and synthesis.
 
 ## Arguments
 
-Single argument: start date in `YYYY-MM-DD` format. End date is always today.
+Optional single argument: start date in `YYYY-MM-DD` format. End date is always
+today. If omitted, Phase 0 suggests a start from the most recent prior changelog
+(you confirm or override).
 
 ## Workflow
+
+### Phase 0: Determine the start date
+
+If the user passed a start date, use it. Otherwise suggest one from the most
+recent prior changelog:
+
+```
+bash ~/.claude/lib/suggest-changelog-start.sh
+```
+
+It prints the end date of the latest `~/docs/changelog-*.md` minus one day (a
+small overlap so nothing falls in the seam between reports), or nothing if there
+is no prior changelog. Confirm the suggested date with the user before
+proceeding; if it prints nothing, ask for an explicit start date.
 
 ### Phase 1: Discover repos
 
@@ -119,6 +135,23 @@ Cite repos and version tags as evidence ("shipped as tfcs v0.12.0").}
 Common themes: challenges overcome, security holes closed, failure prep,
 new capabilities, documentation brought up to date, infrastructure improvements.
 Let the evidence determine the themes — don't force categories that aren't there.
+
+**Scaling to large evidence (parallel digest).** When the evidence is too large
+to read solo — many repos, or a diff dominated by generated/vendored content (a
+past run hit 21 MB across 13 repos, one diff ~91% generated audit JSON) — fan out
+digest sub-agents instead of reading everything yourself:
+
+- One digest agent per repo (or per theme), **≤3 concurrent** per the user-wide
+  rule, and synthesize their results incrementally — don't wait for all to finish.
+- Each returns **structured evidence**, not prose: themes, concrete numbers (perf
+  deltas, error counts, before/after), version tags, issue/PR refs, and the
+  **cc-\* agent identities** from commit trailers and branch names — credit the
+  fleet as first-class evidence, not an afterthought.
+- Instruct each digest to **skip or down-weight generated / vendored / lockfile
+  blobs** (audit JSON, `*.lock`, `dist/`, `vendor/`, minified) and to **report
+  what it skipped** — never silently truncate; a one-line "skipped N MB of
+  generated X" keeps the omission visible.
+- Synthesize the final narrative from the structured digests, not the raw diffs.
 
 **Changelog-specific rules** (general voice rules live in the pb-voice
 module, rendered into the Voice section below):
