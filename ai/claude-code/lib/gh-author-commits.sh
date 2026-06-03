@@ -10,8 +10,10 @@
 # Silent if gh CLI missing. Used by changelog skill to discover which repos
 # saw activity in the reporting window.
 #
+# Warns to stderr if results hit LIMIT (silently truncated otherwise).
+#
 # Usage: bash lib/gh-author-commits.sh YYYY-MM-DD
-#        LIMIT=500 bash lib/gh-author-commits.sh 2026-05-01
+#        LIMIT=2000 bash lib/gh-author-commits.sh 2026-05-01
 
 DATE=${1:-}
 [ -z "$DATE" ] && { echo "usage: gh-author-commits.sh YYYY-MM-DD" >&2; exit 1; }
@@ -20,7 +22,7 @@ command -v gh &>/dev/null || exit 0
 LIMIT=${LIMIT:-1000}
 
 # shellcheck disable=SC2209  # GH_PAGER=cat is an env-prefix for gh, not an assignment
-GH_PAGER=cat gh search commits \
+out=$(GH_PAGER=cat gh search commits \
     --author="@me" \
     --committer-date=">=${DATE}" \
     --sort=committer-date \
@@ -28,4 +30,10 @@ GH_PAGER=cat gh search commits \
     --limit "$LIMIT" \
     --json repository,sha,commit \
     --jq '.[] | "\(.repository.fullName)\t\(.sha[0:7])\t\(.commit.committer.date)\t\(.commit.message | split("\n")[0])"' \
-    2>/dev/null
+    2>/dev/null)
+
+[ -n "$out" ] && printf '%s\n' "$out"
+
+n=$(printf '%s' "$out" | grep -c .)
+[ "$n" -ge "$LIMIT" ] && \
+    echo "# WARN: gh-author-commits hit LIMIT=$LIMIT ($n results) — may be truncated; rerun with a higher LIMIT" >&2

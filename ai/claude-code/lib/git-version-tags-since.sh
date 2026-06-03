@@ -25,7 +25,11 @@ fi
 
 AUTHOR=${AUTHOR:-pball}
 
-git -C "$REPO" log \
+# Resolve the origin default branch via the shared helper (read-only fetch +
+# authoritative resolution), so version bumps merged but not pulled are seen.
+DEFAULT=$(bash "$(dirname "$0")/resolve-origin-default.sh" "$REPO") || exit 0
+
+git -C "$REPO" log "$DEFAULT" \
     --author="$AUTHOR" \
     --since="$DATE" \
     --format="%h %s" 2>/dev/null | \

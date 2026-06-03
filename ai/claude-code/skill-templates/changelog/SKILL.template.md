@@ -40,22 +40,33 @@ those are the working set.
 
 ### Phase 2: Gather per-repo evidence
 
-For each repo, check if a local clone exists at `~/projects/hrdag/{repo_name}`.
-
-**If local clone exists** — collect diffs and version tags:
+Resolve each repo (from Phase 1, as `OWNER/REPO`) to its local clone — clones
+span `~/projects/hrdag`, `~/projects/personal`, `~/projects`, and `~/dotfiles`,
+and the GitHub name can differ from the local dir (`pb-dotfiles` -> `~/dotfiles`):
 
 ```
-bash ~/.claude/lib/repo-diff-since.sh ~/projects/hrdag/{repo} ${DATE} \
-    > /tmp/changelog-diff-{repo}.txt 2>&1
+mkdir -p ~/tmp                                       # once, before the loop
+# then, for each repo from Phase 1 (as OWNER/REPO):
+clone=$(bash ~/.claude/lib/resolve-clone.sh {OWNER/REPO})
+```
 
-bash ~/.claude/lib/git-version-tags-since.sh ~/projects/hrdag/{repo} ${DATE}
+**If `$clone` is non-empty** (a local clone exists) — collect diffs and version tags:
+
+```
+bash ~/.claude/lib/repo-diff-since.sh "$clone" ${DATE} \
+    > ~/tmp/changelog-diff-{repo}.txt 2>&1
+
+bash ~/.claude/lib/git-version-tags-since.sh "$clone" ${DATE}
 ```
 
 `repo-diff-since.sh` is large output (full commits + diffs + stats) — always
-redirect to a per-repo file. Read these via the Read tool when synthesizing.
-The script ff-pulls if clean, warns and skips pull if dirty (your WIP).
+redirect to a per-repo file under `~/tmp`. Read these via the Read tool when
+synthesizing. The script fetches `origin` (read-only — never touches the working
+tree) and logs the origin default branch, so merged work that isn't pulled
+locally is still captured and a dirty WIP tree is irrelevant.
 
-**If no local clone** — skip diffs; use the commit messages from Phase 1.
+**If `$clone` is empty** (no local clone) — skip diffs; use the commit messages
+from Phase 1.
 
 ### Phase 3: Read voice guide (REQUIRED)
 
@@ -66,10 +77,17 @@ changelog's voice comes from this file.
 
 ```
 bash ~/.claude/lib/gh-author-issues.sh ${DATE}
+bash ~/.claude/lib/gh-author-prs.sh ${DATE}
 ```
 
-Output: TSV `repo#N\tstate\ttitle`. Use to enrich the narrative with
-decisions, discussions, and review findings beyond raw commits.
+Outputs: issues TSV `repo#N\tstate\ttitle`; merged-PRs TSV
+`repo#N\tmergedAt\ttitle`. Use to enrich the narrative with decisions,
+discussions, review findings, and the PR-level story (a batch of merged PRs
+often frames a theme) beyond raw commits. Both scripts warn on stderr if they
+hit their LIMIT — if you see a truncation warning, rerun with a higher `LIMIT`.
+PR authorship is GitHub-account-scoped, so repos that merge via agent-authored
+PRs or direct-to-main under-report here; commits + diffs stay authoritative for
+those.
 
 Beyond that, scan the per-repo diff files for:
 - Post-mortems / design docs: `docs/*postmortem*`, `*adr*`, `*design*`, `*plan*`
@@ -106,7 +124,19 @@ Let the evidence determine the themes — don't force categories that aren't the
 module, rendered into the Voice section below):
 
 - Tell stories, not diffs. Commits are evidence for the story.
-- Version tags are navigation aids — readers use them to find the work in git history.
+- Commit SHAs, PR/issue ids, AND version tags go to footnotes — the body stays
+  narrative. Version tags remain navigation aids (readers cite "shipped as tfcs
+  v0.12.0" to find the work in git history); just relocate them out of the prose.
+- Describe internals; name a function, script, file, or metric only when that
+  specific name illuminates the point for a reader who will never see the code.
+  Keep concrete hardware, algorithm, threshold, and approach detail — that is
+  what carries the narrative.
+- Anonymize individuals (e.g. don't name whose key was lost); keep the story,
+  drop the name.
+- When the meta-process is itself a development that window, offer a two-part
+  structure: "how it's built" (the system that produced the work) near the top,
+  then "what it does / what it built." Name the agent fleet; no emojis in prose
+  (agent glyphs belong only in commit trailers / GH footers).
 - Cross-reference freely when work in one repo enabled or depended on another.
 - Scale length to significance, not to commit count.
 - Do NOT recite commits. Synthesize.
@@ -120,11 +150,13 @@ module, rendered into the Voice section below):
 
 ## Guardrails
 
-- Read-only on repos beyond `git pull --ff-only` (and that's skipped on dirty tree).
+- Read-only on repos: the gather scripts `fetch origin` and never modify the
+  working tree (no pull, no checkout, no commit).
 - Do NOT push or commit anything.
 - If `gh-author-commits.sh` returns nothing, say so and stop.
-- The diff files in `/tmp/changelog-diff-*.txt` can be large — read selectively
-  with the Read tool's `limit` and `offset`, not all at once.
+- Scratch goes under `~/tmp`, never `/tmp` (mac rule). The diff files in
+  `~/tmp/changelog-diff-*.txt` can be large — read selectively with the Read
+  tool's `limit` and `offset`, not all at once.
 
 <!-- BEGIN module:pb-voice -->
 <!-- END module:pb-voice -->

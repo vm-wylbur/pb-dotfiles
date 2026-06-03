@@ -5,9 +5,11 @@
 #
 # dotfiles/ai/claude-code/lib/repo-diff-since.sh
 #
-# For a local repo: ff-pull (silent on dirty tree), then emit full diff log
-# (commits + diffs + stat) for AUTHOR since DATE. Output is large — redirect
-# to a file per repo for the changelog skill to feed into synthesis.
+# For a local repo: fetch origin (read-only, never touches the working tree),
+# then emit the full diff log (commits + diffs + stat) for AUTHOR since DATE
+# from the origin default branch — so merged work not yet pulled locally is
+# still captured. Output is large — redirect to a file per repo for the
+# changelog skill to feed into synthesis.
 #
 # Silent and exits 0 if REPO is not a git repo (skip-missing semantics so
 # changelog can iterate over a repo list without pre-checking each).
@@ -25,18 +27,13 @@ fi
 
 AUTHOR=${AUTHOR:-pball}
 
-# Pull only if clean; otherwise leave WIP alone.
-if [ -z "$(git -C "$REPO" status --porcelain 2>/dev/null)" ]; then
-    git -C "$REPO" fetch --quiet origin 2>/dev/null
-    PULL=$(git -C "$REPO" pull --ff-only 2>&1)
-    if echo "$PULL" | grep -qE '^(error|fatal):'; then
-        echo "# WARN: pull --ff-only failed in $REPO — diff reflects local state" >&2
-    fi
-else
-    echo "# WARN: $REPO has uncommitted changes — skipped pull, using local state" >&2
-fi
+# Read-only: the shared helper fetches origin and resolves the default branch
+# (authoritatively, via ls-remote). No pull, so a dirty WIP tree is irrelevant
+# and merged-but-unpulled work is still captured.
+DEFAULT=$(bash "$(dirname "$0")/resolve-origin-default.sh" "$REPO") \
+    || { echo "# WARN: $REPO has no resolvable origin default branch — skipped" >&2; exit 0; }
 
-git -C "$REPO" log \
+git -C "$REPO" log "$DEFAULT" \
     --author="$AUTHOR" \
     --since="$DATE" \
     --format="commit %h %s%n%aI" \
