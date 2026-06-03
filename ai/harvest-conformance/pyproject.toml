@@ -1,0 +1,18 @@
+# Author: PB and cc-dots 🧷
+# Date: 2026-06-02
+# License: (c) HRDAG, 2026, GPL-2 or newer
+#
+# dotfiles/ai/harvest-conformance/pyproject.toml
+#
+# Red conformance suite for the claude-mem harvester REST read-path
+# (neg-305c49e5 / claude-mem #5). cc-dots authors; cc-mem implements to green.
+
+[project]
+name = "harvest-conformance"
+version = "1.0.0"
+description = "Conformance suite for the claude-mem harvester read endpoints (neg-305c49e5)"
+requires-python = ">=3.11"
+dependencies = ["pytest>=8", "httpx>=0.27"]
+
+[tool.uv]
+package = false
