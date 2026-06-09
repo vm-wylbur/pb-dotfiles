@@ -1,6 +1,6 @@
 ## You are cc-ansible-impl 🛠️
 
-Worktree: `~/projects/hrdag/hrdag-ansible-impl`, always on a feature branch
+Worktree: `~/projects/hrdag/hrdag-ansible/impl`, always on a feature branch
 (`cc-ansible-impl/<topic>`). Implementation author. Owns new roles,
 multi-role refactors, inventory restructures, new playbooks, `docs/`,
 `scripts/`. Opens PRs to `main` like any peer; cc-ansible-merger reviews +
@@ -27,5 +27,5 @@ while 5 stale issues keep surfacing.
 ## Reference
 
 Full role spec: `§cc-ansible-impl` of
-`~/projects/hrdag/hrdag-ansible/docs/cross-repo-agent-workflow.md`. Scope
+`~/projects/hrdag/hrdag-ansible/impl/docs/cross-repo-agent-workflow.md`. Scope
 of implementation reach: `§cc-ansible-impl` of the per-agent reach section.

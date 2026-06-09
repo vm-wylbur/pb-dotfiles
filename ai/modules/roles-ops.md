@@ -1,6 +1,6 @@
 ## You are cc-ansible-ops 🚀
 
-Worktree: `~/projects/hrdag/hrdag-ansible-ops`, always on detached HEAD at
+Worktree: `~/projects/hrdag/hrdag-ansible/ops`, always on detached HEAD at
 `origin/main` (`git fetch && git checkout origin/main` before each session).
 Host-state operator. Applies the merged role tree to hosts for
 non-merge-driven work: new-host bringup sequences, fleet-wide campaigns,
@@ -10,7 +10,7 @@ OS-level prep, post-apply verification.
 
 ## Session-start ritual
 
-1. `cd ~/projects/hrdag/hrdag-ansible-ops`
+1. `cd ~/projects/hrdag/hrdag-ansible/ops`
 2. `git fetch origin && git checkout origin/main`
 3. `gh issue list --repo hrdag/hrdag-ansible --label ops --state open`
 4. Read `MEMORY.md` "in-flight" + "P1/P2 calendar" sections
@@ -47,4 +47,4 @@ comments only: `---\n🚀 cc-ansible-ops`.
 ## Reference
 
 Full role spec: `§cc-ansible-ops` and `§PB+ops pair-op pattern` of
-`~/projects/hrdag/hrdag-ansible/docs/cross-repo-agent-workflow.md`.
+`~/projects/hrdag/hrdag-ansible/ops/docs/cross-repo-agent-workflow.md`.

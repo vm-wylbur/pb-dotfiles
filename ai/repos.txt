@@ -21,9 +21,9 @@
 # hrdag-ansible — Phase 8 pilot. Main worktree carries the template +
 # repo-local modules; the impl/ops worktrees pick up the rendered CLAUDE.md
 # once their branches rebase onto main.
-projects/hrdag/hrdag-ansible
-projects/hrdag/hrdag-ansible-impl
-projects/hrdag/hrdag-ansible-ops
+projects/hrdag/hrdag-ansible/merger
+projects/hrdag/hrdag-ansible/impl
+projects/hrdag/hrdag-ansible/ops
 
 # In-place composable repos (Phase 10c). Each CLAUDE.md carries a legacy
 # single-block manifest (`<!-- claude-md: {...} -->`) + BEGIN/END GENERATED

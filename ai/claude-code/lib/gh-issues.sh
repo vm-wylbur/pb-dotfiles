@@ -16,7 +16,7 @@
 git rev-parse --git-dir &>/dev/null || exit 0
 command -v gh &>/dev/null || exit 0
 
-REPO=$(basename "$(git rev-parse --show-toplevel)")
+REPO=$(gh repo view --json nameWithOwner --jq .nameWithOwner 2>/dev/null) || REPO=$(basename "$(git rev-parse --show-toplevel)")
 LIMIT=${LIMIT:-10}
 LABEL=${1:-}
 

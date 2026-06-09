@@ -236,9 +236,9 @@ The hrdag-ansible worktrees (merger / impl / ops) each use a CLAUDE.local.md
 file that declares identity and renders a per-role module. These files are
 NOT in dotfiles. On a fresh machine, re-render them via:
 
-  claude-md render ~/projects/hrdag/hrdag-ansible/CLAUDE.local.md
-  claude-md render ~/projects/hrdag/hrdag-ansible-impl/CLAUDE.local.md
-  claude-md render ~/projects/hrdag/hrdag-ansible-ops/CLAUDE.local.md
+  claude-md render ~/projects/hrdag/hrdag-ansible/merger/CLAUDE.local.md
+  claude-md render ~/projects/hrdag/hrdag-ansible/impl/CLAUDE.local.md
+  claude-md render ~/projects/hrdag/hrdag-ansible/ops/CLAUDE.local.md
 
 The CLAUDE.local.md "shell" (identity + manifest declaring roles-merger /
 roles-impl / roles-ops) must exist first; copy from the source machine or

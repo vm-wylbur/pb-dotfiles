@@ -6,7 +6,7 @@ agents (merger, impl, ops) + 7 peer agents with declared slice reach
 cc-tfccc).
 
 Canonical workflow doc:
-`~/projects/hrdag/hrdag-ansible/docs/cross-repo-agent-workflow.md`.
+`~/projects/hrdag/hrdag-ansible/merger/docs/cross-repo-agent-workflow.md`.
 
 Read it before PR-shaped work in `hrdag-ansible` or any cross-agent
 coordination. It covers: slice reach per agent, PR gate (`make pr-gate`),
