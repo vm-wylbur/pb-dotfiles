@@ -1,7 +1,7 @@
 #
-#  Author: PB
+#  Author: PB & web-Claude
 #  Maintainer: PB
-#  License: (c) HRDAG 2022, some rights reserved: GPL v2 or newer
+#  License: (c) HRDAG 2026, some rights reserved: GPL v2 or newer
 #
 # Executes commands at the start of an interactive session.
 
@@ -14,16 +14,29 @@ esac
 # Show backup status on terminal open
 [[ -x /etc/update-motd.d/50-backup-status ]] && /etc/update-motd.d/50-backup-status
 
+# Completion. -C skips the per-startup security audit of $fpath dirs (faster
+# startup; safe once you trust your fpath). Drop the -C if you change fpath
+# often and want the audit back.
 autoload -Uz compinit
-compinit
+compinit -C
 
 # ---functions -----
+# chpwd: report cwd to terminal via OSC 7 (for new-tab-inherits-cwd) and list dir.
+# NOTE: deliberately does NOT set the window/tab title (no OSC 0/2), so that
+# titles set via `tabname` persist across directory changes.
 function chpwd() {
   emulate -L zsh
-  printf "\033]7;file://$(hostname -s)\033\\"
-  echo -ne "\x1b]0;$(hostname -s)\x1b\\"
+  printf "\033]7;file://$(hostname -s)$PWD\033\\"
   ls -ltrFG --color
 }
+
+# tabname: set the terminal tab/window title from a script or interactively.
+# e.g. `tabname PH-ICC`
+tabname() { print -n "\e]2;$1\e\\"; }
+
+# ccat: syntax-highlighted cat. Must be a function, not an alias, so the
+# argument is bound at call time rather than definition time.
+ccat() { pygmentize "$1"; }
 
 # ---paths-----
 if [[ -f $HOME/.machinespecific/paths ]] ; then
@@ -54,9 +67,6 @@ fi
 # ---PB additions below-----
 SED='sed'
 
-# colors
-export TERM=xterm-256color
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=black,bold'
 export PGDATABASE=pball
 
 # ---shell options-----
@@ -65,12 +75,13 @@ setopt PUSHD_IGNORE_DUPS
 setopt CHASE_LINKS
 setopt ALWAYS_TO_END
 setopt rm_star_silent
+# SHARE_HISTORY implies incremental append + reload across sessions, so the
+# separate INC_APPEND_HISTORY / APPEND_HISTORY opts are redundant and omitted.
+# (SHARE_HISTORY is what you want for parallel sessions.)
 setopt HIST_IGNORE_DUPS
 setopt BANG_HIST
 setopt EXTENDED_HISTORY
-setopt APPEND_HISTORY
 setopt SHARE_HISTORY
-setopt INC_APPEND_HISTORY
 
 HISTSIZE=10000
 HISTFILE=~/.zsh_history
@@ -91,7 +102,6 @@ alias '..'='cd ..'
 alias '...'='cd ../..'
 alias '....'='cd ../../..'
 alias '.....'='cd ../../../..'
-alias ccat="pygmentize $1"
 
 alias ll="ls -ltrFG --color"
 alias la="ls -laFG  --color"
@@ -140,8 +150,6 @@ else
   PROMPT='%n@%m:%~ %# '
 fi
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
-
 # Python stuff
 command -v uv &>/dev/null && eval "$(uv generate-shell-completion zsh)"
 eval "$(zoxide init zsh)"
@@ -160,8 +168,14 @@ case "$OSTYPE" in
     [[ -f ~/.venv/bin/activate ]] && source ~/.venv/bin/activate
     ;;
   darwin*)
-    export PAGER="most"
-    export MANPAGER="most"
+    # Guard against `most` not being installed; fall back to less.
+    if command -v most &>/dev/null; then
+      export PAGER="most"
+      export MANPAGER="most"
+    else
+      export PAGER="less"
+      export MANPAGER="less"
+    fi
     ;;
 esac
 
