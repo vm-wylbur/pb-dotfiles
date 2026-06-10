@@ -17,3 +17,5 @@ lazy-lock.json
 .config
 ai/claude-code/install.log
 .omc/
+__pycache__/
+*.pyc
