@@ -8,7 +8,8 @@
 #
 # SessionStart hook: emit grounded environment facts before any task starts.
 # Thin orchestrator — each line of output comes from a composable script in
-# ~/.claude/lib/ that can also be invoked mid-session via the refresh skill.
+# ~/.claude/lib/ (each invocable directly mid-session; the refresh skill that
+# used to wrap them was retired 2026-06-10, unused since the hooks landed).
 #
 # Install in ~/.claude/settings.json (handled by install.sh):
 #   "SessionStart": [{"hooks": [{"type": "command",
