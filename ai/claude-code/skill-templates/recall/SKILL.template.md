@@ -19,23 +19,34 @@ On-demand, query-specific recall over the durable memory store. Complements the 
 
 1. **Determine the query.** If a topic arg is given, use it as the query verbatim. If there's no arg, compose a concise query yourself from the current context — the thing you're stuck on, the decision you're about to make, or the error text. (Bash can't read the transcript; you have the context, so you write the query.)
 
-2. **Search claude-mem** via the loop orchestrator:
+2. **Search claude-mem** via the loop orchestrator — one call that searches AND prints readable previews (turn economy: don't spend one tool call searching and another formatting):
 
    ```bash
-   echo '{"query":"<your query>","limit":10}' | bash ~/.claude/lib/recall-loop.sh
+   echo '{"query":"<your query>","limit":7}' | bash ~/.claude/lib/recall-loop.sh > /tmp/recall-$$.json
+   jq -c '{loop_id, iteration, stop_hint, new_count, query_moved}' /tmp/recall-$$.json
+   jq -r '.memories[] | "—— [\(.memory_id)] sim=\(.similarity|tostring|.[0:5])\n\(.content | gsub("\\s+"; " ") | .[0:500])\n"' /tmp/recall-$$.json
    ```
 
-   Returns the search results plus loop-control fields: `{loop_id, iteration, stop_hint, new_count, seen_total, query_moved, max_similarity, above_floor, suppressed_count, memories:[{content, score, similarity, memory_id, metadata, created_at, ...}]}`. Memories are ranked by `score` — Reciprocal Rank Fusion over FTS + fuzzy + vector legs. `similarity` is the cosine leg only. It's a global search over the whole store — no project filter, so cross-project lessons can surface (often useful, occasionally off-topic; the noise gate handles that). (The raw single-shot shim `mem-search.sh` still exists; the orchestrator wraps it and adds the loop state + telemetry.)
+   The orchestrator returns loop-control fields (`loop_id, iteration, stop_hint, new_count, seen_total, query_moved, max_similarity, above_floor, suppressed_count`) plus `memories:[{content, score, similarity, memory_id, ...}]`, ranked by `score` — Reciprocal Rank Fusion over FTS + fuzzy + vector legs; `similarity` is the cosine leg only. Global search, no project filter — cross-project lessons can surface. Default `limit` 7: ranks 8+ rarely change the answer and everything returned costs reading time. 500-char previews are usually enough to judge sufficiency AND synthesize; deep-read only the 1–3 load-bearing memories (step 3). (The raw single-shot shim `mem-search.sh` still exists; the orchestrator adds loop state + telemetry.)
 
-3. **Judge sufficiency, then loop or stop.** Read the returned memories: is this enough to answer the question you brought? Judge from CONTENT, not scores. Then:
+3. **Judge sufficiency, then act — and ALWAYS piggyback the verdict on your next Bash call, never spend a tool call on it alone.** Read the previews: is this enough to answer the question you brought? Judge from CONTENT, not scores. Then:
 
-   - **Sufficient** → record the verdict and synthesize (step 4):
+   - **Sufficient** → one final call combining the deep-read of the 1–3 load-bearing memories with the terminal verdict (often the previews suffice and the deep-read part is unnecessary — then just send the verdict with your NEXT unrelated command, or alone if the turn ends):
 
      ```bash
+     jq -r '.memories[] | select(.memory_id == "<id1>" or .memory_id == "<id2>") | .content' /tmp/recall-$$.json
      echo '{"loop_id":"<id>","iteration":N,"verdict":"sufficient","outcome":"satisfied"}' | bash ~/.claude/lib/recall-loop.sh verdict
      ```
 
-   - **Insufficient and `stop_hint` allows continuing** → record `"verdict":"insufficient"` (no outcome — not terminal), then **reformulate and call the orchestrator again with the same `loop_id`**. The reformulation must GENUINELY move: different vocabulary, a different angle (symptom vs cause, tool name vs error text), or different terms entirely — not the same words reshuffled. The orchestrator checks this (`query_moved`); a lazy rephrase that returns nothing new yields `stop_hint: rephrase-harder`, which means *your rephrase failed, not the corpus* — try once more with genuinely different words.
+   - **Insufficient and `stop_hint` allows continuing** → one call combining the insufficient verdict (no outcome — not terminal) with the next iteration:
+
+     ```bash
+     echo '{"loop_id":"<id>","iteration":N,"verdict":"insufficient"}' | bash ~/.claude/lib/recall-loop.sh verdict > /dev/null
+     echo '{"query":"<GENUINELY different query>","limit":7,"loop_id":"<id>"}' | bash ~/.claude/lib/recall-loop.sh > /tmp/recall-$$.json
+     # + the two display jq lines from step 2
+     ```
+
+     The reformulation must GENUINELY move: different vocabulary, a different angle (symptom vs cause, tool name vs error text), or different terms entirely — not the same words reshuffled. The orchestrator checks this (`query_moved`); a lazy rephrase that returns nothing new yields `stop_hint: rephrase-harder`, which means *your rephrase failed, not the corpus* — try once more with genuinely different words.
    - **`stop_hint: saturated`** → the query moved and still nothing new surfaced: the store likely has no more on this. Record the terminal verdict honestly (`"outcome":"satisfied"` if what you have suffices, else note the miss in your synthesis) and stop.
    - **`stop_hint: budget-exhausted`** (3 iterations) → stop, record `"outcome":"budget-exhausted"`. Don't loop past the budget — a budget-hit is itself a miss signal worth recording, not a failure to push through.
 
