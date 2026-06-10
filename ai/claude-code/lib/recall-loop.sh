@@ -43,10 +43,12 @@
 # the loop must not paper over single-shot recall gaps). Suppressed memories
 # are filtered from DISPLAY only; they still count as retrieved in telemetry.
 #
-# Forward-compat (L4, engine-side, not yet deployed): when /search returns
-# search_id and POST /search-verdict exists, `iterate` captures search_id per
-# iteration and `verdict` POSTs {search_id, verdict, iteration, loop_id,
-# outcome?} alongside the local JSONL (which stays, as the local mirror).
+# Engine telemetry (L4, live since claude-mem PR #13): `iterate` captures the
+# search_id /search returns per iteration; `verdict` POSTs {search_id, verdict,
+# iteration, loop_id, outcome?} to /search-verdict alongside the local JSONL
+# (which stays, as the local mirror). The POST is best-effort: a telemetry
+# failure must never block the interactive recall path — it warns on stderr
+# and the JSONL still records.
 #
 # Env overrides:
 #   CLAUDE_MEM_URL          — passed through to mem-search.sh
@@ -105,9 +107,34 @@ cmd_verdict() {
           iteration:$iteration, verdict:$verdict,
           outcome:(if $outcome=="" then null else $outcome end)}' \
         >> "$LOOP_DIR/trajectory.jsonl"
-    # L4 forward-compat: POST /search-verdict lands here once the endpoint exists.
+
+    # Engine emission (L4): best-effort POST to /search-verdict keyed by the
+    # iteration's search_id. Never blocks: missing secret/search_id or a curl
+    # failure warns and falls back to the local JSONL above.
+    local posted=false search_id secret
+    search_id=$(jq -r --argjson i "$iteration" '.search_ids[$i - 1] // empty' "$state_file")
+    secret=$(jq -r '.env.CLAUDE_MEM_SECRET // empty' "$HOME/.claude/settings.json" 2>/dev/null)
+    if [ -n "$search_id" ] && [ -n "$secret" ]; then
+        if jq -nc --arg search_id "$search_id" --arg verdict "$verdict" \
+            --argjson iteration "$iteration" --arg loop_id "$loop_id" --arg outcome "$outcome" \
+            '{search_id:$search_id, verdict:$verdict, iteration:$iteration, loop_id:$loop_id,
+              outcome:(if $outcome=="" then null else $outcome end)}
+             | with_entries(select(.value != null))' \
+            | curl -fsS -m 10 -H "X-Claude-Mem-Secret: $secret" \
+                -H 'Content-Type: application/json' \
+                -X POST "${CLAUDE_MEM_URL:-http://snowball:3456}/search-verdict" \
+                --data-binary @- >/dev/null 2>&1; then
+            posted=true
+        else
+            echo "recall-loop: warning — /search-verdict POST failed; local JSONL is the record" >&2
+        fi
+    else
+        echo "recall-loop: warning — no search_id/secret for iteration $iteration; local JSONL only" >&2
+    fi
+
     jq -n --arg loop_id "$loop_id" --argjson iteration "$iteration" \
-        --arg verdict "$verdict" '{recorded:true, loop_id:$loop_id, iteration:$iteration, verdict:$verdict}'
+        --arg verdict "$verdict" --argjson posted "$posted" \
+        '{recorded:true, posted:$posted, loop_id:$loop_id, iteration:$iteration, verdict:$verdict}'
 }
 
 cmd_iterate() {
@@ -126,7 +153,8 @@ cmd_iterate() {
         state_file="$LOOP_DIR/$loop_id.json"
         jq -nc --arg loop_id "$loop_id" --arg session_id "$SESSION_ID" \
             --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-            '{loop_id:$loop_id, session_id:$session_id, started_at:$ts, queries:[], seen_ids:[]}' \
+            '{loop_id:$loop_id, session_id:$session_id, started_at:$ts,
+              queries:[], search_ids:[], seen_ids:[]}' \
             > "$state_file"
     else
         state_file="$LOOP_DIR/$loop_id.json"
@@ -174,7 +202,8 @@ cmd_iterate() {
     fi
 
     # --- churn vs seen (rung 1 structural critic) ---
-    local returned_ids new_ids new_count seen_total max_sim above_floor
+    local returned_ids new_ids new_count seen_total max_sim above_floor search_id
+    search_id=$(jq -r '.search_id // empty' <<<"$results")
     returned_ids=$(jq -c '[.memories[].memory_id]' <<<"$results")
     new_ids=$(jq -c --argjson ret "$returned_ids" \
         '.seen_ids as $seen | [$ret[] | select(. as $id | ($seen | index($id)) | not)]' \
@@ -186,8 +215,9 @@ cmd_iterate() {
     # --- update state ---
     local tmp
     tmp=$(mktemp)
-    jq --arg q "$query" --argjson ret "$returned_ids" \
-        '.queries += [$q] | .seen_ids = ((.seen_ids + $ret) | unique)' \
+    jq --arg q "$query" --arg sid "$search_id" --argjson ret "$returned_ids" \
+        '.queries += [$q] | .search_ids += [(if $sid=="" then null else $sid end)]
+         | .seen_ids = ((.seen_ids + $ret) | unique)' \
         "$state_file" > "$tmp" && mv "$tmp" "$state_file"
     seen_total=$(jq '.seen_ids | length' "$state_file")
 
@@ -205,13 +235,14 @@ cmd_iterate() {
 
     # --- telemetry, UNCONDITIONAL, before output (honesty interlock, L5) ---
     jq -nc --arg loop_id "$loop_id" --arg session_id "$SESSION_ID" \
-        --argjson iteration "$iteration" --arg q "$query" \
+        --argjson iteration "$iteration" --arg q "$query" --arg sid "$search_id" \
         --argjson returned "$returned_ids" --argjson new_count "$new_count" \
         --argjson moved "$moved" --arg jac "$jac" \
         --argjson max_sim "$max_sim" --arg stop_hint "$stop_hint" \
         --arg ts "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
         '{type:"iteration", ts:$ts, loop_id:$loop_id, session_id:$session_id,
-          iteration:$iteration, query:$q, returned_ids:$returned,
+          iteration:$iteration, query:$q,
+          search_id:(if $sid=="" then null else $sid end), returned_ids:$returned,
           new_count:$new_count, query_moved:$moved, query_jaccard:($jac|tonumber),
           max_similarity:$max_sim, stop_hint:$stop_hint}' \
         >> "$LOOP_DIR/trajectory.jsonl"
