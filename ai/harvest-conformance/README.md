@@ -18,6 +18,10 @@ It tracks claude-mem issue **#5**: the two endpoints retire the last `ssh snowba
 - `GET /docs/:doc_id` → `{doc: {doc_id, filename, filepath, content, file_mtime, doc_hash, metadata}}`, or `404 {error}`. Replaces `eval.py`'s `load_docs` (fetch by `doc_id` — the PK that `extraction_decisions` reference; `doc_hash` is not unique, so id is the key). Returns full **content**, which `/docs/manifest` does not.
 - `GET /docs/backlog?limit=N&offset=M` → `{docs: [{doc_id, doc_hash, filepath, content}], limit, offset, total}`. Replaces `distill.py`'s backlog query. Rows are **distinct by `doc_hash`**, and a `doc_hash` is excluded once **any** of its doc_ids has a decision or a `source_doc_id`-linked memory — exclusion is by `doc_hash`, not by the `DISTINCT ON`-picked `doc_id`. (That correctness point is the HIGH dedup bug in the old client query; moving the corrected query server-side fixes it at the source. The suite pins it in `test_backlog_excludes_decided_content`.)
 
+## Provenance round-trip (v1.2.0, neg-6b0a3bf5)
+
+`test_provenance_roundtrip.py` pins the Workstream-B provenance contract (claude-mem#12): `POST /store` accepts optional `session_id`/`host`/`agent_id` (green — regression guards on the deployed PR #11: echo-of-accepted-input, `''` → 400, absent → 200); `GET /memory/:memory_id` returns `{memory: {memory_id, content, created_at, updated_at, session_id, host, agent_id, evicted_at, evicted_by, evict_reason}}` with a JSON 404 envelope and secret auth (**red** until the migration-003 unit ships); the store→read round-trip asserts **persistence**, which the echo cannot (**red**); and `POST /harvest` accepts + stamps the same fields and returns `memoryId` (**red** — the contract extension cc-mem raised, so harvested memories stop landing with NULL provenance). POSTing tests are seed-gated per suite policy.
+
 ## Invariants pinned
 
 Beyond endpoint shape, the suite pins the two contract invariants from neg-305c49e5:
