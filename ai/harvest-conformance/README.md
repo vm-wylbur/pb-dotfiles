@@ -31,7 +31,7 @@ It tracks claude-mem issue **#5**: the two endpoints retire the last `ssh snowba
 - **Evict/unevict round-trip** (PR #20, the W5 mutation surface) — `POST /memory/:id/evict {evicted_by, evict_reason}` → 200 `{memory, already_evicted}` with first-evictor-wins; `/unevict` → `{memory, was_evicted}`, idempotent on a live row; JSON 404 envelopes; secret auth.
 - **Additive back-compat** — a clean first write carries neither `updated` nor `evicted`; the signals appear only on effect.
 
-Known engine bug **claude-mem#22** (ids stored unpadded, echoed padded — ~1/16 of echoed ids 404 on by-id surfaces): all by-id access goes through `idlib.py`, which retries with leading zeros stripped. Engine HEAD already pads at generation (migration 005 canonicalizes old rows); remove the workaround and assert verbatim round-trips once that migration is confirmed deployed.
+v1.3.1: **claude-mem#22 is fixed** (generation pads to 16 chars; migration 005 canonicalized old rows — confirmed deployed 2026-06-11 on #12), so `idlib.py` asserts that echoed ids round-trip **verbatim**: a 404 on an echoed id is a contract violation, not a known flake.
 
 ## Invariants pinned
 
