@@ -48,6 +48,7 @@ jq -e 'type == "object"' "$SETTINGS" >/dev/null 2>&1 \
 jq \
     --arg guard   "bash ${HOOKS_DIR}/pre-bash-guard.sh" \
     --arg numcheck "bash ${HOOKS_DIR}/flag-unbacked-numerics.sh" \
+    --arg webfetch "bash ${HOOKS_DIR}/webfetch-allowlist.sh" \
     --arg inject  "bash ${HOOKS_DIR}/mem-inject.sh" \
     --arg sessenv "bash ${HOOKS_DIR}/session-env.sh" \
     --arg cmcheck "bash ${HOOKS_DIR}/claude-md-check.sh" \
@@ -76,6 +77,8 @@ jq \
     .hooks.PreToolUse = [{"matcher": "Bash", "hooks": [
         {"type": "command", "command": $guard},
         {"type": "command", "command": $numcheck}
+    ]}, {"matcher": "WebFetch", "hooks": [
+        {"type": "command", "command": $webfetch}
     ]}] |
     .hooks.SessionStart = [{"hooks": [
         {"type": "command", "command": $inject},
@@ -89,7 +92,7 @@ jq \
     .hooks.Stop = [{"hooks": [
         {"type": "command", "command": $stopoff}
     ]}] |
-    .enabledPlugins."oh-my-claudecode@omc" = false |
+    del(.enabledPlugins."oh-my-claudecode@omc") |
     .skipDangerousModePermissionPrompt = true
     ' "$SETTINGS" > "$TMP"
 
