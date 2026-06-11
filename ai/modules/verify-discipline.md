@@ -10,6 +10,14 @@ Before claiming ANYTHING works:
 - "Ready to commit" = tested and working, not "looks right."
 - After running a report / deploy / pipeline, READ the output and
   confirm. "Should work" is not verification. Quote the actual value.
+- Multi-step protocols (auth handshakes, pipelines, deploys): a
+  passing INTERMEDIATE step is not verification — exercise the path
+  to its final effect. Lesson (2026-06-11): an ssh change shipped as
+  "verified live" on `Server accepts key`, but that line only proves
+  the cert OFFER; the signature step comes after, was broken by the
+  same change, and took out fleet ControlMaster tooling for a
+  morning (hrdag-ansible #779). The offer is not the auth; the
+  handshake is not the session; "accepted" is not "done."
 
 Skipped / None / disabled checks:
 - STOP. A skipped check is NOT a pass.
