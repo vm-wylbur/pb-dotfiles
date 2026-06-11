@@ -22,6 +22,17 @@ It tracks claude-mem issue **#5**: the two endpoints retire the last `ssh snowba
 
 `test_provenance_roundtrip.py` pins the Workstream-B provenance contract (claude-mem#12): `POST /store` accepts optional `session_id`/`host`/`agent_id` (green — regression guards on the deployed PR #11: echo-of-accepted-input, `''` → 400, absent → 200); `GET /memory/:memory_id` returns `{memory: {memory_id, content, created_at, updated_at, session_id, host, agent_id, evicted_at, evicted_by, evict_reason}}` with a JSON 404 envelope and secret auth (**red** until the migration-003 unit ships); the store→read round-trip asserts **persistence**, which the echo cannot (**red**); and `POST /harvest` accepts + stamps the same fields and returns `memoryId` (**red** — the contract extension cc-mem raised, so harvested memories stop landing with NULL provenance). POSTing tests are seed-gated per suite policy.
 
+## W8 write guards (v1.3.0, claude-mem#12 — the 951-doc re-run gate)
+
+`test_w8_write_guards.py` pins the engine half of W8 (main `b05a252` + PR #20), all seed-gated; **green on a disposable instance = re-run go**:
+
+- **No-clobber** — the `/harvest` keyed upsert is ownership-guarded: cross-agent and provenance-less writes to an owned `source_key` are refused with 200 `{updated: false, deferred_to: <owner>}` and the owner's row untouched; same-agent re-writes and writes to unowned (`agent_id IS NULL`) rows still upsert.
+- **Sticky tombstone** (PB-ratified 2026-06-11) — a `/store` or `/harvest` collision with a tombstoned row signals `evicted: true` and leaves the row evicted; revival is only the explicit `/unevict` verb. The collision scope is pinned as **(content, content_type)** — `memory_id = hash(content ':' content_type)`, so identical text under a different type is a new live row, not a collision.
+- **Evict/unevict round-trip** (PR #20, the W5 mutation surface) — `POST /memory/:id/evict {evicted_by, evict_reason}` → 200 `{memory, already_evicted}` with first-evictor-wins; `/unevict` → `{memory, was_evicted}`, idempotent on a live row; JSON 404 envelopes; secret auth.
+- **Additive back-compat** — a clean first write carries neither `updated` nor `evicted`; the signals appear only on effect.
+
+Known engine bug **claude-mem#22** (ids stored unpadded, echoed padded — ~1/16 of echoed ids 404 on by-id surfaces): all by-id access goes through `idlib.py`, which retries with leading zeros stripped. Engine HEAD already pads at generation (migration 005 canonicalizes old rows); remove the workaround and assert verbatim round-trips once that migration is confirmed deployed.
+
 ## Invariants pinned
 
 Beyond endpoint shape, the suite pins the two contract invariants from neg-305c49e5:

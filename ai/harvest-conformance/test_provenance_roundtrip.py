@@ -30,7 +30,8 @@
 
 import uuid
 
-UNKNOWN_ID = "0" * 16  # memory ids are 16-char hex (verified against GET /recent)
+from idlib import UNKNOWN_ID
+from idlib import get_memory as _get_memory
 
 PROVENANCE_FIELDS = ("session_id", "host", "agent_id")
 EVICTION_FIELDS = ("evicted_at", "evicted_by", "evict_reason")
@@ -100,9 +101,7 @@ def test_memory_fetch_by_id_shape(client):
     # /recent names the field `id` today; tolerate a future rename to memory_id
     mid = memories[0].get("memory_id") or memories[0]["id"]
 
-    r = client.get(f"/memory/{mid}")
-    assert r.status_code == 200, f"expected 200, got {r.status_code} (endpoint missing today)"
-    mem = r.json()["memory"]
+    mem = _get_memory(client, mid)  # idlib: #22-padding-tolerant by-id read
     for field in BY_ID_FIELDS:
         assert field in mem, f"missing field: {field}"
     assert mem["memory_id"] == mid
@@ -140,9 +139,7 @@ def test_store_provenance_persists(client, writes_allowed):
     mid = r.json().get("memoryId")
     assert mid, "/store response must carry memoryId"
 
-    g = client.get(f"/memory/{mid}")
-    assert g.status_code == 200, f"by-id read failed: {g.status_code} (endpoint missing today)"
-    mem = g.json()["memory"]
+    mem = _get_memory(client, mid)  # idlib: #22-padding-tolerant by-id read
     for f in PROVENANCE_FIELDS:
         assert mem[f] == stamp[f], f"persisted {f} != stored {f} (round-trip broken)"
     for f in EVICTION_FIELDS:
@@ -169,8 +166,6 @@ def test_harvest_provenance_persists(client, writes_allowed):
     mid = hv.json().get("memoryId")
     assert mid, "/harvest response must carry memoryId (contract addition, missing today)"
 
-    g = client.get(f"/memory/{mid}")
-    assert g.status_code == 200, f"by-id read failed: {g.status_code} (endpoint missing today)"
-    mem = g.json()["memory"]
+    mem = _get_memory(client, mid)  # idlib: #22-padding-tolerant by-id read
     for f in PROVENANCE_FIELDS:
         assert mem[f] == stamp[f], f"persisted {f} != harvested {f} (round-trip broken)"
