@@ -33,6 +33,10 @@ It tracks claude-mem issue **#5**: the two endpoints retire the last `ssh snowba
 
 v1.3.1: **claude-mem#22 is fixed** (generation pads to 16 chars; migration 005 canonicalized old rows — confirmed deployed 2026-06-11 on #12), so `idlib.py` asserts that echoed ids round-trip **verbatim**: a 404 on an echoed id is a contract violation, not a known flake.
 
+## Consolidation round-trip (v1.4.0, claude-mem#12 — synthesize-then-evict)
+
+`test_consolidation_roundtrip.py` pins the mechanical contract of the consolidation pass exactly as first executed (2026-06-11: 2 survivors, 20 tombstones): `/store` accepts `consolidated_from: [<sibling ids>]` with an **outcome-gated echo** (engine `ee8f4e3` — a clean store echoes and persists the lineage edge; a refused store must not claim it), the tombstone's `evict_reason` is a machine-parsable `superseded-by <16-hex>` pointer, following it reaches the **live** survivor whose `consolidated_from` closes the loop, and re-storing an evicted sibling's content stays sticky (`evicted: true`, composing the v1.3.0 pin). Retrieval quality ("search serves the survivor") is deliberately NOT pinned — that is eval-harness territory.
+
 ## Invariants pinned
 
 Beyond endpoint shape, the suite pins the two contract invariants from neg-305c49e5:
