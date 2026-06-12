@@ -9,6 +9,8 @@ dotfiles/docs/tree-sitter-adoption-plan-20260611.md
 
 # Tree-sitter adoption plan: move the choice into the menu, not the prose
 
+> **STATUS 2026-06-11: PARKED at the Phase 0 gate.** Win rate 12% vs the pre-registered 30% floor — see [the Phase 0 report](tree-sitter-phase0-report-20260611.md). The measurement instrument (`lib/grep-replay.sh`) stays for re-measurement if the workload shifts.
+
 ## The problem, with evidence
 
 The tree-sitter skill carries a "STRONGLY PREFER over Bash grep" instruction and has never once been model-invoked (usage-scan, both hosts, full retention window). The 2026-06-11 session is the inside-view evidence: ~40 greps in one session, several exactly symbol-shaped (callers of `_post("/harvest")`, definition of `generateMemoryHash`), zero consideration of the skill. The failure mechanism is structural, not motivational: at tool-choice time the agent picks among TOOLS in the menu; tree-sitter is a skill description that must be *recalled*, and grep never punishes the habit (noisy results get narrowed, not switched away from). Prefer-X-over-habit instructions don't land — second independent confirmation after the recall-loop turn-economy work.
