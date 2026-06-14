@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  dotfiles/ai/claude-code/launchd/com.hrdag.fleet-brief.plist
+
+  Template for the daily fleet-brief launchd agent (macOS only). install.sh
+  substitutes the @@RUNNER@@ and @@LOGDIR@@ sentinels with absolute paths
+  (launchd does not expand ~ or env vars) and installs the result to
+  ~/Library/LaunchAgents/. Runs the /fleet-brief skill each morning at
+  07:17. RunAtLoad is false so installing/reloading never fires a brief;
+  it only runs on the calendar trigger. Edit the time below to retune.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.hrdag.fleet-brief</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>@@RUNNER@@</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>7</integer>
+    <key>Minute</key>
+    <integer>17</integer>
+  </dict>
+  <key>RunAtLoad</key>
+  <false/>
+  <key>StandardOutPath</key>
+  <string>@@LOGDIR@@/fleet-brief.out</string>
+  <key>StandardErrorPath</key>
+  <string>@@LOGDIR@@/fleet-brief.err</string>
+  <key>ProcessType</key>
+  <string>Background</string>
+</dict>
+</plist>

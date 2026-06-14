@@ -42,6 +42,7 @@ bash "${LIB}/triage-issues.sh" </dev/null | jq -r '
              else empty end)
         )
     end' 2>/dev/null
+bash "${LIB}/fleet-brief-status.sh"
 bash "${LIB}/skills-list.sh"
 bash "${LIB}/claude-md-mtime.sh"
 bash "${LIB}/mcp-status.sh"

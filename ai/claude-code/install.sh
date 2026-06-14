@@ -278,6 +278,37 @@ else
     echo "  skipped: $VERSION_FILE missing"
 fi
 
+# ── 10. Fleet-brief daily schedule (macOS launchd only) ────────────────────
+# Installs the /fleet-brief launchd agent on macOS (porky); other hosts skip
+# (launchd is macOS-only — scott/snowball would need cron/systemd if ever
+# wanted, but the brief is for PB's primary machine). launchd needs absolute
+# paths, so the plist template's @@RUNNER@@/@@LOGDIR@@ sentinels are filled in
+# here. RunAtLoad is false, so loading never fires a brief.
+
+echo "Configuring fleet-brief schedule..."
+if [ "$(uname -s)" = "Darwin" ]; then
+    PLIST_TMPL="$DOTFILES/ai/claude-code/launchd/com.hrdag.fleet-brief.plist"
+    LA_DIR="$HOME/Library/LaunchAgents"
+    PLIST="$LA_DIR/com.hrdag.fleet-brief.plist"
+    RUNNER="$CLAUDE_DIR/lib/fleet-brief-run.sh"
+    LOGDIR="$HOME/Library/Logs"
+    if [ -f "$PLIST_TMPL" ]; then
+        mkdir -p "$LA_DIR" "$LOGDIR"
+        sed -e "s|@@RUNNER@@|$RUNNER|g" -e "s|@@LOGDIR@@|$LOGDIR|g" \
+            "$PLIST_TMPL" > "$PLIST"
+        launchctl unload "$PLIST" 2>/dev/null || true
+        if launchctl load "$PLIST" 2>/dev/null; then
+            echo "  loaded: $PLIST (daily 07:17)"
+        else
+            echo "  WARN: launchctl load failed for $PLIST"
+        fi
+    else
+        echo "  skipped: plist template missing ($PLIST_TMPL)"
+    fi
+else
+    echo "  skipped: fleet-brief schedule is launchd/macOS-only (host=$(uname -s))"
+fi
+
 # ── Done ─────────────────────────────────────────────────────────────────────
 
 echo "Setup complete. Verify with: claude mcp list"

@@ -115,4 +115,4 @@ echo "  skills: $(comm -23 <(ls "$HOME/.claude/skills" 2>/dev/null | sort -u) <(
 echo "  lib:    $(comm -23 <(jq -r '.[]' <<<"$LIB_NAMES" | sort -u) <(printf '%s\n' "$used_libs") | tr '\n' ' ')"
 echo "  agents (ours): $(comm -23 <(jq -r '.[]' <<<"$OUR_AGENTS" | sort -u) <(printf '%s\n' "$used_agents") | tr '\n' ' ')"
 echo
-echo "caveats: lib-from-lib composition invisible; hooks not in transcripts; this host + retention window only."
+echo "caveats: lib-from-lib composition invisible; hooks, launchd jobs, and headless-child (claude -p) invocations not in transcripts; this host + retention window only."
