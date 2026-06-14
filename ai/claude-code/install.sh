@@ -219,9 +219,12 @@ echo "  updated: $CLAUDE_JSON (claude-negotiate only; repomix, tree_sitter, clau
 # template hasn't been authored yet (symlink-only).
 
 echo "Per-repo deploy..."
+deploy_repos_status="ok"
 if [ -x "$DOTFILES/scripts/deploy-repos" ] && [ -f "$DOTFILES/ai/repos.txt" ]; then
-    "$DOTFILES/scripts/deploy-repos" || echo "  (deploy-repos reported issues; continuing)"
+    "$DOTFILES/scripts/deploy-repos" \
+        || { deploy_repos_status="degraded"; echo "  (deploy-repos reported issues; continuing)"; }
 else
+    deploy_repos_status="skipped"
     echo "  skipped: deploy-repos or repos.txt missing"
 fi
 
@@ -246,6 +249,34 @@ hand-author per the templates in dotfiles/ai/modules/roles-*.md.
 ────────────────────────────────────────────────────────────────────────────
 
 EOF
+
+# ── 9. Stamp deployed environment version ──────────────────────────────────
+
+echo "Stamping environment version..."
+VERSION_FILE="$DOTFILES/VERSION"
+if [ -f "$VERSION_FILE" ]; then
+    # Each capture has a fallback so a failure here never aborts an otherwise
+    # successful deploy (this is the last step); empty VERSION -> "unknown".
+    env_version=$(tr -d '[:space:]' < "$VERSION_FILE" 2>/dev/null || echo unknown)
+    [ -z "$env_version" ] && env_version=unknown
+    git_describe=$(git -C "$DOTFILES" describe --tags --always --dirty 2>/dev/null || echo unknown)
+    git_commit=$(git -C "$DOTFILES" rev-parse --short HEAD 2>/dev/null || echo unknown)
+    deployed_at=$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo unknown)
+    host=$(hostname -s 2>/dev/null || echo unknown)
+    jq -n \
+        --arg version "$env_version" \
+        --arg describe "$git_describe" \
+        --arg commit "$git_commit" \
+        --arg deployed_at "$deployed_at" \
+        --arg host "$host" \
+        --arg deploy_repos "${deploy_repos_status:-unknown}" \
+        '{version:$version, git_describe:$describe, commit:$commit,
+          deployed_at:$deployed_at, host:$host, deploy_repos:$deploy_repos}' \
+        > "$CLAUDE_DIR/.env-version"
+    echo "  stamped: $CLAUDE_DIR/.env-version ($env_version / $git_describe, deploy_repos=${deploy_repos_status:-unknown})"
+else
+    echo "  skipped: $VERSION_FILE missing"
+fi
 
 # ── Done ─────────────────────────────────────────────────────────────────────
 
