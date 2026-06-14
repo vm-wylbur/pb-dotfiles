@@ -37,6 +37,10 @@ v1.3.1: **claude-mem#22 is fixed** (generation pads to 16 chars; migration 005 c
 
 `test_consolidation_roundtrip.py` pins the mechanical contract of the consolidation pass exactly as first executed (2026-06-11: 2 survivors, 20 tombstones): `/store` accepts `consolidated_from: [<sibling ids>]` with an **outcome-gated echo** (engine `ee8f4e3` — a clean store echoes and persists the lineage edge; a refused store must not claim it), the tombstone's `evict_reason` is a machine-parsable `superseded-by <16-hex>` pointer, following it reaches the **live** survivor whose `consolidated_from` closes the loop, and re-storing an evicted sibling's content stays sticky (`evicted: true`, composing the v1.3.0 pin). Retrieval quality ("search serves the survivor") is deliberately NOT pinned — that is eval-harness territory.
 
+## Topical-coverage write gate (v1.5.0, claude-mem#12 — the Layer-1 near-dup gate)
+
+`test_topical_coverage_gate.py` pins the write-time topical-coverage gate that makes unattended incremental harvesting safe. Design (PB-arbitrated on #12, 2026-06-14): incremental re-harvest produces **topical**, not atomic, redundancy (atom-level dup ~1.3%, survivor-ground-truthed) — so keep blobs and gate at write time on topical coverage keyed **strictly on the same `source_doc_id`**. Cross-doc near-dups are deliberately **not** suppressed (a cross-doc "duplicate" is usually the same fact in a useful different context — merging that is consolidation's job, not a write-time drop), which makes the gate distiller-path-only by construction (agent writes carry no `source_doc_id`). Confirmed wire contract (cc-mem, against the live route `index-http.ts:345/:373`): the gate lives on `POST /harvest`; `source_doc_id` is a first-class body field; the response always carries `stored` (`stored:false` + `covered_by:[…]` when covered, `stored:true` otherwise). Two assertions pin the keying decision and guarantee cross-doc context is never silently lost: same-doc near-copy → covered; different-doc near-copy → stored. A unique `source_key` per probe isolates the coverage gate from the W8 source_key-collision guard (which runs first; re-distillation produces a new `source_key` with near-dup content — the exact case W8 misses and coverage catches).
+
 ## Invariants pinned
 
 Beyond endpoint shape, the suite pins the two contract invariants from neg-305c49e5:
@@ -63,7 +67,7 @@ Env:
 
 ## Expected state
 
-- **Today (red):** the read-endpoint tests fail — `GET /docs/:doc_id` and `GET /docs/backlog` return 404 because the routes do not exist. `test_read_endpoints_require_auth` passes (the service already enforces the secret). Seed-gated tests skip unless `ALLOW_WRITES=1`.
+- **Today (red):** the read-endpoint tests fail — `GET /docs/:doc_id` and `GET /docs/backlog` return 404 because the routes do not exist. `test_read_endpoints_require_auth` passes (the service already enforces the secret). The topical-coverage gate tests (v1.5.0) are red until the gate ships in the `/harvest` ADD path — it is last in the build order (watermark → consolidation+preservation → write-time gate), so these reds lead the furthest-out piece. Seed-gated tests skip unless `ALLOW_WRITES=1`.
 - **After cc-mem implements (green):** all tests pass against an instance that has the two routes; cc-mem runs the pinned version as its pre-deploy gate.
 
 ## Versioning / pinning
