@@ -85,7 +85,31 @@ Rules:
 
 1. Write to `~/docs/fleet-brief-{TODAY}.md` (TODAY = `date +%Y-%m-%d`).
 2. If running interactively, render: `glow ~/docs/fleet-brief-{TODAY}.md`.
-3. Report the path. The scheduled run relies on the file; the SessionStart surfacing (if wired) points at it.
+3. Report the path. The scheduled run relies on the file; the SessionStart surfacing points at it via `fleet-brief-status.sh`.
+
+### Phase 5: Append to the longitudinal ledger
+
+The prose brief is for today; the ledger is the time-series that later reveals *process* patterns (chronic gates, dwell-time by category, recurring decision types). Emit one structured OBSERVATION per gate (from Phase 2) and per decision (from Phase 3) as a JSON array and pipe it to the ledger helper, which stamps the date, validates, and appends idempotently:
+
+```
+echo '<JSON array>' | bash ~/.claude/lib/fleet-brief-ledger.sh
+```
+
+Each observation: `{type, key, category, title|summary, agent?, ref?}`.
+- `type`: `"gate"` or `"decision"`.
+- `key`: a STABLE id so the same item groups across days — `pr:owner/repo#N`, `issue:owner/repo#N`, `qfix:ID`, `neg:ID`, `decision:<slug>`, or `free:<slug>` for free-text gates that have no natural id (these group fuzzily; that's expected).
+- `category`: a short reusable tag (`pr-review`, `qfix`, `negotiation`, `physical-infra`, `versioning`, …) — keep the vocabulary small and consistent across days, since analysis groups on it.
+
+Example:
+```json
+[
+  {"type":"gate","key":"pr:HRDAG/hrdag-ansible#824","category":"pr-review","title":"tfc-ingest-gui role + cutover","agent":"cc-tfcs"},
+  {"type":"gate","key":"qfix:42","category":"qfix","title":"meerkat NUT drift"},
+  {"type":"decision","key":"decision:dotfiles-versioning-1.0.0","category":"versioning","summary":"dotfiles adopted bare-semver discipline at 1.0.0","agent":"cc-dots","ref":"25d2671"}
+]
+```
+
+Record only the keyable gates and the real decisions — do not invent observations to pad a quiet day. Do NOT write the ledger to claude-mem; it is a local structured corpus by design (see the helper's header).
 
 ## Guardrails
 
