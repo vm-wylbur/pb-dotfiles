@@ -26,13 +26,14 @@
 # daily cadence (the exact problem the layer-1 write-gate exists to stop).
 #
 # Observation schema (the /fleet-brief skill produces these; this script
-# only enforces structure and stamps the date):
+# validates the required fields, defaults category, and stamps the date):
 #   {type, key, category, title?, summary?, agent?, ref?}
-#     type      "gate" | "decision"
-#     key       STABLE id so the same item groups across days:
-#               pr:owner/repo#N | issue:owner/repo#N | qfix:ID |
-#               neg:ID | decision:slug | free:slug
-#     category  short tag (pr-review, qfix, negotiation, versioning, ...)
+#     type      REQUIRED "gate" | "decision" — row DROPPED if neither
+#     key       REQUIRED non-empty string, STABLE id so the same item groups
+#               across days: pr:owner/repo#N | issue:owner/repo#N | qfix:ID |
+#               neg:ID | decision:slug | free:slug — row DROPPED if missing
+#     category  short tag (pr-review, qfix, negotiation, versioning, ...);
+#               defaults to "uncategorized" if absent (row KEPT)
 # `date` is added here (today, LOCAL) — never trusted from input. Local, not
 # UTC, so the ledger bucket matches the local-morning brief's filename and the
 # session-start status check; all three must agree or analysis mis-joins.
@@ -59,11 +60,26 @@ if ! arr=$(jq -ce 'if type=="array" then . else error("not array") end' <<<"$inp
     exit 1
 fi
 
-# Stamp today's date on each record (override any provided date), one per line.
-stamped=$(jq -c --arg d "$today" '.[] | .date=$d' <<<"$arr")
+# Validate + stamp. A row is only useful if it can be GROUPED and TYPED, so
+# `type` (gate|decision) and a non-empty string `key` are HARD-required — rows
+# missing them are dropped (an untyped/unkeyed row is pure noise in analysis).
+# `category` is SOFT — default it to "uncategorized" rather than lose a real
+# gate over a missing tag. Date is stamped here (local), never trusted.
+total=$(jq 'length' <<<"$arr")
+stamped=$(jq -c --arg d "$today" '
+    .[]
+    | select((.type == "gate" or .type == "decision")
+             and (.key | type == "string") and (.key | length > 0))
+    | .date = $d
+    | .category = (if ((.category | type) == "string" and (.category | length) > 0)
+                   then .category else "uncategorized" end)
+' <<<"$arr")
 n=$(printf '%s' "$stamped" | grep -c . || true)
+dropped=$(( total - n ))
+[ "$dropped" -gt 0 ] && \
+    echo "fleet-brief-ledger: WARN dropped $dropped record(s) missing valid type/key" >&2
 if [ "$n" -eq 0 ]; then
-    echo "fleet-brief-ledger: empty array; nothing appended" >&2
+    echo "fleet-brief-ledger: no valid records; nothing appended" >&2
     exit 0
 fi
 
