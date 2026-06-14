@@ -41,6 +41,7 @@ Design + implementation plan: `~/dotfiles/ai/docs/composable-CLAUDE.md-design.md
 | roles-merger | `roles-merger.md` | hrdag-ansible (cc-ansible-merger worktree). Pointer to §cc-ansible-merger of workflow doc. |
 | roles-impl | `roles-impl.md` | hrdag-ansible-impl. Pointer to §cc-ansible-impl. |
 | roles-ops | `roles-ops.md` | hrdag-ansible-ops. Pointer to §cc-ansible-ops. |
+| roles-vuln | `roles-vuln.md` | hrdag-ansible cc-vuln worktree (temporary, #805). Pointer to §cc-vuln. |
 | pb-voice | `pb-voice.md` | Skills/agents that produce prose for humans (changelog, README writers, issue/PR composers). Operational subset of `~/docs/pb-voice-guide.md`. |
 | code-review | `code-review.md` | When to invoke the built-in `/code-review` skill and at which effort level. Routing rule for specialized reviewers. |
 | goal-lock | `goal-lock.md` | When to invoke `/goal` (session anchor) and how it composes with `TaskCreate` (in-session ledger). Goal-condition format. |
