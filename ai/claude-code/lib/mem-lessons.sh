@@ -98,14 +98,17 @@ if ! memories=$(jq -ce '.memories // []' <<<"$mem_raw" 2>/dev/null); then
     exit 0
 fi
 
-jq -n \
-    --argjson mem "$memories" \
+# Pipe the (potentially large) memory blob via STDIN, not --argjson: a big
+# claude-mem store (100 memories x several KB) overflows ARG_MAX as an argv
+# value and jq fails to exec ("Argument list too long", exit 126, no JSON).
+# stdin has no such ceiling. (Reported by cc-hmon on hrdag-monitor#32.)
+printf '%s' "$memories" | jq \
     --arg since "$SINCE" \
     --arg cues "$CUES" \
-    --argjson cap "$CAP" \
     --argjson shaped_only "$SHAPED_ONLY" \
     --argjson all_types "$ALL_TYPES" '
-    ($mem | length) as $fetched
+    . as $mem
+    | ($mem | length) as $fetched
     # Robust truncation: if the OLDEST memory we fetched is still inside the
     # window, the fetch ran out before the window did — older in-window
     # lessons may be missing. Catches a server-side cap below our --n too.
