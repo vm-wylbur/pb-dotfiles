@@ -22,7 +22,14 @@
 #
 # Output: a single JSON object on stdout:
 #   {since, generated_at, host, commits[], issues[], merged_prs[],
-#    recent_memories[], qfix_open[], sources{ok/failed per source}}
+#    recent_memories[], lessons[], lessons_source, lessons_truncated,
+#    qfix_open[], sources{ok/failed per source}}
+# `lessons[]` is the date-windowed, lesson-shaped view from the shared
+# mem-lessons primitive (also consumed by cc-hmon's report); recent_memories
+# stays the raw pull the composer folds into "Decisions made".
+# `lessons_source` ("reachable"/"unreachable") and `lessons_truncated` carry
+# mem-lessons' own health so the composer can flag a dark or capped lessons
+# pull instead of mistaking [] for a quiet day.
 # Every source degrades to [] on failure and is flagged in .sources,
 # so a missing gh/claude-mem never aborts the brief — it shows as a
 # gap the composer can call out.
@@ -93,6 +100,17 @@ else
     qfix='[]'; qfix_ok=false
 fi
 
+# Recent lessons (date-windowed, lesson-shaped) via the shared mem-lessons
+# primitive — the same surface cc-hmon's report consumes. mem-lessons makes
+# its OWN /recent call, so it can be dark or truncated independently of the
+# mem-recent pull above; carry its source/truncated flags through so the
+# composer never reports a dark lessons pull as a quiet day (a [] from a dark
+# source is a gap, not "no lessons").
+lessons_raw=$(bash "$LIB_DIR/mem-lessons.sh" --since "$SINCE" 2>/dev/null)
+lessons=$(jq -ce '.lessons // []' <<<"$lessons_raw" 2>/dev/null) || lessons='[]'
+lessons_source=$(jq -r '.source // "unreachable"' <<<"$lessons_raw" 2>/dev/null) || lessons_source=unreachable
+lessons_truncated=$(jq -ce '.truncated // false' <<<"$lessons_raw" 2>/dev/null) || lessons_truncated=false
+
 # Reliable tool health (computed in the main shell, no subshell loss):
 # gh presence is exact; claude-mem is reachable if either REST call parsed.
 gh_status=missing
@@ -113,10 +131,15 @@ jq -n \
     --argjson issues "${issues:-[]}" \
     --argjson merged_prs "${prs:-[]}" \
     --argjson recent_memories "${memories:-[]}" \
+    --argjson lessons "${lessons:-[]}" \
+    --arg lessons_source "${lessons_source:-unreachable}" \
+    --argjson lessons_truncated "${lessons_truncated:-false}" \
     --argjson qfix_open "${qfix:-[]}" \
     --argjson sources "${sources:-{\}}" \
     '{since:$since, generated_at:$generated_at, host:$host,
       commits:$commits, issues:$issues, merged_prs:$merged_prs,
-      recent_memories:$recent_memories, qfix_open:$qfix_open,
+      recent_memories:$recent_memories, lessons:$lessons,
+      lessons_source:$lessons_source, lessons_truncated:$lessons_truncated,
+      qfix_open:$qfix_open,
       negotiations:"MCP-only; added by the composing agent",
       sources:$sources}'

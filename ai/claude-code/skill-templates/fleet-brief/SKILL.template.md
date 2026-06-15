@@ -1,6 +1,6 @@
 ---
 name: fleet-brief
-description: Daily cross-agent fleet brief — what the fleet did, decisions made, and what's blocked on you. Aggregates commits/issues/PRs/memory/qfix/negotiations across all repos into one morning screen so PB stops being the only place fleet state lives. Use when PB types /fleet-brief, asks "what's the fleet doing / what's blocked on me / fleet status", or when the scheduled morning run invokes it.
+description: Daily cross-agent fleet brief — what's blocked on you, decisions made, the day's most important lessons, and what the fleet did. Aggregates commits/issues/PRs/memory/lessons/qfix/negotiations across all repos into one morning screen so PB stops being the only place fleet state lives. Use when PB types /fleet-brief, asks "what's the fleet doing / what's blocked on me / fleet status", or when the scheduled morning run invokes it.
 ---
 
 # Fleet brief
@@ -31,7 +31,9 @@ Optional single argument: window start date `YYYY-MM-DD`. Default is the last 24
 bash ~/.claude/lib/fleet-brief-gather.sh ${DATE:+--since $DATE}
 ```
 
-Returns ONE JSON object: `{since, generated_at, host, commits[], issues[], merged_prs[], recent_memories[], qfix_open[], negotiations, sources{gh, claude_mem}}`. Check `.sources` first — if `gh` is `missing` or `claude_mem` is `unreachable`, say so explicitly in the brief; a dark source is a gap, not a quiet day, and the "blocked on you" section is only as trustworthy as its inputs.
+Returns ONE JSON object: `{since, generated_at, host, commits[], issues[], merged_prs[], recent_memories[], lessons[], lessons_source, lessons_truncated, qfix_open[], negotiations, sources{gh, claude_mem}}`. Check `.sources` first — if `gh` is `missing` or `claude_mem` is `unreachable`, say so explicitly in the brief; a dark source is a gap, not a quiet day, and the "blocked on you" section is only as trustworthy as its inputs.
+
+`lessons[]` is the date-windowed, lesson-shaped view from the shared `mem-lessons` primitive (the same surface cc-hmon's report consumes). Each item carries `{id, created, age, type, lesson_shaped, content}`. It feeds the "Lessons" section in Phase 3; `recent_memories[]` stays the raw pull for the "Decisions made" fold. `lessons_source` (`reachable`/`unreachable`) and `lessons_truncated` carry the lessons pull's own health — `mem-lessons` makes a separate call, so check these for the Lessons section rather than assuming `.sources.claude_mem` covers it.
 
 ### Phase 1: Add the gate sources the gather can't see
 
@@ -53,7 +55,7 @@ This is the load-bearing section. A gate is anything that cannot advance without
 
 For each gate, name three things: **agent / artifact / the single action PB takes**. Example: "cc-dots — PR #14 (fleet-brief 2c) — review & merge". Be honest about scope: in-session commit gates and anything ephemeral are NOT visible to a scheduled run, so this section covers persistent gates only. If nothing is blocked, say "Nothing blocked on you" — do not manufacture gates.
 
-### Phase 3: Compose the three sections
+### Phase 3: Compose the sections
 
 Terse. Bullets over prose. Group, don't recite.
 
@@ -67,19 +69,25 @@ Terse. Bullets over prose. Group, don't recite.
 ## Decisions made ({window})
 - {one line each, with repo#N / sha / memory id as a trailing ref}
 
+## Lessons (last 24h)
+- {the 2-3 most important/reusable lessons, one line each, with a trailing memory-id ref}
+  (or: "No notable lessons captured.")
+
 ## What the fleet did
 - {theme-grouped one-liners — by agent or by repo cluster, whichever reads cleaner}
 
 {If any source was dark: "⚠ Gaps: {gh missing | claude-mem unreachable | negotiations not checked}"}
 ```
 
-Ordering is deliberate: **blocked on you first** — it is why PB opens this. Decisions and activity are context below it.
+Ordering is deliberate: **blocked on you first** — it is why PB opens this. Decisions, lessons, and activity are context below it.
+
+**The "Lessons" section** is sourced from `.lessons[]` (already date-windowed and shape-flagged by the `mem-lessons` primitive — do NOT re-pull). Pick the **2-3 most important and reusable** lessons, preferring `lesson_shaped:true`; a lesson is a transferable gotcha or principle ("X counter is unreliable, don't alert on it"; "config archaeology beats reinvention"), distinct from a decision (a choice made). Write one line each, trailing the memory `id` as the ref. Cap at three — do not pad a thin day. A lesson already stated as a decision goes in "Decisions made," not both. Honesty: if `.lessons_source` is `unreachable`, write "⚠ Lessons: claude-mem unreachable" (a dark pull is a gap, NOT a quiet day); only if it is `reachable` and `.lessons` is empty say "No notable lessons captured." If `.lessons_truncated` is true, append "(more than shown — lessons pull hit the fetch cap)".
 
 Rules:
 - Scale length to what actually happened. A quiet day is three lines, not a forced full template.
 - Credit agents by their cc-* identity (from commit trailers, branch names, issue signatures).
 - No emojis except the ⚠ gap marker (agent glyphs belong in commit trailers, not here).
-- Recent memories are evidence of decisions/lessons — fold them into "Decisions made" where they explain a why; don't list raw memory dumps.
+- Recent memories are evidence of decisions/lessons — fold decision-relevant ones into "Decisions made" where they explain a why; the lesson-shaped ones surface in "Lessons". Never list raw memory dumps.
 
 ### Phase 4: Output
 
